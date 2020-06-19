@@ -19,6 +19,8 @@ github.com/gorilla/mux v0.0.0-20160816184630-cf79e51a62d8/go.mod h1:1lud6UwP+6or
 github.com/klauspost/crc32 v0.0.0-20161016154125-cb6bfca970f6/go.mod h1:+ZoRqAPRLkC4NPOvfYeR5KNOrY6TD+/sAC3HXPZgDYg=
 github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515/go.mod h1:+0opPa2QZZtGFBFZlji/RkVcI2GknAs/DXo4wKdlNEc=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
+github.com/microservices-demo/user v0.0.0-20180427160107-af5e0a7e7210 h1:2rGQ6MzW59RP7C6titrQoWibk8bnaUJaR1B2BtejsTA=
+github.com/microservices-demo/user v0.0.0-20180427160107-af5e0a7e7210/go.mod h1:v9AHUSLbQcIyfPtnP5noSGgHvqCZQQDTPh2FZLEFFNE=
 github.com/opentracing/opentracing-go v1.0.1-0.20161231212324-5e5abf838007/go.mod h1:UkNAQd3GIcIGf0SeVgPpRdFStlNbqXla1AfSYxPUl2o=
 github.com/openzipkin/zipkin-go-opentracing v0.2.2/go.mod h1:js2AbwmHW0YD9DwIw2JhQWmbfFi/UnWyYwdVhqbCDOE=
 github.com/pierrec/lz4 v0.0.0-20161206202305-5c9560bfa9ac/go.mod h1:pdkljMzZIN41W+lC3N2tnIh5sFi+IEE17M5jbnwPHcY=
