@@ -13,5 +13,5 @@ if [ -z "$REPO" ]; then
   REPO="microservices-demo"
 fi
 
-docker build -f $CODE_DIR/../../images/go/Dockerfile --build-arg MAIN_PATH=cmd/cataloguesvc/main.go \
+docker build -f $CODE_DIR/Dockerfile --build-arg MAIN_PATH=cmd/cataloguesvc/main.go \
   -t $REPO/shop-catalogue:$TAG $CODE_DIR
