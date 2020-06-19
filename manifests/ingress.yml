@@ -10,9 +10,9 @@ metadata:
     name: front-end
 spec:
   rules:
-    - http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: front-end
-              servicePort: 80
+  - http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: front-end
+          servicePort: 80
