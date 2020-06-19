@@ -166,7 +166,7 @@ spec:
     spec:
       containers:
       - name: catalogue
-        image: niallthomson/shop-catalogue:1592539792
+        image: niallthomson/shop-catalogue:1592540440
         ports:
         - containerPort: 8080
 ---
