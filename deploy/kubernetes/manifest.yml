@@ -202,7 +202,7 @@ spec:
     spec:
       containers:
       - name: front-end
-        image: weaveworksdemos/front-end:0.3.12
+        image: niallthomson/shop-front-end:1592529022
         resources:
           requests:
             cpu: 100m
