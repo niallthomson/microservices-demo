@@ -591,7 +591,7 @@ spec:
       - name: user
         image: niallthomson/shop-user:1592536217
         ports:
-        - containerPort: 8080
+        - containerPort: 8084
         env:
         - name: MONGO_HOST
           value: user-db:27017
@@ -611,6 +611,6 @@ spec:
   ports:
     # the port that this service should serve on
   - port: 80
-    targetPort: 8080
+    targetPort: 8084
   selector:
     name: user
