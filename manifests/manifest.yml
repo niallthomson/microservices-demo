@@ -594,6 +594,10 @@ spec:
         env:
         - name: MONGO_HOST
           value: user-db:27017
+        - name: USER_DATABASE
+          value: mongodb
+        - name: HATEAOS
+          value: user
 ---
 apiVersion: v1
 kind: Service
