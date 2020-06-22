@@ -72,7 +72,7 @@ spec:
     spec:
       containers:
       - name: carts
-        image: niallthomson/shop-carts:1592541543
+        image: niallthomson/shop-carts:1592591266
         ports:
          - containerPort: 8080
         env:
@@ -166,7 +166,7 @@ spec:
     spec:
       containers:
       - name: catalogue
-        image: niallthomson/shop-catalogue:1592540440
+        image: niallthomson/shop-catalogue:1592846477
         ports:
         - containerPort: 8080
 ---
@@ -208,7 +208,7 @@ spec:
             cpu: 100m
             memory: 100Mi
         ports:
-        - containerPort: 8079
+        - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
@@ -221,7 +221,7 @@ spec:
   type: NodePort
   ports:
   - port: 80
-    targetPort: 8079
+    targetPort: 8080
   selector:
     name: front-end
 ---
@@ -299,7 +299,7 @@ spec:
     spec:
       containers:
       - name: orders
-        image: niallthomson/shop-orders:1592529502
+        image: niallthomson/shop-orders:1592591266
         env:
          - name: ZIPKIN
            value: zipkin.jaeger.svc.cluster.local
@@ -349,9 +349,9 @@ spec:
     spec:
       containers:
       - name: payment
-        image: niallthomson/shop-payment:1592529392
+        image: niallthomson/shop-payment:1592591266
         ports:
-        - containerPort: 80
+        - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
@@ -589,9 +589,9 @@ spec:
     spec:
       containers:
       - name: user
-        image: niallthomson/shop-user:1592536217
+        image: niallthomson/shop-user:1592591266
         ports:
-        - containerPort: 8084
+        - containerPort: 8080
         env:
         - name: MONGO_HOST
           value: user-db:27017
@@ -611,6 +611,6 @@ spec:
   ports:
     # the port that this service should serve on
   - port: 80
-    targetPort: 8084
+    targetPort: 8080
   selector:
     name: user
