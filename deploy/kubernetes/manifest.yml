@@ -69,6 +69,7 @@ spec:
     metadata:
       labels:
         name: carts
+        fargate: "true"
     spec:
       containers:
       - name: carts
