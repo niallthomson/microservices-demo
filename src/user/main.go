@@ -14,9 +14,9 @@ import (
 
 	"github.com/go-kit/kit/log"
 	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
-	"github.com/microservices-demo/user/api"
-	"github.com/microservices-demo/user/db"
-	"github.com/microservices-demo/user/db/mongodb"
+	"github.com/niallthomson/microservices-demo/user/api"
+	"github.com/niallthomson/microservices-demo/user/db"
+	"github.com/niallthomson/microservices-demo/user/db/mongodb"
 	stdopentracing "github.com/opentracing/opentracing-go"
 	zipkin "github.com/openzipkin/zipkin-go-opentracing"
 	stdprometheus "github.com/prometheus/client_golang/prometheus"
@@ -43,7 +43,7 @@ const (
 func init() {
 	stdprometheus.MustRegister(HTTPLatency)
 	flag.StringVar(&zip, "zipkin", os.Getenv("ZIPKIN"), "Zipkin address")
-	flag.StringVar(&port, "port", "8084", "Port on which to run")
+	flag.StringVar(&port, "port", lookupEnvOrString("PORT", "8080"), "Port on which to run")
 	db.Register("mongodb", &mongodb.Mongo{})
 }
 
@@ -164,4 +164,11 @@ func main() {
 	}()
 
 	logger.Log("exit", <-errc)
+}
+
+func lookupEnvOrString(key string, defaultVal string) string {
+	if val, ok := os.LookupEnv(key); ok {
+		return val
+	}
+	return defaultVal
 }

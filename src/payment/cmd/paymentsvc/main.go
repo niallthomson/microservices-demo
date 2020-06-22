@@ -11,7 +11,7 @@ import (
 	"syscall"
 
 	"github.com/go-kit/kit/log"
-	"github.com/microservices-demo/payment"
+	"github.com/niallthomson/microservices-demo/payment"
 	stdopentracing "github.com/opentracing/opentracing-go"
 	zipkin "github.com/openzipkin/zipkin-go-opentracing"
 	"golang.org/x/net/context"
@@ -23,7 +23,7 @@ const (
 
 func main() {
 	var (
-		port          = flag.String("port", "8080", "Port to bind HTTP listener")
+		port          = flag.String("port", lookupEnvOrString("PORT", "8080"), "Port to bind HTTP listener")
 		zip           = flag.String("zipkin", os.Getenv("ZIPKIN"), "Zipkin address")
 		declineAmount = flag.Float64("decline", 105, "Decline payments over certain amount")
 	)
@@ -90,4 +90,11 @@ func main() {
 	}()
 
 	logger.Log("exit", <-errc)
+}
+
+func lookupEnvOrString(key string, defaultVal string) string {
+	if val, ok := os.LookupEnv(key); ok {
+		return val
+	}
+	return defaultVal
 }
