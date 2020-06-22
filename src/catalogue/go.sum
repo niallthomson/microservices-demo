@@ -23,6 +23,7 @@ github.com/eapache/queue v1.1.0/go.mod h1:6eCeP0CKFpHLu8blIFXhExK/dRa7WDZfr6jVFP
 github.com/felixge/httpsnoop v0.0.0-20161125085600-287b56e9e314/go.mod h1:3+D9sFq0ahK/JeJPhCBUV1xlf4/eIYrUQaxulT0VzX8=
 github.com/go-kit/kit v0.3.1-0.20170113143921-b8f878dd8851 h1:4EOhaEW0ZNVVVaDRS0oh4JKgBQG6ecl1I7+e5rVb970=
 github.com/go-kit/kit v0.3.1-0.20170113143921-b8f878dd8851/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+github.com/go-kit/kit v0.10.0 h1:dXFJfIHVvUcpSgDOV+Ne6t7jXri8Tfv2uOLHUZ2XNuo=
 github.com/go-logfmt/logfmt v0.3.0 h1:8HUsc87TaSWLKwrnumgC8/YconD2fJQsRJAsWaPg2ic=
 github.com/go-logfmt/logfmt v0.3.0/go.mod h1:Qt1PoO58o5twSAckw1HlFXLmHsOX5/0LbT9GBnD5lWE=
 github.com/go-sql-driver/mysql v1.3.0 h1:pgwjLi/dvffoP9aabwkT3AKpXQM93QARkjFhDDqC1UE=
@@ -93,6 +94,7 @@ google.golang.org/api v0.0.0-20170321005416-16ab375f9450/go.mod h1:4mhQ8q/RsB7i+
 google.golang.org/appengine v1.0.1-0.20170307235554-b79c28f01977/go.mod h1:EbEs0AVv82hx2wNQdGPgUI5lhzA/G0D9YwlJXL52JkM=
 google.golang.org/grpc v1.2.0 h1:v8eFdETH8nqZHQ9x+0f2PLuU6W7zo5PFZuVEwH5126Y=
 google.golang.org/grpc v1.2.0/go.mod h1:yo6s7OP7yaDglbqo1J04qKzAhqBH6lvTonzMVmEdcZw=
+gopkg.in/DATA-DOG/go-sqlmock.v1 v1.1.4 h1:fJ175KxE4wUAZMv1f5kMw1k0OL0SrJ+bBk5UCAynuoA=
 gopkg.in/DATA-DOG/go-sqlmock.v1 v1.1.4/go.mod h1:OdE7CF6DbADk7lN8LIKRzRJTTZXIjtWgA5THM5lhBAw=
 gopkg.in/airbrake/gobrake.v2 v2.0.9/go.mod h1:/h5ZAUhDkGaJfjzjKLSjv6zCL6O0LLBxU4K+aSYdM/U=
 gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.1/go.mod h1:Xk6kEKp8OKb+X14hQBKWaSkCsqBpgog8nAV2xsGOxlo=

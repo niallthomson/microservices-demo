@@ -64,7 +64,7 @@ func (mw loggingMiddleware) Get(id string) (s Sock, err error) {
 	return mw.next.Get(id)
 }
 
-func (mw loggingMiddleware) Tags() (tags []string, err error) {
+func (mw loggingMiddleware) Tags() (tags []Tag, err error) {
 	defer func(begin time.Time) {
 		mw.logger.Log(
 			"method", "Tags",

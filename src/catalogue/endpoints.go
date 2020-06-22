@@ -110,8 +110,8 @@ type tagsRequest struct {
 }
 
 type tagsResponse struct {
-	Tags []string `json:"tags"`
-	Err  error    `json:"err"`
+	Tags []Tag `json:"tags"`
+	Err  error `json:"err"`
 }
 
 type healthRequest struct {

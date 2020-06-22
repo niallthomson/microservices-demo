@@ -19,7 +19,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"github.com/microservices-demo/catalogue"
+	"github.com/niallthomson/microservices-demo/catalogue"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/weaveworks/common/middleware"
 	"golang.org/x/net/context"
@@ -43,7 +43,7 @@ func init() {
 
 func main() {
 	var (
-		port   = flag.String("port", "8080", "Port to bind HTTP listener") // TODO(pb): should be -addr, default ":8080"
+		port   = flag.String("port", lookupEnvOrString("PORT", "8080"), "Port to bind HTTP listener") // TODO(pb): should be -addr, default ":8080"
 		images = flag.String("images", "./images/", "Image path")
 		dsn    = flag.String("DSN", "catalogue_user:default_password@tcp(catalogue-db:3306)/socksdb", "Data Source Name: [username[:password]@][protocol[(address)]]/dbname")
 		zip    = flag.String("zipkin", os.Getenv("ZIPKIN"), "Zipkin address")
@@ -156,4 +156,11 @@ func main() {
 	}()
 
 	logger.Log("exit", <-errc)
+}
+
+func lookupEnvOrString(key string, defaultVal string) string {
+	if val, ok := os.LookupEnv(key); ok {
+		return val
+	}
+	return defaultVal
 }

@@ -4,16 +4,16 @@ services:
     catalogue:
       build:
         context: .
-        dockerfile: ../../images/go/Dockerfile
+        dockerfile: Dockerfile
         args:
           MAIN_PATH: cmd/cataloguesvc/main.go
       image: microservices-demo/catalogue
       hostname: catalogue
+      depends_on:
+      - catalogue-db
       restart: always
       cap_drop:
         - all
-      cap_add:
-        - NET_BIND_SERVICE
       read_only: true
       environment:
         - reschedule=on-node-failure

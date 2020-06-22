@@ -37,7 +37,6 @@ require (
 	github.com/klauspost/crc32 v0.0.0-20161016154125-cb6bfca970f6
 	github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515
 	github.com/matttproud/golang_protobuf_extensions v1.0.1
-	github.com/microservices-demo/catalogue v0.0.0-20180608164449-97545f4ae068
 	github.com/opentracing/opentracing-go v1.0.1-0.20161202035312-ac5446f53f2c
 	github.com/openzipkin/zipkin-go-opentracing v0.2.2
 	github.com/pborman/uuid v0.0.0-20161206184745-5007efa264d9

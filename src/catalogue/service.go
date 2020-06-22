@@ -18,7 +18,7 @@ type Service interface {
 	List(tags []string, order string, pageNum, pageSize int) ([]Sock, error) // GET /catalogue
 	Count(tags []string) (int, error)                                        // GET /catalogue/size
 	Get(id string) (Sock, error)                                             // GET /catalogue/{id}
-	Tags() ([]string, error)                                                 // GET /tags
+	Tags() ([]Tag, error)                                                    // GET /tags
 	Health() []Health                                                        // GET /health
 }
 
@@ -37,6 +37,12 @@ type Sock struct {
 	Count       int      `json:"count" db:"count"`
 	Tags        []string `json:"tag" db:"-"`
 	TagString   string   `json:"-" db:"tag_name"`
+}
+
+// Tag describes a label for a Sock
+type Tag struct {
+	Name        string `json:"name" db:"name"`
+	DisplayName string `json:"displayName" db:"display_name"`
 }
 
 // Health describes the health of a service
@@ -181,23 +187,26 @@ func (s *catalogueService) Health() []Health {
 	return health
 }
 
-func (s *catalogueService) Tags() ([]string, error) {
-	var tags []string
-	query := "SELECT name FROM tag;"
+func (s *catalogueService) Tags() ([]Tag, error) {
+	var tags []Tag
+	query := "SELECT name, display_name FROM tag;"
 	rows, err := s.db.Query(query)
 	if err != nil {
 		s.logger.Log("database error", err)
-		return []string{}, ErrDBConnection
+		return []Tag{}, ErrDBConnection
 	}
-	var tag string
+
 	for rows.Next() {
-		err = rows.Scan(&tag)
+		var tag Tag
+
+		err = rows.Scan(&tag.Name, &tag.DisplayName)
 		if err != nil {
 			s.logger.Log("database error", err)
 			continue
 		}
 		tags = append(tags, tag)
 	}
+
 	return tags, nil
 }
 
