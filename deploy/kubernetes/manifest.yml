@@ -163,6 +163,7 @@ spec:
     metadata:
       labels:
         name: catalogue
+        fargate: "true"
     spec:
       containers:
       - name: catalogue
