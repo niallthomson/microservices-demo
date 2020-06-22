@@ -98,7 +98,7 @@ metadata:
 spec:
   ports:
     # the port that this service should serve on
-  - port: 80
+  - port: 8080
     targetPort: 8080
   selector:
     name: carts
@@ -180,7 +180,7 @@ metadata:
 spec:
   ports:
     # the port that this service should serve on
-  - port: 80
+  - port: 8080
     targetPort: 8080
   selector:
     name: catalogue
@@ -220,7 +220,7 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 80
+  - port: 8080
     targetPort: 8080
   selector:
     name: front-end
@@ -325,7 +325,7 @@ metadata:
 spec:
   ports:
     # the port that this service should serve on
-  - port: 80
+  - port: 8080
     targetPort: 8080
   selector:
     name: orders
@@ -363,7 +363,7 @@ metadata:
 spec:
   ports:
     # the port that this service should serve on
-  - port: 80
+  - port: 8080
     targetPort: 8080
   selector:
     name: payment
@@ -510,7 +510,7 @@ metadata:
 spec:
   ports:
     # the port that this service should serve on
-  - port: 80
+  - port: 8080
     targetPort: 80
   selector:
     name: shipping
@@ -610,7 +610,7 @@ metadata:
 spec:
   ports:
     # the port that this service should serve on
-  - port: 80
+  - port: 8080
     targetPort: 8080
   selector:
     name: user
