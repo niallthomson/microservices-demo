@@ -122,7 +122,7 @@ spec:
     spec:
       containers:
       - name: catalogue-db
-        image: niallthomson/shop-catalogue-db:1592847476
+        image: niallthomson/shop-catalogue-db:1592852738
         env:
           - name: MYSQL_ROOT_PASSWORD
             value: fake_password
@@ -166,7 +166,7 @@ spec:
     spec:
       containers:
       - name: catalogue
-        image: niallthomson/shop-catalogue:1592851736
+        image: niallthomson/shop-catalogue:1592852662
         ports:
         - containerPort: 8080
 ---
@@ -202,7 +202,7 @@ spec:
     spec:
       containers:
       - name: front-end
-        image: niallthomson/shop-front-end:1592850695
+        image: niallthomson/shop-front-end:1592852638
         resources:
           requests:
             cpu: 100m
