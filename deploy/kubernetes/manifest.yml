@@ -166,7 +166,7 @@ spec:
     spec:
       containers:
       - name: catalogue
-        image: shop-catalogue:1592849586
+        image: niallthomson/shop-catalogue:1592851736
         ports:
         - containerPort: 8080
 ---
@@ -220,7 +220,7 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 8080
+  - port: 80
     targetPort: 8080
   selector:
     name: front-end
