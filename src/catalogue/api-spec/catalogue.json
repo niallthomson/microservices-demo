@@ -28,7 +28,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Listresponse"
+                "$ref": "#/definitions/CatalogItem"
               }
             }
           }
@@ -53,7 +53,7 @@
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/Getanitemresponse"
+              "$ref": "#/definitions/CatalogItem"
             }
           }
         }
@@ -69,7 +69,7 @@
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/Getsizeresponse"
+              "$ref": "#/definitions/CatalogSizeResponse"
             }
           }
         }
@@ -85,7 +85,10 @@
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/Listresponse3"
+              "type": "array",
+              "items": {
+                "$ref":  "#/definitions/ItemTag"
+              }
             }
           }
         }
@@ -93,51 +96,7 @@
     }
   },
   "definitions": {
-    "Listresponse": {
-      "title": "List response",
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "imageUrl": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "price": {
-          "type": "number",
-          "format": "double"
-        },
-        "count": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "tag": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "required": [
-        "id",
-        "name",
-        "description",
-        "imageUrl",
-        "price",
-        "count",
-        "tag"
-      ]
-    },
-    "Getanitemresponse": {
+    "CatalogItem": {
       "title": "Get an item response",
       "type": "object",
       "properties": {
@@ -181,7 +140,7 @@
         "tag"
       ]
     },
-    "Getsizeresponse": {
+    "CatalogSizeResponse": {
       "title": "Get size response",
       "type": "object",
       "properties": {
@@ -192,18 +151,17 @@
       },
       "required": ["size"]
     },
-    "Listresponse3": {
-      "title": "List response3",
+    "ItemTag": {
+      "title": "Item tag information",
       "type": "object",
       "properties": {
-        "tags": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "name": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
         }
-      },
-      "required": ["tags"]
+      }
     }
   }
 }
