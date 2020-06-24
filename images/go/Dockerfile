@@ -1,4 +1,4 @@
-FROM golang:1.12.0-alpine3.9 as build-env
+FROM golang:1.13.0-alpine as build-env
 
 ARG MAIN_PATH
 
