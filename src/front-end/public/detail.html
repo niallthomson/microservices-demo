@@ -200,7 +200,7 @@ _________________________________________________________ -->
         if (id == null || id == "") {
             document.location.href = "/";
         }
-        $.getJSON('/catalogue/' + id, function (data) {
+        $.getJSON('/catalogue/product/' + id, function (data) {
             $("#title").text(data.name);
             $("#breadcrumb").text(data.name);
             $("#price").text("$" + data.price.toFixed(2));

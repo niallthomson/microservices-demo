@@ -369,7 +369,7 @@ _________________________________________________________ -->
                 var orderPlaced = false;
                 $.each(data, function (index, element) {
                     if (element != null && element.itemId != null && element.itemId != "null") {
-                        $.getJSON('/catalogue/' + element.itemId, function (data) {
+                        $.getJSON('/catalogue/product/' + element.itemId, function (data) {
                             console.log(JSON.stringify(data));
                             $('#cart-list').append(' <tr class="item">\
                                                 <input class="id" type="hidden" value="' + data.id + '">\

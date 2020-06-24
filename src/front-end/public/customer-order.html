@@ -214,7 +214,7 @@ _________________________________________________________ -->
             $('#orderDate').text(data.date.split(".")[0].replace("T", " "));
             $('#orderStatus').text("shipped");
             $.each(data.items, function (index, item) {
-                $.getJSON('/catalogue/' + item.itemId, function (data) {
+                $.getJSON('/catalogue/product/' + item.itemId, function (data) {
                     console.log(JSON.stringify(data));
                     $('#tableOrder').append(' <tr>\
                                                 <td>\

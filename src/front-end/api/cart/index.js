@@ -74,7 +74,7 @@
 
     async.waterfall([
         function (callback) {
-          request(endpoints.catalogueUrl + "/catalogue/" + req.body.id.toString(), function (error, response, body) {
+          request(endpoints.catalogueUrl + "/catalogue/product/" + req.body.id.toString(), function (error, response, body) {
             console.log(body);
             callback(error, JSON.parse(body));
           });
@@ -122,7 +122,7 @@
 
     async.waterfall([
         function (callback) {
-          request(endpoints.catalogueUrl + "/catalogue/" + req.body.id.toString(), function (error, response, body) {
+          request(endpoints.catalogueUrl + "/catalogue/product/" + req.body.id.toString(), function (error, response, body) {
             console.log(body);
             callback(error, JSON.parse(body));
           });
