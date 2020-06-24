@@ -1,0 +1,105 @@
+#@ load("@ytt:data", "data")
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: carts-db
+  labels:
+    name: carts-db
+  namespace: #@ data.values.namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: carts-db
+  template:
+    metadata:
+      labels:
+        name: carts-db
+    spec:
+      containers:
+      - name: carts-db
+        image: mongo
+        ports:
+        - name: mongo
+          containerPort: 27017
+        securityContext:
+          capabilities:
+            drop:
+              - all
+            add:
+              - CHOWN
+              - SETGID
+              - SETUID
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+        - name: tmp-volume
+          emptyDir:
+            medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carts-db
+  labels:
+    name: carts-db
+  namespace: #@ data.values.namespace
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    name: carts-db
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: carts
+  labels:
+    name: carts
+  namespace: #@ data.values.namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: carts
+  template:
+    metadata:
+      labels:
+        name: carts
+        fargate: "true"
+    spec:
+      containers:
+      - name: carts
+        image: #@ data.values.cart.image
+        ports:
+         - containerPort: 8080
+        env:
+         - name: ZIPKIN
+           value: zipkin.jaeger.svc.cluster.local
+         - name: JAVA_OPTS
+           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+        - name: tmp-volume
+          emptyDir:
+            medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carts
+  labels:
+    name: carts
+  namespace: #@ data.values.namespace
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    name: carts

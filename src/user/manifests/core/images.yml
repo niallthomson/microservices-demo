@@ -1,0 +1,18 @@
+#@ load("@ytt:data", "data")
+
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: Sources
+sources:
+- image: #@ data.values.user.image
+  path: #@ data.values.user.imagePath
+  docker:
+    build:
+      file: #@ data.values.imagePath + '/go/Dockerfile'
+      rawOptions: ["--build-arg", "MAIN_PATH=main.go"]
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageDestinations
+destinations:
+- image: #@ data.values.user.image
+  newImage: docker.io/niallthomson/shop-user

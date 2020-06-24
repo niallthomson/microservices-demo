@@ -1,0 +1,104 @@
+#@ load("@ytt:data", "data")
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-db
+  labels:
+    name: orders-db
+  namespace: #@ data.values.namespace
+spec:
+  selector:
+    matchLabels:
+      name: orders-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: orders-db
+    spec:
+      containers:
+      - name: orders-db
+        image: mongo
+        ports:
+        - name: mongo
+          containerPort: 27017
+        securityContext:
+          capabilities:
+            drop:
+              - all
+            add:
+              - CHOWN
+              - SETGID
+              - SETUID
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+        - name: tmp-volume
+          emptyDir:
+            medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-db
+  labels:
+    name: orders-db
+  namespace: #@ data.values.namespace
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    name: orders-db
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders
+  labels:
+    name: orders
+  namespace: #@ data.values.namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: orders
+  template:
+    metadata:
+      labels:
+        name: orders
+    spec:
+      containers:
+      - name: orders
+        image: #@ data.values.orders.image
+        env:
+         - name: ZIPKIN
+           value: zipkin.jaeger.svc.cluster.local
+         - name: JAVA_OPTS
+           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+        - name: tmp-volume
+          emptyDir:
+            medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders
+  labels:
+    name: orders
+  namespace: #@ data.values.namespace
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    name: orders

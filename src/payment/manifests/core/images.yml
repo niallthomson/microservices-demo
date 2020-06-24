@@ -1,0 +1,18 @@
+#@ load("@ytt:data", "data")
+
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: Sources
+sources:
+- image: #@ data.values.payment.image
+  path: #@ data.values.payment.imagePath
+  docker:
+    build:
+      file: #@ data.values.imagePath + '/go/Dockerfile'
+      rawOptions: ["--build-arg", "MAIN_PATH=cmd/paymentsvc/main.go"]
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageDestinations
+destinations:
+- image: #@ data.values.payment.image
+  newImage: docker.io/niallthomson/shop-payment

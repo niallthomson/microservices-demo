@@ -1,0 +1,38 @@
+#@ load("@ytt:data", "data")
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  labels:
+    name: payment
+  namespace: #@ data.values.namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: payment
+  template:
+    metadata:
+      labels:
+        name: payment
+    spec:
+      containers:
+      - name: payment
+        image: #@ data.values.payment.image
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+  labels:
+    name: payment
+  namespace: #@ data.values.namespace
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    name: payment

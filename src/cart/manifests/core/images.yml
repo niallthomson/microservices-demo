@@ -1,0 +1,18 @@
+#@ load("@ytt:data", "data")
+
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: Sources
+sources:
+- image: #@ data.values.cart.image
+  path: #@ data.values.cart.imagePath
+  docker:
+    build:
+      file: #@ data.values.imagePath + '/java/Dockerfile'
+      rawOptions: ["--build-arg", "JAR_PATH=target/carts.jar"]
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageDestinations
+destinations:
+- image: #@ data.values.cart.image
+  newImage: docker.io/niallthomson/shop-carts
