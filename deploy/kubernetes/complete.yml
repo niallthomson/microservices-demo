@@ -1,374 +1,7 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: carts-db
-  labels:
-    name: carts-db
-  namespace: sock-shop
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: carts-db
-  template:
-    metadata:
-      labels:
-        name: carts-db
-    spec:
-      containers:
-      - name: carts-db
-        image: mongo
-        ports:
-        - name: mongo
-          containerPort: 27017
-        securityContext:
-          capabilities:
-            drop:
-              - all
-            add:
-              - CHOWN
-              - SETGID
-              - SETUID
-          readOnlyRootFilesystem: true
-        volumeMounts:
-        - mountPath: /tmp
-          name: tmp-volume
-      volumes:
-        - name: tmp-volume
-          emptyDir:
-            medium: Memory
----
 apiVersion: v1
-kind: Service
+kind: Namespace
 metadata:
-  name: carts-db
-  labels:
-    name: carts-db
-  namespace: sock-shop
-spec:
-  ports:
-    # the port that this service should serve on
-  - port: 27017
-    targetPort: 27017
-  selector:
-    name: carts-db
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: carts
-  labels:
-    name: carts
-  namespace: sock-shop
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: carts
-  template:
-    metadata:
-      labels:
-        name: carts
-        fargate: "true"
-    spec:
-      containers:
-      - name: carts
-        image: niallthomson/shop-carts:1592591266
-        ports:
-         - containerPort: 8080
-        env:
-         - name: ZIPKIN
-           value: zipkin.jaeger.svc.cluster.local
-         - name: JAVA_OPTS
-           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
-        volumeMounts:
-        - mountPath: /tmp
-          name: tmp-volume
-      volumes:
-        - name: tmp-volume
-          emptyDir:
-            medium: Memory
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: carts
-  labels:
-    name: carts
-  namespace: sock-shop
-spec:
-  ports:
-    # the port that this service should serve on
-  - port: 8080
-    targetPort: 8080
-  selector:
-    name: carts
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: catalogue-db
-  labels:
-    name: catalogue-db
-  namespace: sock-shop
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: catalogue-db
-  template:
-    metadata:
-      labels:
-        name: catalogue-db
-    spec:
-      containers:
-      - name: catalogue-db
-        image: niallthomson/shop-catalogue-db:1592852738
-        env:
-          - name: MYSQL_ROOT_PASSWORD
-            value: fake_password
-          - name: MYSQL_DATABASE
-            value: socksdb
-        ports:
-        - name: mysql
-          containerPort: 3306
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: catalogue-db
-  labels:
-    name: catalogue-db
-  namespace: sock-shop
-spec:
-  ports:
-    # the port that this service should serve on
-  - port: 3306
-    targetPort: 3306
-  selector:
-    name: catalogue-db
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: catalogue
-  labels:
-    name: catalogue
-  namespace: sock-shop
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: catalogue
-  template:
-    metadata:
-      labels:
-        name: catalogue
-        fargate: "true"
-    spec:
-      containers:
-      - name: catalogue
-        image: niallthomson/shop-catalogue:1592852662
-        ports:
-        - containerPort: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: catalogue
-  labels:
-    name: catalogue
-  namespace: sock-shop
-spec:
-  ports:
-    # the port that this service should serve on
-  - port: 8080
-    targetPort: 8080
-  selector:
-    name: catalogue
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: front-end
-  namespace: sock-shop
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: front-end
-  template:
-    metadata:
-      labels:
-        name: front-end
-    spec:
-      containers:
-      - name: front-end
-        image: niallthomson/shop-front-end:1592852638
-        resources:
-          requests:
-            cpu: 100m
-            memory: 100Mi
-        ports:
-        - containerPort: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: front-end
-  labels:
-    name: front-end
-  namespace: sock-shop
-spec:
-  type: NodePort
-  ports:
-  - port: 80
-    targetPort: 8080
-  selector:
-    name: front-end
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: orders-db
-  labels:
-    name: orders-db
-  namespace: sock-shop
-spec:
-  selector:
-    matchLabels:
-      name: orders-db
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        name: orders-db
-    spec:
-      containers:
-      - name: orders-db
-        image: mongo
-        ports:
-        - name: mongo
-          containerPort: 27017
-        securityContext:
-          capabilities:
-            drop:
-              - all
-            add:
-              - CHOWN
-              - SETGID
-              - SETUID
-          readOnlyRootFilesystem: true
-        volumeMounts:
-        - mountPath: /tmp
-          name: tmp-volume
-      volumes:
-        - name: tmp-volume
-          emptyDir:
-            medium: Memory
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: orders-db
-  labels:
-    name: orders-db
-  namespace: sock-shop
-spec:
-  ports:
-    # the port that this service should serve on
-  - port: 27017
-    targetPort: 27017
-  selector:
-    name: orders-db
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: orders
-  labels:
-    name: orders
-  namespace: sock-shop
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: orders
-  template:
-    metadata:
-      labels:
-        name: orders
-    spec:
-      containers:
-      - name: orders
-        image: niallthomson/shop-orders:1592591266
-        env:
-         - name: ZIPKIN
-           value: zipkin.jaeger.svc.cluster.local
-         - name: JAVA_OPTS
-           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
-        ports:
-        - containerPort: 8080
-        volumeMounts:
-        - mountPath: /tmp
-          name: tmp-volume
-      volumes:
-        - name: tmp-volume
-          emptyDir:
-            medium: Memory
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: orders
-  labels:
-    name: orders
-  namespace: sock-shop
-spec:
-  ports:
-    # the port that this service should serve on
-  - port: 8080
-    targetPort: 8080
-  selector:
-    name: orders
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: payment
-  labels:
-    name: payment
-  namespace: sock-shop
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: payment
-  template:
-    metadata:
-      labels:
-        name: payment
-    spec:
-      containers:
-      - name: payment
-        image: niallthomson/shop-payment:1592591266
-        ports:
-        - containerPort: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: payment
-  labels:
-    name: payment
-  namespace: sock-shop
-spec:
-  ports:
-    # the port that this service should serve on
-  - port: 8080
-    targetPort: 8080
-  selector:
-    name: payment
+  name: watchn
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -376,7 +9,7 @@ metadata:
   name: queue-master
   labels:
     name: queue-master
-  namespace: sock-shop
+  namespace: watchn
 spec:
   replicas: 1
   selector:
@@ -400,11 +33,10 @@ metadata:
   labels:
     name: queue-master
   annotations:
-    prometheus.io/path: "/prometheus"
-  namespace: sock-shop
+    prometheus.io/path: /prometheus
+  namespace: watchn
 spec:
   ports:
-    # the port that this service should serve on
   - port: 80
     targetPort: 80
   selector:
@@ -416,7 +48,7 @@ metadata:
   name: rabbitmq
   labels:
     name: rabbitmq
-  namespace: sock-shop
+  namespace: watchn
 spec:
   replicas: 1
   selector:
@@ -435,12 +67,12 @@ spec:
         securityContext:
           capabilities:
             drop:
-              - all
+            - all
             add:
-              - CHOWN
-              - SETGID
-              - SETUID
-              - DAC_OVERRIDE
+            - CHOWN
+            - SETGID
+            - SETUID
+            - DAC_OVERRIDE
           readOnlyRootFilesystem: true
 ---
 apiVersion: v1
@@ -449,10 +81,9 @@ metadata:
   name: rabbitmq
   labels:
     name: rabbitmq
-  namespace: sock-shop
+  namespace: watchn
 spec:
   ports:
-    # the port that this service should serve on
   - port: 5672
     targetPort: 5672
   selector:
@@ -464,7 +95,7 @@ metadata:
   name: shipping
   labels:
     name: shipping
-  namespace: sock-shop
+  namespace: watchn
 spec:
   replicas: 1
   selector:
@@ -479,10 +110,11 @@ spec:
       - name: shipping
         image: weaveworksdemos/shipping:0.4.8
         env:
-         - name: ZIPKIN
-           value: zipkin.jaeger.svc.cluster.local
-         - name: JAVA_OPTS
-           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+        - name: ZIPKIN
+          value: zipkin.jaeger.svc.cluster.local
+        - name: JAVA_OPTS
+          value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
+            -Djava.security.egd=file:/dev/urandom
         ports:
         - containerPort: 80
         securityContext:
@@ -490,17 +122,17 @@ spec:
           runAsUser: 10001
           capabilities:
             drop:
-              - all
+            - all
             add:
-              - NET_BIND_SERVICE
+            - NET_BIND_SERVICE
           readOnlyRootFilesystem: true
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume
       volumes:
-        - name: tmp-volume
-          emptyDir:
-            medium: Memory
+      - name: tmp-volume
+        emptyDir:
+          medium: Memory
 ---
 apiVersion: v1
 kind: Service
@@ -508,14 +140,427 @@ metadata:
   name: shipping
   labels:
     name: shipping
-  namespace: sock-shop
+  namespace: watchn
 spec:
   ports:
-    # the port that this service should serve on
   - port: 8080
     targetPort: 80
   selector:
     name: shipping
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: front-end
+  namespace: watchn
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+  labels:
+    name: front-end
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: front-end
+          servicePort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: carts-db
+  labels:
+    name: carts-db
+  namespace: watchn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: carts-db
+  template:
+    metadata:
+      labels:
+        name: carts-db
+    spec:
+      containers:
+      - name: carts-db
+        image: mongo
+        ports:
+        - name: mongo
+          containerPort: 27017
+        securityContext:
+          capabilities:
+            drop:
+            - all
+            add:
+            - CHOWN
+            - SETGID
+            - SETUID
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carts-db
+  labels:
+    name: carts-db
+  namespace: watchn
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    name: carts-db
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: carts
+  labels:
+    name: carts
+  namespace: watchn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: carts
+  template:
+    metadata:
+      labels:
+        name: carts
+        fargate: "true"
+    spec:
+      containers:
+      - name: carts
+        image: niallthomson/shop-carts:1592591266
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ZIPKIN
+          value: zipkin.jaeger.svc.cluster.local
+        - name: JAVA_OPTS
+          value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
+            -Djava.security.egd=file:/dev/urandom
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carts
+  labels:
+    name: carts
+  namespace: watchn
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    name: carts
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: Sources
+sources:
+- image: watchn-catalog
+  path: ../../src/catalog
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageDestinations
+destinations:
+- image: watchn-catalog
+  newImage: docker.io/niallthomson/shop-catalog
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogue-db
+  labels:
+    name: catalogue-db
+  namespace: watchn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: catalogue-db
+  template:
+    metadata:
+      labels:
+        name: catalogue-db
+    spec:
+      containers:
+      - name: catalogue-db
+        image: mysql:5.7
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: my-secret-pw
+        - name: MYSQL_DATABASE
+          value: watchndb
+        - name: MYSQL_USER
+          value: catalog_user
+        - name: MYSQL_PASSWORD
+          value: default_password
+        ports:
+        - name: mysql
+          containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-db
+  labels:
+    name: catalog-db
+  namespace: watchn
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  selector:
+    name: catalogue-db
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogue
+  labels:
+    name: catalogue
+  namespace: watchn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: catalogue
+  template:
+    metadata:
+      labels:
+        name: catalogue
+        fargate: "true"
+    spec:
+      containers:
+      - name: catalogue
+        image: niallthomson/shop-catalog:1593030117
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogue
+  labels:
+    name: catalogue
+  namespace: watchn
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    name: catalogue
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: Sources
+sources:
+- image: watchn-front-end
+  path: ../../src/front-end
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageDestinations
+destinations:
+- image: watchn-front-end
+  newImage: docker.io/niallthomson/shop-front-end
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-end
+  namespace: watchn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: front-end
+  template:
+    metadata:
+      labels:
+        name: front-end
+    spec:
+      containers:
+      - name: front-end
+        image: watchn-front-end
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-end
+  labels:
+    name: front-end
+  namespace: watchn
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    name: front-end
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-db
+  labels:
+    name: orders-db
+  namespace: watchn
+spec:
+  selector:
+    matchLabels:
+      name: orders-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: orders-db
+    spec:
+      containers:
+      - name: orders-db
+        image: mongo
+        ports:
+        - name: mongo
+          containerPort: 27017
+        securityContext:
+          capabilities:
+            drop:
+            - all
+            add:
+            - CHOWN
+            - SETGID
+            - SETUID
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-db
+  labels:
+    name: orders-db
+  namespace: watchn
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    name: orders-db
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders
+  labels:
+    name: orders
+  namespace: watchn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: orders
+  template:
+    metadata:
+      labels:
+        name: orders
+    spec:
+      containers:
+      - name: orders
+        image: niallthomson/shop-orders:1592591266
+        env:
+        - name: ZIPKIN
+          value: zipkin.jaeger.svc.cluster.local
+        - name: JAVA_OPTS
+          value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
+            -Djava.security.egd=file:/dev/urandom
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders
+  labels:
+    name: orders
+  namespace: watchn
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    name: orders
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  labels:
+    name: payment
+  namespace: watchn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: payment
+  template:
+    metadata:
+      labels:
+        name: payment
+    spec:
+      containers:
+      - name: payment
+        image: niallthomson/shop-payment:1592591266
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+  labels:
+    name: payment
+  namespace: watchn
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    name: payment
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -523,7 +568,7 @@ metadata:
   name: user-db
   labels:
     name: user-db
-  namespace: sock-shop
+  namespace: watchn
 spec:
   replicas: 1
   selector:
@@ -543,19 +588,19 @@ spec:
         securityContext:
           capabilities:
             drop:
-              - all
+            - all
             add:
-              - CHOWN
-              - SETGID
-              - SETUID
+            - CHOWN
+            - SETGID
+            - SETUID
           readOnlyRootFilesystem: true
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume
       volumes:
-        - name: tmp-volume
-          emptyDir:
-            medium: Memory
+      - name: tmp-volume
+        emptyDir:
+          medium: Memory
 ---
 apiVersion: v1
 kind: Service
@@ -563,10 +608,9 @@ metadata:
   name: user-db
   labels:
     name: user-db
-  namespace: sock-shop
+  namespace: watchn
 spec:
   ports:
-    # the port that this service should serve on
   - port: 27017
     targetPort: 27017
   selector:
@@ -578,7 +622,7 @@ metadata:
   name: user
   labels:
     name: user
-  namespace: sock-shop
+  namespace: watchn
 spec:
   replicas: 1
   selector:
@@ -608,10 +652,9 @@ metadata:
   name: user
   labels:
     name: user
-  namespace: sock-shop
+  namespace: watchn
 spec:
   ports:
-    # the port that this service should serve on
   - port: 8080
     targetPort: 8080
   selector:

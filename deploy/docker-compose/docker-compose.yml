@@ -2,7 +2,7 @@ version: '2'
 
 services:
   front-end:
-    image: niallthomson/shop-front-end:1592850695
+    image: niallthomson/shop-front-end:1593030235
     hostname: front-end
     restart: always
     cap_drop:
@@ -10,6 +10,8 @@ services:
     cap_add:
       - NET_BIND_SERVICE
     read_only: true
+    environment:
+      - PORT=8079
   edge-router:
     image: weaveworksdemos/edge-router:0.1.1
     ports:
@@ -29,7 +31,7 @@ services:
     hostname: edge-router
     restart: always
   catalogue:
-    image: niallthomson/shop-catalogue:1592849586
+    image: niallthomson/shop-catalog:1593030117
     hostname: catalogue
     restart: always
     cap_drop:
@@ -37,14 +39,17 @@ services:
     cap_add:
       - NET_BIND_SERVICE
     read_only: true
-  catalogue-db:
-    image: niallthomson/shop-catalogue-db:1592847476
-    hostname: catalogue-db
-    restart: always
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_ALLOW_EMPTY_PASSWORD=true
-      - MYSQL_DATABASE=socksdb
+  catalog-db:
+      image: mysql:5.7
+      hostname: catalog-db
+      restart: always
+      environment:
+        - reschedule=on-node-failure
+        - MYSQL_ROOT_PASSWORD=my-secret-pw
+        - MYSQL_ALLOW_EMPTY_PASSWORD=true
+        - MYSQL_DATABASE=watchndb
+        - MYSQL_USER=catalog_user
+        - MYSQL_PASSWORD=default_password
   carts:
     image: niallthomson/shop-carts:1592591266
     hostname: carts
