@@ -1,0 +1,14 @@
+#@ load("@ytt:data", "data")
+
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: Sources
+sources:
+- image: #@ data.values.catalog.image
+  path: #@ data.values.catalog.imagePath
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageDestinations
+destinations:
+- image: #@ data.values.catalog.image
+  newImage: docker.io/niallthomson/shop-catalog
