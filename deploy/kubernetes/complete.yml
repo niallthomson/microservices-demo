@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -6,9 +7,16 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: queue-master
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Tag: 0.3.1
+          Type: resolved
+          URL: weaveworksdemos/queue-master:0.3.1
+        URL: index.docker.io/weaveworksdemos/queue-master@sha256:6292d3095f4c7aeed8d863527f8ef6d7a75d3128f20fc61e57f398c100142712
   labels:
     name: queue-master
+  name: queue-master
   namespace: watchn
 spec:
   replicas: 1
@@ -21,19 +29,19 @@ spec:
         name: queue-master
     spec:
       containers:
-      - name: queue-master
-        image: weaveworksdemos/queue-master:0.3.1
+      - image: index.docker.io/weaveworksdemos/queue-master@sha256:6292d3095f4c7aeed8d863527f8ef6d7a75d3128f20fc61e57f398c100142712
+        name: queue-master
         ports:
         - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: queue-master
-  labels:
-    name: queue-master
   annotations:
     prometheus.io/path: /prometheus
+  labels:
+    name: queue-master
+  name: queue-master
   namespace: watchn
 spec:
   ports:
@@ -45,9 +53,16 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rabbitmq
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Tag: 3.6.8
+          Type: resolved
+          URL: rabbitmq:3.6.8
+        URL: index.docker.io/library/rabbitmq@sha256:a9f4923559bbcd00b93b02e61615aef5eb6f1d1c98db51053bab0fa6b680db26
   labels:
     name: rabbitmq
+  name: rabbitmq
   namespace: watchn
 spec:
   replicas: 1
@@ -60,27 +75,27 @@ spec:
         name: rabbitmq
     spec:
       containers:
-      - name: rabbitmq
-        image: rabbitmq:3.6.8
+      - image: index.docker.io/library/rabbitmq@sha256:a9f4923559bbcd00b93b02e61615aef5eb6f1d1c98db51053bab0fa6b680db26
+        name: rabbitmq
         ports:
         - containerPort: 5672
         securityContext:
           capabilities:
-            drop:
-            - all
             add:
             - CHOWN
             - SETGID
             - SETUID
             - DAC_OVERRIDE
+            drop:
+            - all
           readOnlyRootFilesystem: true
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitmq
   labels:
     name: rabbitmq
+  name: rabbitmq
   namespace: watchn
 spec:
   ports:
@@ -92,9 +107,16 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: shipping
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Tag: 0.4.8
+          Type: resolved
+          URL: weaveworksdemos/shipping:0.4.8
+        URL: index.docker.io/weaveworksdemos/shipping@sha256:983305c948fded487f4a4acdeab5f898e89d577b4bc1ca3de7750076469ccad4
   labels:
     name: shipping
+  name: shipping
   namespace: watchn
 spec:
   replicas: 1
@@ -107,39 +129,39 @@ spec:
         name: shipping
     spec:
       containers:
-      - name: shipping
-        image: weaveworksdemos/shipping:0.4.8
-        env:
+      - env:
         - name: ZIPKIN
           value: zipkin.jaeger.svc.cluster.local
         - name: JAVA_OPTS
           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
+        image: index.docker.io/weaveworksdemos/shipping@sha256:983305c948fded487f4a4acdeab5f898e89d577b4bc1ca3de7750076469ccad4
+        name: shipping
         ports:
         - containerPort: 80
         securityContext:
-          runAsNonRoot: true
-          runAsUser: 10001
           capabilities:
-            drop:
-            - all
             add:
             - NET_BIND_SERVICE
+            drop:
+            - all
           readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 10001
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume
       volumes:
-      - name: tmp-volume
-        emptyDir:
+      - emptyDir:
           medium: Memory
+        name: tmp-volume
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: shipping
   labels:
     name: shipping
+  name: shipping
   namespace: watchn
 spec:
   ports:
@@ -151,28 +173,35 @@ spec:
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: front-end
-  namespace: watchn
   annotations:
-    kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
+    kubernetes.io/ingress.class: alb
   labels:
     name: front-end
+  name: front-end
+  namespace: watchn
 spec:
   rules:
   - http:
       paths:
-      - path: /*
-        backend:
+      - backend:
           serviceName: front-end
           servicePort: 80
+        path: /*
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: carts-db
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Tag: latest
+          Type: resolved
+          URL: mongo
+        URL: index.docker.io/library/mongo@sha256:29805e9a6fc2a233b9b633c7b0f382a43df3f119522b82366a72abecb302a793
   labels:
     name: carts-db
+  name: carts-db
   namespace: watchn
 spec:
   replicas: 1
@@ -185,34 +214,34 @@ spec:
         name: carts-db
     spec:
       containers:
-      - name: carts-db
-        image: mongo
+      - image: index.docker.io/library/mongo@sha256:29805e9a6fc2a233b9b633c7b0f382a43df3f119522b82366a72abecb302a793
+        name: carts-db
         ports:
-        - name: mongo
-          containerPort: 27017
+        - containerPort: 27017
+          name: mongo
         securityContext:
           capabilities:
-            drop:
-            - all
             add:
             - CHOWN
             - SETGID
             - SETUID
+            drop:
+            - all
           readOnlyRootFilesystem: true
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume
       volumes:
-      - name: tmp-volume
-        emptyDir:
+      - emptyDir:
           medium: Memory
+        name: tmp-volume
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: carts-db
   labels:
     name: carts-db
+  name: carts-db
   namespace: watchn
 spec:
   ports:
@@ -224,9 +253,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: carts
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Path: /home/niall/projects/microservices-demo/src/cart
+          Type: local
+        - Dirty: true
+          RemoteURL: git@github.com:niallthomson/microservices-demo.git
+          SHA: 4b6d852cb71469cc6daa2039fd8f573f56e89e1a
+          Type: git
+        URL: index.docker.io/niallthomson/shop-carts@sha256:6f3e47a2331ead48a23266d53ce1dab955ac6a96ee734a9800577282ac54fe5f
   labels:
     name: carts
+  name: carts
   namespace: watchn
 spec:
   replicas: 1
@@ -236,34 +275,34 @@ spec:
   template:
     metadata:
       labels:
-        name: carts
         fargate: "true"
+        name: carts
     spec:
       containers:
-      - name: carts
-        image: niallthomson/shop-carts:1592591266
-        ports:
-        - containerPort: 8080
-        env:
+      - env:
         - name: ZIPKIN
           value: zipkin.jaeger.svc.cluster.local
         - name: JAVA_OPTS
           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
+        image: index.docker.io/niallthomson/shop-carts@sha256:6f3e47a2331ead48a23266d53ce1dab955ac6a96ee734a9800577282ac54fe5f
+        name: carts
+        ports:
+        - containerPort: 8080
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume
       volumes:
-      - name: tmp-volume
-        emptyDir:
+      - emptyDir:
           medium: Memory
+        name: tmp-volume
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: carts
   labels:
     name: carts
+  name: carts
   namespace: watchn
 spec:
   ports:
@@ -272,24 +311,19 @@ spec:
   selector:
     name: carts
 ---
-apiVersion: kbld.k14s.io/v1alpha1
-kind: Sources
-sources:
-- image: watchn-catalog
-  path: ../../src/catalog
----
-apiVersion: kbld.k14s.io/v1alpha1
-kind: ImageDestinations
-destinations:
-- image: watchn-catalog
-  newImage: docker.io/niallthomson/shop-catalog
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: catalogue-db
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Tag: "5.7"
+          Type: resolved
+          URL: mysql:5.7
+        URL: index.docker.io/library/mysql@sha256:32f9d9a069f7a735e28fd44ea944d53c61f990ba71460c5c183e610854ca4854
   labels:
     name: catalogue-db
+  name: catalogue-db
   namespace: watchn
 spec:
   replicas: 1
@@ -302,9 +336,7 @@ spec:
         name: catalogue-db
     spec:
       containers:
-      - name: catalogue-db
-        image: mysql:5.7
-        env:
+      - env:
         - name: MYSQL_ROOT_PASSWORD
           value: my-secret-pw
         - name: MYSQL_DATABASE
@@ -313,16 +345,18 @@ spec:
           value: catalog_user
         - name: MYSQL_PASSWORD
           value: default_password
+        image: index.docker.io/library/mysql@sha256:32f9d9a069f7a735e28fd44ea944d53c61f990ba71460c5c183e610854ca4854
+        name: catalogue-db
         ports:
-        - name: mysql
-          containerPort: 3306
+        - containerPort: 3306
+          name: mysql
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: catalog-db
   labels:
     name: catalog-db
+  name: catalog-db
   namespace: watchn
 spec:
   ports:
@@ -334,9 +368,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: catalogue
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Path: /home/niall/projects/microservices-demo/src/catalog
+          Type: local
+        - Dirty: true
+          RemoteURL: git@github.com:niallthomson/microservices-demo.git
+          SHA: 4b6d852cb71469cc6daa2039fd8f573f56e89e1a
+          Type: git
+        URL: index.docker.io/niallthomson/shop-catalog@sha256:009bddcc96a57fb596681b944a3834742df85a1ed9ee3bea2810fa7f50c5d93a
   labels:
     name: catalogue
+  name: catalogue
   namespace: watchn
 spec:
   replicas: 1
@@ -346,21 +390,21 @@ spec:
   template:
     metadata:
       labels:
-        name: catalogue
         fargate: "true"
+        name: catalogue
     spec:
       containers:
-      - name: catalogue
-        image: niallthomson/shop-catalog:1593030117
+      - image: index.docker.io/niallthomson/shop-catalog@sha256:009bddcc96a57fb596681b944a3834742df85a1ed9ee3bea2810fa7f50c5d93a
+        name: catalogue
         ports:
         - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: catalogue
   labels:
     name: catalogue
+  name: catalogue
   namespace: watchn
 spec:
   ports:
@@ -369,21 +413,19 @@ spec:
   selector:
     name: catalogue
 ---
-apiVersion: kbld.k14s.io/v1alpha1
-kind: Sources
-sources:
-- image: watchn-front-end
-  path: ../../src/front-end
----
-apiVersion: kbld.k14s.io/v1alpha1
-kind: ImageDestinations
-destinations:
-- image: watchn-front-end
-  newImage: docker.io/niallthomson/shop-front-end
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Path: /home/niall/projects/microservices-demo/src/front-end
+          Type: local
+        - Dirty: true
+          RemoteURL: git@github.com:niallthomson/microservices-demo.git
+          SHA: 4b6d852cb71469cc6daa2039fd8f573f56e89e1a
+          Type: git
+        URL: index.docker.io/niallthomson/shop-front-end@sha256:ff602e8c059bc15f219b0ed99ad455593dca9dfd1c3bf5aa40a3888db8917925
   name: front-end
   namespace: watchn
 spec:
@@ -397,76 +439,83 @@ spec:
         name: front-end
     spec:
       containers:
-      - name: front-end
-        image: watchn-front-end
+      - image: index.docker.io/niallthomson/shop-front-end@sha256:ff602e8c059bc15f219b0ed99ad455593dca9dfd1c3bf5aa40a3888db8917925
+        name: front-end
+        ports:
+        - containerPort: 8080
         resources:
           requests:
             cpu: 100m
             memory: 100Mi
-        ports:
-        - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: front-end
   labels:
     name: front-end
+  name: front-end
   namespace: watchn
 spec:
-  type: NodePort
   ports:
   - port: 80
     targetPort: 8080
   selector:
     name: front-end
+  type: NodePort
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: orders-db
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Tag: latest
+          Type: resolved
+          URL: mongo
+        URL: index.docker.io/library/mongo@sha256:29805e9a6fc2a233b9b633c7b0f382a43df3f119522b82366a72abecb302a793
   labels:
     name: orders-db
+  name: orders-db
   namespace: watchn
 spec:
+  replicas: 1
   selector:
     matchLabels:
       name: orders-db
-  replicas: 1
   template:
     metadata:
       labels:
         name: orders-db
     spec:
       containers:
-      - name: orders-db
-        image: mongo
+      - image: index.docker.io/library/mongo@sha256:29805e9a6fc2a233b9b633c7b0f382a43df3f119522b82366a72abecb302a793
+        name: orders-db
         ports:
-        - name: mongo
-          containerPort: 27017
+        - containerPort: 27017
+          name: mongo
         securityContext:
           capabilities:
-            drop:
-            - all
             add:
             - CHOWN
             - SETGID
             - SETUID
+            drop:
+            - all
           readOnlyRootFilesystem: true
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume
       volumes:
-      - name: tmp-volume
-        emptyDir:
+      - emptyDir:
           medium: Memory
+        name: tmp-volume
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: orders-db
   labels:
     name: orders-db
+  name: orders-db
   namespace: watchn
 spec:
   ports:
@@ -478,9 +527,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: orders
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Path: /home/niall/projects/microservices-demo/src/orders
+          Type: local
+        - Dirty: true
+          RemoteURL: git@github.com:niallthomson/microservices-demo.git
+          SHA: 4b6d852cb71469cc6daa2039fd8f573f56e89e1a
+          Type: git
+        URL: index.docker.io/niallthomson/shop-orders@sha256:66964a9f4e6b7f3150e7af12cbc433316acdcb72e7c445140258a8f9fc5f3cc9
   labels:
     name: orders
+  name: orders
   namespace: watchn
 spec:
   replicas: 1
@@ -493,30 +552,30 @@ spec:
         name: orders
     spec:
       containers:
-      - name: orders
-        image: niallthomson/shop-orders:1592591266
-        env:
+      - env:
         - name: ZIPKIN
           value: zipkin.jaeger.svc.cluster.local
         - name: JAVA_OPTS
           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
+        image: index.docker.io/niallthomson/shop-orders@sha256:66964a9f4e6b7f3150e7af12cbc433316acdcb72e7c445140258a8f9fc5f3cc9
+        name: orders
         ports:
         - containerPort: 8080
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume
       volumes:
-      - name: tmp-volume
-        emptyDir:
+      - emptyDir:
           medium: Memory
+        name: tmp-volume
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: orders
   labels:
     name: orders
+  name: orders
   namespace: watchn
 spec:
   ports:
@@ -528,9 +587,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payment
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Path: /home/niall/projects/microservices-demo/src/payment
+          Type: local
+        - Dirty: true
+          RemoteURL: git@github.com:niallthomson/microservices-demo.git
+          SHA: 4b6d852cb71469cc6daa2039fd8f573f56e89e1a
+          Type: git
+        URL: index.docker.io/niallthomson/shop-payment@sha256:c0b0d38ddecfb6a1e947c09dd45e756dc8a9fa4b79fbacf6ba87edaddca31f7c
   labels:
     name: payment
+  name: payment
   namespace: watchn
 spec:
   replicas: 1
@@ -543,17 +612,17 @@ spec:
         name: payment
     spec:
       containers:
-      - name: payment
-        image: niallthomson/shop-payment:1592591266
+      - image: index.docker.io/niallthomson/shop-payment@sha256:c0b0d38ddecfb6a1e947c09dd45e756dc8a9fa4b79fbacf6ba87edaddca31f7c
+        name: payment
         ports:
         - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: payment
   labels:
     name: payment
+  name: payment
   namespace: watchn
 spec:
   ports:
@@ -565,9 +634,16 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-db
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Tag: 0.4.0
+          Type: resolved
+          URL: weaveworksdemos/user-db:0.4.0
+        URL: index.docker.io/weaveworksdemos/user-db@sha256:b43f0f8a76e0c908805fcec74d1ad7f4af4d93c4612632bd6dc20a87508e0b68
   labels:
     name: user-db
+  name: user-db
   namespace: watchn
 spec:
   replicas: 1
@@ -580,34 +656,34 @@ spec:
         name: user-db
     spec:
       containers:
-      - name: user-db
-        image: weaveworksdemos/user-db:0.4.0
+      - image: index.docker.io/weaveworksdemos/user-db@sha256:b43f0f8a76e0c908805fcec74d1ad7f4af4d93c4612632bd6dc20a87508e0b68
+        name: user-db
         ports:
-        - name: mongo
-          containerPort: 27017
+        - containerPort: 27017
+          name: mongo
         securityContext:
           capabilities:
-            drop:
-            - all
             add:
             - CHOWN
             - SETGID
             - SETUID
+            drop:
+            - all
           readOnlyRootFilesystem: true
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume
       volumes:
-      - name: tmp-volume
-        emptyDir:
+      - emptyDir:
           medium: Memory
+        name: tmp-volume
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-db
   labels:
     name: user-db
+  name: user-db
   namespace: watchn
 spec:
   ports:
@@ -619,9 +695,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Path: /home/niall/projects/microservices-demo/src/user
+          Type: local
+        - Dirty: true
+          RemoteURL: git@github.com:niallthomson/microservices-demo.git
+          SHA: 4b6d852cb71469cc6daa2039fd8f573f56e89e1a
+          Type: git
+        URL: index.docker.io/niallthomson/shop-user@sha256:35d2ea66e0f090a15817e96fbb6a6023d3333a8b74aa4f0187c7d5533770f7f2
   labels:
     name: user
+  name: user
   namespace: watchn
 spec:
   replicas: 1
@@ -634,24 +720,24 @@ spec:
         name: user
     spec:
       containers:
-      - name: user
-        image: niallthomson/shop-user:1592591266
-        ports:
-        - containerPort: 8080
-        env:
+      - env:
         - name: MONGO_HOST
           value: user-db:27017
         - name: USER_DATABASE
           value: mongodb
         - name: HATEAOS
           value: user
+        image: index.docker.io/niallthomson/shop-user@sha256:35d2ea66e0f090a15817e96fbb6a6023d3333a8b74aa4f0187c7d5533770f7f2
+        name: user
+        ports:
+        - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: user
   labels:
     name: user
+  name: user
   namespace: watchn
 spec:
   ports:
