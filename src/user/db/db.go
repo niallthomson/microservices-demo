@@ -41,7 +41,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&database, "database", os.Getenv("USER_DATABASE"), "Database to use, Mongodb or ...")
+	flag.StringVar(&database, "database1", os.Getenv("USER_DATABASE"), "Database to use, Mongodb or ...")
 }
 
 //Init inits the selected DB in DefaultDb
