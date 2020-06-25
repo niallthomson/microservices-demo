@@ -18,8 +18,6 @@ import works.weave.socks.cart.services.CartService;
 @RequestMapping(path = "/carts")
 @Slf4j
 public class CartsController {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     private CartService service;
 

@@ -1,0 +1,4 @@
+amazon:
+  dynamodb:
+    endpoint: http://localhost:8888/
+    createTable: true

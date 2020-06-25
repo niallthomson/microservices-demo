@@ -1,27 +1,26 @@
 package works.weave.socks.cart.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import works.weave.socks.cart.repositories.ItemEntity;
-import works.weave.socks.cart.repositories.mongo.CartRepository;
-import works.weave.socks.cart.repositories.mongo.ItemRepository;
+import works.weave.socks.cart.repositories.mongo.MongoCartRepository;
+import works.weave.socks.cart.repositories.mongo.MongoItemRepository;
 import works.weave.socks.cart.repositories.mongo.entities.MongoCartEntity;
 import works.weave.socks.cart.repositories.mongo.entities.MongoItemEntity;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
-@Service
 public class MongoCartService implements CartService {
 
-    @Autowired
-    private CartRepository cartRepository;
+    private MongoCartRepository cartRepository;
 
-    @Autowired
-    private ItemRepository itemRepository;
+    private MongoItemRepository itemRepository;
+
+    public MongoCartService(MongoCartRepository cartRepository, MongoItemRepository itemRepository) {
+        this.cartRepository = cartRepository;
+        this.itemRepository = itemRepository;
+    }
 
     private MongoCartEntity create(String customerId) {
         log.error("Creating new cart for {}", customerId);
@@ -74,11 +73,7 @@ public class MongoCartService implements CartService {
     }
 
     @Override
-    public Optional<ItemEntity> item(String customerId, String itemId) {
-        return this.itemInternal(customerId, itemId).map(i -> i);
-    }
-
-    public Optional<MongoItemEntity> itemInternal(String customerId, String itemId) {
+    public Optional<MongoItemEntity> item(String customerId, String itemId) {
         return this.itemRepository.findById(customerId+itemId);
     }
 
@@ -96,8 +91,8 @@ public class MongoCartService implements CartService {
     }
 
     @Override
-    public Optional<ItemEntity> update(String customerId, String itemId, int quantity, float unitPrice) {
-        return itemInternal(customerId, itemId).map(
+    public Optional<MongoItemEntity> update(String customerId, String itemId, int quantity, float unitPrice) {
+        return item(customerId, itemId).map(
             item -> {
                 item.setQuantity(quantity);
                 item.setUnitPrice(unitPrice);

@@ -17,9 +17,9 @@ public interface CartService {
 
     List<? extends ItemEntity> items(String customerId);
 
-    Optional<ItemEntity> item(String customerId, String itemId);
+    Optional<? extends ItemEntity> item(String customerId, String itemId);
 
     void deleteItem(String customerId, String itemId);
 
-    Optional<ItemEntity> update(String customerId, String itemId, int quantity, float unitPrice);
+    Optional<? extends ItemEntity> update(String customerId, String itemId, int quantity, float unitPrice);
 }
