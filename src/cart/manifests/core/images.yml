@@ -1,6 +1,6 @@
 #@ load("@ytt:data", "data")
 
-#@ if not data.values.existingImage:
+#@ if not len(data.values.imageTag) > 0:
 ---
 apiVersion: kbld.k14s.io/v1alpha1
 kind: Sources
@@ -21,11 +21,11 @@ destinations:
   newImage: #@ data.values.pushRepo + '/shop-carts'
 #@ end
 
-#@ if/end data.values.existingImage:
+#@ if/end len(data.values.imageTag) > 0:
 ---
 apiVersion: kbld.k14s.io/v1alpha1
 kind: ImageOverrides
 overrides:
 - image: #@ data.values.cart.image
-  newImage: docker.io/niallthomson/shop-carts:v0.0.1
+  newImage: #@ 'docker.io/niallthomson/shop-carts:' + data.values.imageTag
   preresolved: true

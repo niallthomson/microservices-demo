@@ -1,83 +1,60 @@
 package works.weave.socks.cart.controllers;
 
-import org.slf4j.Logger;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import works.weave.socks.cart.cart.CartDAO;
-import works.weave.socks.cart.cart.CartResource;
-import works.weave.socks.cart.entities.Item;
-import works.weave.socks.cart.item.FoundItem;
-import works.weave.socks.cart.item.ItemDAO;
-import works.weave.socks.cart.item.ItemResource;
+import works.weave.socks.cart.controllers.api.Item;
+import works.weave.socks.cart.services.CartService;
 
 import java.util.List;
-import java.util.function.Supplier;
-
-import static org.slf4j.LoggerFactory.getLogger;
+import java.util.stream.Collectors;
 
 @RestController
+@Api(tags = {"items"})
 @RequestMapping(value = "/carts/{customerId:.*}/items")
+@Slf4j
 public class ItemsController {
-    private final Logger LOG = getLogger(getClass());
 
     @Autowired
-    private ItemDAO itemDAO;
-    @Autowired
-    private CartsController cartsController;
-    @Autowired
-    private CartDAO cartDAO;
+    private CartService service;
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/{itemId:.*}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    @GetMapping(value = "/{itemId:.*}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Retrieve an item from a cart", nickname = "getItem")
     public Item get(@PathVariable String customerId, @PathVariable String itemId) {
-        return new FoundItem(() -> getItems(customerId), () -> new Item(itemId)).get();
+        return this.service.item(customerId, itemId).map(Item::from).get();
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Retrieve items from a cart", nickname = "getItems")
     public List<Item> getItems(@PathVariable String customerId) {
-        return cartsController.get(customerId).contents();
+        return this.service.items(customerId).stream()
+                .map(Item::from).collect(Collectors.toList());
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Add an item to a cart", nickname = "addItem")
     public Item addToCart(@PathVariable String customerId, @RequestBody Item item) {
-        // If the item does not exist in the cart, create new one in the repository.
-        FoundItem foundItem = new FoundItem(() -> cartsController.get(customerId).contents(), () -> item);
-        if (!foundItem.hasItem()) {
-            Supplier<Item> newItem = new ItemResource(itemDAO, () -> item).create();
-            LOG.debug("Did not find item. Creating item for user: " + customerId + ", " + newItem.get());
-            new CartResource(cartDAO, customerId).contents().get().add(newItem).run();
-            return item;
-        } else {
-            Item newItem = new Item(foundItem.get(), foundItem.get().quantity() + 1);
-            LOG.debug("Found item in cart. Incrementing for user: " + customerId + ", " + newItem);
-            updateItem(customerId, newItem);
-            return newItem;
-        }
+        return Item.from(this.service.add(customerId, item.getItemId(), item.getQuantity(), item.getUnitPrice()));
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @RequestMapping(value = "/{itemId:.*}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/{itemId:.*}")
+    @ApiOperation(value = "Delete an item from a cart", nickname = "deleteItem")
     public void removeItem(@PathVariable String customerId, @PathVariable String itemId) {
-        FoundItem foundItem = new FoundItem(() -> getItems(customerId), () -> new Item(itemId));
-        Item item = foundItem.get();
-
-        LOG.debug("Removing item from cart: " + item);
-        new CartResource(cartDAO, customerId).contents().get().delete(() -> item).run();
-
-        LOG.debug("Removing item from repository: " + item);
-        new ItemResource(itemDAO, () -> item).destroy().run();
+        this.service.deleteItem(customerId, itemId);
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PATCH)
+    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Update an item in a cart", nickname = "updateItem")
     public void updateItem(@PathVariable String customerId, @RequestBody Item item) {
-        // Merge old and new items
-        ItemResource itemResource = new ItemResource(itemDAO, () -> get(customerId, item.itemId()));
-        LOG.debug("Merging item in cart for user: " + customerId + ", " + item);
-        itemResource.merge(item).run();
+        this.service.update(customerId, item.getItemId(), item.getQuantity(), item.getUnitPrice());
     }
 }
