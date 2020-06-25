@@ -14,6 +14,7 @@ import (
 	_ "github.com/niallthomson/microservices-demo/catalog/docs"
 	"github.com/niallthomson/microservices-demo/catalog/repository"
 	"github.com/sethvargo/go-envconfig/pkg/envconfig"
+	"github.com/zsais/go-gin-prometheus"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -64,5 +65,9 @@ func main() {
 	r.GET("/health", func(c *gin.Context) {
 		c.String(http.StatusOK, "OK")
 	})
+
+	p := ginprometheus.NewPrometheus("gin")
+	p.Use(r)
+
 	r.Run(":" + strconv.Itoa(config.Port))
 }
