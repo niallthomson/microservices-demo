@@ -4,8 +4,14 @@ set -e
 
 SCRIPT_DIR=$(dirname "$0")
 
-export REPO="niallthomson"
-export TAG=$(date +%s)
+if [ -z "${REPO}" ]; then
+  echo "Error: must set env variable REPO"
+  exit 1
+fi
+
+if [ -z "${TAG}" ]; then
+  export TAG=$(date +%s)
+fi
 
 $SCRIPT_DIR/../src/front-end/scripts/push.sh
 $SCRIPT_DIR/../src/catalogue/scripts/push.sh
