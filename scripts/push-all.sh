@@ -14,7 +14,7 @@ if [ -z "${TAG}" ]; then
 fi
 
 $SCRIPT_DIR/../src/front-end/scripts/push.sh
-$SCRIPT_DIR/../src/catalogue/scripts/push.sh
+$SCRIPT_DIR/../src/catalog/scripts/push.sh
 $SCRIPT_DIR/../src/cart/scripts/push.sh
 $SCRIPT_DIR/../src/payment/scripts/push.sh
 $SCRIPT_DIR/../src/orders/scripts/push.sh

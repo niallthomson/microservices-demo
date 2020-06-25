@@ -2,3 +2,5 @@
 ---
 namespace: watchn
 imagePath: ../../../images
+existingImage: true
+pushRepo: ""

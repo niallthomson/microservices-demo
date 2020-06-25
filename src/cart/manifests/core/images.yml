@@ -1,5 +1,6 @@
 #@ load("@ytt:data", "data")
 
+#@ if not data.values.existingImage:
 ---
 apiVersion: kbld.k14s.io/v1alpha1
 kind: Sources
@@ -8,11 +9,23 @@ sources:
   path: #@ data.values.cart.imagePath
   docker:
     build:
-      file: #@ data.values.imagePath + '/java/Dockerfile'
-      rawOptions: ["--build-arg", "JAR_PATH=target/carts.jar"]
+      file: #@ data.values.imagePath + '/java11/Dockerfile'
+      rawOptions: ["--build-arg", "JAR_PATH=target/carts-2.2.6.RELEASE.jar"]
+
+#@ if/end len(data.values.pushRepo) > 0:
 ---
 apiVersion: kbld.k14s.io/v1alpha1
 kind: ImageDestinations
 destinations:
 - image: #@ data.values.cart.image
-  newImage: docker.io/niallthomson/shop-carts
+  newImage: #@ data.values.pushRepo + '/shop-carts'
+#@ end
+
+#@ if/end data.values.existingImage:
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageOverrides
+overrides:
+- image: #@ data.values.cart.image
+  newImage: docker.io/niallthomson/shop-carts:v0.0.1
+  preresolved: true

@@ -19,5 +19,5 @@ ytt -f $DIR/../src \
     -f $APP_SRC_DIR/src/payment/manifests/core \
     --data-value payment.imagePath=$APP_SRC_DIR/src/payment \
     -f $APP_SRC_DIR/src/user/manifests/core \
-    --data-value user.imagePath=$APP_SRC_DIR/src/user \
+    --data-value user.imagePath=$APP_SRC_DIR/src/user $@ \
     | kbld -f -

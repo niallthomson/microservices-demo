@@ -256,13 +256,9 @@ metadata:
   annotations:
     kbld.k14s.io/images: |
       - Metas:
-        - Path: /home/niall/projects/microservices-demo/src/cart
-          Type: local
-        - Dirty: true
-          RemoteURL: git@github.com:niallthomson/microservices-demo.git
-          SHA: 4b6d852cb71469cc6daa2039fd8f573f56e89e1a
-          Type: git
-        URL: index.docker.io/niallthomson/shop-carts@sha256:6f3e47a2331ead48a23266d53ce1dab955ac6a96ee734a9800577282ac54fe5f
+        - Type: preresolved
+          URL: docker.io/niallthomson/shop-carts:v0.0.1
+        URL: docker.io/niallthomson/shop-carts:v0.0.1
   labels:
     name: carts
   name: carts
@@ -285,10 +281,15 @@ spec:
         - name: JAVA_OPTS
           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
-        image: index.docker.io/niallthomson/shop-carts@sha256:6f3e47a2331ead48a23266d53ce1dab955ac6a96ee734a9800577282ac54fe5f
+        image: docker.io/niallthomson/shop-carts:v0.0.1
         name: carts
         ports:
         - containerPort: 8080
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            memory: 512Mi
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume
@@ -371,13 +372,9 @@ metadata:
   annotations:
     kbld.k14s.io/images: |
       - Metas:
-        - Path: /home/niall/projects/microservices-demo/src/catalog
-          Type: local
-        - Dirty: true
-          RemoteURL: git@github.com:niallthomson/microservices-demo.git
-          SHA: 4b6d852cb71469cc6daa2039fd8f573f56e89e1a
-          Type: git
-        URL: index.docker.io/niallthomson/shop-catalog@sha256:009bddcc96a57fb596681b944a3834742df85a1ed9ee3bea2810fa7f50c5d93a
+        - Type: preresolved
+          URL: docker.io/niallthomson/shop-catalog:v0.0.1
+        URL: docker.io/niallthomson/shop-catalog:v0.0.1
   labels:
     name: catalogue
   name: catalogue
@@ -394,7 +391,7 @@ spec:
         name: catalogue
     spec:
       containers:
-      - image: index.docker.io/niallthomson/shop-catalog@sha256:009bddcc96a57fb596681b944a3834742df85a1ed9ee3bea2810fa7f50c5d93a
+      - image: docker.io/niallthomson/shop-catalog:v0.0.1
         name: catalogue
         ports:
         - containerPort: 8080
@@ -419,13 +416,9 @@ metadata:
   annotations:
     kbld.k14s.io/images: |
       - Metas:
-        - Path: /home/niall/projects/microservices-demo/src/front-end
-          Type: local
-        - Dirty: true
-          RemoteURL: git@github.com:niallthomson/microservices-demo.git
-          SHA: 4b6d852cb71469cc6daa2039fd8f573f56e89e1a
-          Type: git
-        URL: index.docker.io/niallthomson/shop-front-end@sha256:ff602e8c059bc15f219b0ed99ad455593dca9dfd1c3bf5aa40a3888db8917925
+        - Type: preresolved
+          URL: docker.io/niallthomson/shop-front-end:v0.0.1
+        URL: docker.io/niallthomson/shop-front-end:v0.0.1
   name: front-end
   namespace: watchn
 spec:
@@ -439,7 +432,7 @@ spec:
         name: front-end
     spec:
       containers:
-      - image: index.docker.io/niallthomson/shop-front-end@sha256:ff602e8c059bc15f219b0ed99ad455593dca9dfd1c3bf5aa40a3888db8917925
+      - image: docker.io/niallthomson/shop-front-end:v0.0.1
         name: front-end
         ports:
         - containerPort: 8080
@@ -530,13 +523,9 @@ metadata:
   annotations:
     kbld.k14s.io/images: |
       - Metas:
-        - Path: /home/niall/projects/microservices-demo/src/orders
-          Type: local
-        - Dirty: true
-          RemoteURL: git@github.com:niallthomson/microservices-demo.git
-          SHA: 4b6d852cb71469cc6daa2039fd8f573f56e89e1a
-          Type: git
-        URL: index.docker.io/niallthomson/shop-orders@sha256:66964a9f4e6b7f3150e7af12cbc433316acdcb72e7c445140258a8f9fc5f3cc9
+        - Type: preresolved
+          URL: docker.io/niallthomson/shop-orders:v0.0.1
+        URL: docker.io/niallthomson/shop-orders:v0.0.1
   labels:
     name: orders
   name: orders
@@ -558,7 +547,7 @@ spec:
         - name: JAVA_OPTS
           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
-        image: index.docker.io/niallthomson/shop-orders@sha256:66964a9f4e6b7f3150e7af12cbc433316acdcb72e7c445140258a8f9fc5f3cc9
+        image: docker.io/niallthomson/shop-orders:v0.0.1
         name: orders
         ports:
         - containerPort: 8080
@@ -590,13 +579,9 @@ metadata:
   annotations:
     kbld.k14s.io/images: |
       - Metas:
-        - Path: /home/niall/projects/microservices-demo/src/payment
-          Type: local
-        - Dirty: true
-          RemoteURL: git@github.com:niallthomson/microservices-demo.git
-          SHA: 4b6d852cb71469cc6daa2039fd8f573f56e89e1a
-          Type: git
-        URL: index.docker.io/niallthomson/shop-payment@sha256:c0b0d38ddecfb6a1e947c09dd45e756dc8a9fa4b79fbacf6ba87edaddca31f7c
+        - Type: preresolved
+          URL: docker.io/niallthomson/shop-payment:v0.0.1
+        URL: docker.io/niallthomson/shop-payment:v0.0.1
   labels:
     name: payment
   name: payment
@@ -612,7 +597,7 @@ spec:
         name: payment
     spec:
       containers:
-      - image: index.docker.io/niallthomson/shop-payment@sha256:c0b0d38ddecfb6a1e947c09dd45e756dc8a9fa4b79fbacf6ba87edaddca31f7c
+      - image: docker.io/niallthomson/shop-payment:v0.0.1
         name: payment
         ports:
         - containerPort: 8080
@@ -698,13 +683,9 @@ metadata:
   annotations:
     kbld.k14s.io/images: |
       - Metas:
-        - Path: /home/niall/projects/microservices-demo/src/user
-          Type: local
-        - Dirty: true
-          RemoteURL: git@github.com:niallthomson/microservices-demo.git
-          SHA: 4b6d852cb71469cc6daa2039fd8f573f56e89e1a
-          Type: git
-        URL: index.docker.io/niallthomson/shop-user@sha256:35d2ea66e0f090a15817e96fbb6a6023d3333a8b74aa4f0187c7d5533770f7f2
+        - Type: preresolved
+          URL: docker.io/niallthomson/shop-user:v0.0.1
+        URL: docker.io/niallthomson/shop-user:v0.0.1
   labels:
     name: user
   name: user
@@ -727,7 +708,7 @@ spec:
           value: mongodb
         - name: HATEAOS
           value: user
-        image: index.docker.io/niallthomson/shop-user@sha256:35d2ea66e0f090a15817e96fbb6a6023d3333a8b74aa4f0187c7d5533770f7f2
+        image: docker.io/niallthomson/shop-user:v0.0.1
         name: user
         ports:
         - containerPort: 8080

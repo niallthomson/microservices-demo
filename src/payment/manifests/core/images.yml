@@ -1,5 +1,6 @@
 #@ load("@ytt:data", "data")
 
+#@ if not data.values.existingImage:
 ---
 apiVersion: kbld.k14s.io/v1alpha1
 kind: Sources
@@ -10,9 +11,21 @@ sources:
     build:
       file: #@ data.values.imagePath + '/go/Dockerfile'
       rawOptions: ["--build-arg", "MAIN_PATH=cmd/paymentsvc/main.go"]
+
+#@ if/end len(data.values.pushRepo) > 0:
 ---
 apiVersion: kbld.k14s.io/v1alpha1
 kind: ImageDestinations
 destinations:
 - image: #@ data.values.payment.image
-  newImage: docker.io/niallthomson/shop-payment
+  newImage: #@ data.values.pushRepo + '/shop-payment'
+#@ end
+
+#@ if/end data.values.existingImage:
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageOverrides
+overrides:
+- image: #@ data.values.payment.image
+  newImage: docker.io/niallthomson/shop-payment:v0.0.1
+  preresolved: true
