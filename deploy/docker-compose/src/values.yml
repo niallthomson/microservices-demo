@@ -1,6 +1,5 @@
 #@data/values
 ---
-namespace: watchn
 imagePath: ../../../images
 imageTag: ""
 pushRepo: ""

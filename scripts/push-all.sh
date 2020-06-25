@@ -2,7 +2,7 @@
 
 set -e
 
-SCRIPT_DIR=$(dirname "$0")
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 if [ -z "${REPO}" ]; then
   echo "Error: must set env variable REPO"
