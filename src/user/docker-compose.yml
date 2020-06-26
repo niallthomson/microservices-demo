@@ -21,11 +21,9 @@ services:
       - HATEAOS=user
       - reschedule=on-node-failure
     ports:
-      - "8084:8084"
+      - "8084:8080"
   user-db:
-    build:
-      context: ./docker/user-db/
-    image: microservices-demo/user-db
+    image: mongo:3
     hostname: user-db
     restart: always
     cap_drop:

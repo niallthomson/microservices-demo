@@ -1,0 +1,74 @@
+[
+  { 
+    "create": "addresses"
+  },
+  {
+    "insert": "customers",
+    "documents": [
+      {
+        "_id": "1",
+        "firstName": "Eve",
+        "lastName": "Berger",
+        "username": "Eve_Berger",
+        "password": "fec51acb3365747fc61247da5e249674cf8463c2",
+        "salt": "c748112bc027878aa62812ba1ae00e40ad46d497",
+        "addresses": [
+          {
+            "number": "246",
+            "street": "Whitelees Road",
+            "city": "Glasgow",
+            "postcode": "G67 3DL",
+            "country": "United Kingdom"
+          }
+        ],
+        "cards":[{
+          "longNum": "0908415193175205",
+          "expires": "08/19",
+          "ccv": "280"
+        }]
+      },{
+        "_id": "2",
+        "firstName": "User",
+        "lastName": "Name",
+        "username": "user",
+        "password": "e2de7202bb2201842d041f6de201b10438369fb8",
+        "salt": "6c1c6176e8b455ef37da13d953df971c249d0d8e",
+        "addresses": [
+          {
+            "number": "246",
+            "street": "Whitelees Road",
+            "city": "Glasgow",
+            "postcode": "G67 3DL",
+            "country": "United Kingdom"
+          }
+        ],
+        "cards":[{
+          "longNum": "5544154011345918",
+          "expires": "08/19",
+          "ccv": "958"
+        }]
+      },{
+        "_id": "3",
+        "firstName": "User1",
+        "lastName": "Name1",
+        "username": "user1",
+        "password": "8f31df4dcc25694aeb0c212118ae37bbd6e47bcd",
+        "salt": "bd832b0e10c6882deabc5e8e60a37689e2b708c2",
+        "addresses": [
+          {
+            "number": "4",
+            "street": "Maes-Y-Deri",
+            "city": "Aberdare",
+            "postcode": "CF44 6TF",
+            "country": "United Kingdom"
+          }
+        ],
+        "cards":[{
+          "longNum": "5429804235432",
+          "expires": "04/16",
+          "ccv": "432"
+        }]
+      }
+    ]
+  }
+]

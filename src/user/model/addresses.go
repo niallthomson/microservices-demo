@@ -1,4 +1,4 @@
-package users
+package model
 
 type Address struct {
 	Street   string `json:"street" bson:"street,omitempty"`
@@ -6,10 +6,4 @@ type Address struct {
 	Country  string `json:"country" bson:"country,omitempty"`
 	City     string `json:"city" bson:"city,omitempty"`
 	PostCode string `json:"postcode" bson:"postcode,omitempty"`
-	ID       string `json:"id" bson:"-"`
-	Links    Links  `json:"_links"`
-}
-
-func (a *Address) AddLinks() {
-	a.Links.AddAddress(a.ID)
 }

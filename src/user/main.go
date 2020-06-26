@@ -1,174 +1,70 @@
 package main
 
 import (
-	"flag"
-	"fmt"
-	"net"
+	"context"
+	"log"
 	"net/http"
-	"os"
-	"os/signal"
-	"strings"
-	"syscall"
+	"strconv"
 
-	corelog "log"
+	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/niallthomson/microservices-demo/user/config"
+	"github.com/niallthomson/microservices-demo/user/controller"
+	_ "github.com/niallthomson/microservices-demo/user/docs"
+	"github.com/niallthomson/microservices-demo/user/repository"
+	"github.com/sethvargo/go-envconfig/pkg/envconfig"
+	ginprometheus "github.com/zsais/go-gin-prometheus"
 
-	"github.com/go-kit/kit/log"
-	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
-	"github.com/niallthomson/microservices-demo/user/api"
-	"github.com/niallthomson/microservices-demo/user/db"
-	"github.com/niallthomson/microservices-demo/user/db/mongodb"
-	stdopentracing "github.com/opentracing/opentracing-go"
-	zipkin "github.com/openzipkin/zipkin-go-opentracing"
-	stdprometheus "github.com/prometheus/client_golang/prometheus"
-	commonMiddleware "github.com/weaveworks/common/middleware"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-var (
-	port string
-	zip  string
-)
+// @title User API
+// @version 1.0
+// @description This API stores user data
 
-var (
-	HTTPLatency = stdprometheus.NewHistogramVec(stdprometheus.HistogramOpts{
-		Name:    "http_request_duration_seconds",
-		Help:    "Time (in seconds) spent serving HTTP requests.",
-		Buckets: stdprometheus.DefBuckets,
-	}, []string{"method", "path", "status_code", "isWS"})
-)
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-const (
-	ServiceName = "user"
-)
-
-func init() {
-	stdprometheus.MustRegister(HTTPLatency)
-	flag.StringVar(&zip, "zipkin", os.Getenv("ZIPKIN"), "Zipkin address")
-	flag.StringVar(&port, "port", lookupEnvOrString("PORT", "8080"), "Port on which to run")
-	db.Register("mongodb", &mongodb.Mongo{})
-}
+// @host localhost:8080
+// @BasePath /customers
 
 func main() {
+	ctx := context.Background()
 
-	flag.Parse()
-	// Mechanical stuff.
-	errc := make(chan error)
-
-	// Log domain.
-	var logger log.Logger
-	{
-		logger = log.NewLogfmtLogger(os.Stderr)
-		logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-		logger = log.With(logger, "caller", log.DefaultCaller)
+	var config config.AppConfiguration
+	if err := envconfig.Process(ctx, &config); err != nil {
+		log.Fatal(err)
 	}
 
-	// Find service local IP.
-	conn, err := net.Dial("udp", "8.8.8.8:80")
+	_, err := repository.NewRepository(config.Database)
 	if err != nil {
-		logger.Log("err", err)
-		os.Exit(1)
+		log.Println("Error creating repository", err)
 	}
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	host := strings.Split(localAddr.String(), ":")[0]
-	defer conn.Close()
 
-	var tracer stdopentracing.Tracer
+	r := gin.Default()
+
+	c, err := controller.NewController(config)
+	if err != nil {
+		log.Fatalln("Error creating controller", err)
+	}
+
+	catalog := r.Group("/customers")
 	{
-		if zip == "" {
-			tracer = stdopentracing.NoopTracer{}
-		} else {
-			logger := log.With(logger, "tracer", "Zipkin")
-			logger.Log("addr", zip)
-			collector, err := zipkin.NewHTTPCollector(
-				zip,
-				zipkin.HTTPLogger(logger),
-			)
-			if err != nil {
-				logger.Log("err", err)
-				os.Exit(1)
-			}
-			tracer, err = zipkin.NewTracer(
-				zipkin.NewRecorder(collector, false, fmt.Sprintf("%v:%v", host, port), ServiceName),
-			)
-			if err != nil {
-				logger.Log("err", err)
-				os.Exit(1)
-			}
-		}
-		stdopentracing.InitGlobalTracer(tracer)
-	}
-	dbconn := false
-	for !dbconn {
-		err := db.Init()
-		if err != nil {
-			if err == db.ErrNoDatabaseSelected {
-				corelog.Fatal(err)
-			}
-			corelog.Print(err)
-		} else {
-			dbconn = true
-		}
+		catalog.GET("/:id/cards", c.GetCustomerCards)
+		catalog.GET("/:id/addresses", c.GetCustomerAddresses)
+		catalog.GET("/:id", c.GetCustomer)
 	}
 
-	fieldKeys := []string{"method"}
-	// Service domain.
-	var service api.Service
-	{
-		service = api.NewFixedService()
-		service = api.LoggingMiddleware(logger)(service)
-		service = api.NewInstrumentingService(
-			kitprometheus.NewCounterFrom(
-				stdprometheus.CounterOpts{
-					Namespace: "microservices_demo",
-					Subsystem: "user",
-					Name:      "request_count",
-					Help:      "Number of requests received.",
-				},
-				fieldKeys),
-			kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
-				Namespace: "microservices_demo",
-				Subsystem: "user",
-				Name:      "request_latency_microseconds",
-				Help:      "Total duration of requests in microseconds.",
-			}, fieldKeys),
-			service,
-		)
-	}
+	r.GET("/login", c.Login)
 
-	// Endpoint domain.
-	endpoints := api.MakeEndpoints(service, tracer)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/health", func(c *gin.Context) {
+		c.String(http.StatusOK, "OK")
+	})
 
-	// HTTP router
-	router := api.MakeHTTPHandler(endpoints, logger, tracer)
+	p := ginprometheus.NewPrometheus("gin")
+	p.Use(r)
 
-	httpMiddleware := []commonMiddleware.Interface{
-		commonMiddleware.Instrument{
-			Duration:     HTTPLatency,
-			RouteMatcher: router,
-		},
-	}
-
-	// Handler
-	handler := commonMiddleware.Merge(httpMiddleware...).Wrap(router)
-
-	// Create and launch the HTTP server.
-	go func() {
-		logger.Log("transport", "HTTP", "port", port)
-		errc <- http.ListenAndServe(fmt.Sprintf(":%v", port), handler)
-	}()
-
-	// Capture interrupts.
-	go func() {
-		c := make(chan os.Signal)
-		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-		errc <- fmt.Errorf("%s", <-c)
-	}()
-
-	logger.Log("exit", <-errc)
-}
-
-func lookupEnvOrString(key string, defaultVal string) string {
-	if val, ok := os.LookupEnv(key); ok {
-		return val
-	}
-	return defaultVal
+	r.Run(":" + strconv.Itoa(config.Port))
 }

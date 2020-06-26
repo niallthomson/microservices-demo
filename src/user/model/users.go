@@ -1,4 +1,4 @@
-package users
+package model
 
 import (
 	"crypto/sha1"
@@ -20,15 +20,14 @@ type User struct {
 	Email     string    `json:"-" bson:"email"`
 	Username  string    `json:"username" bson:"username"`
 	Password  string    `json:"-" bson:"password,omitempty"`
-	Addresses []Address `json:"-,omitempty" bson:"-"`
-	Cards     []Card    `json:"-,omitempty" bson:"-"`
 	UserID    string    `json:"id" bson:"-"`
-	Links     Links     `json:"_links"`
+	Addresses []Address `json:"addresses" bson:"addresses"`
+	Cards     []Card    `json:"cards" bson:"cards"`
 	Salt      string    `json:"-" bson:"salt"`
 }
 
 func New() User {
-	u := User{Addresses: make([]Address, 0), Cards: make([]Card, 0)}
+	u := User{}
 	u.NewSalt()
 	return u
 }
@@ -54,10 +53,6 @@ func (u *User) MaskCCs() {
 		c.MaskCC()
 		u.Cards[k] = c
 	}
-}
-
-func (u *User) AddLinks() {
-	u.Links.AddCustomer(u.UserID)
 }
 
 func (u *User) NewSalt() {

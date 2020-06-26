@@ -7,10 +7,6 @@ kind: Sources
 sources:
 - image: #@ data.values.user.image
   path: #@ data.values.user.imagePath
-  docker:
-    build:
-      file: #@ data.values.imagePath + '/go/Dockerfile'
-      rawOptions: ["--build-arg", "MAIN_PATH=main.go"]
 
 #@ if/end len(data.values.pushRepo) > 0:
 ---
