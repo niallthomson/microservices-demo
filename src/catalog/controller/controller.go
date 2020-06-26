@@ -87,7 +87,7 @@ func (c *Controller) GetProducts(ctx *gin.Context) {
 // @Failure 400 {object} httputil.HTTPError
 // @Failure 404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
-// @Router / [get]
+// @Router /{id} [get]
 func (c *Controller) GetProduct(ctx *gin.Context) {
 	id := ctx.Param("id")
 

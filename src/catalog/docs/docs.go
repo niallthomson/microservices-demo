@@ -44,25 +44,25 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "tagged products to include",
+                        "description": "Tagged products to include",
                         "name": "tags",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "order of response",
+                        "description": "Order of response",
                         "name": "order",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "page number",
+                        "description": "Page number",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "page size",
+                        "description": "Page size",
                         "name": "size",
                         "in": "query"
                     }
@@ -114,7 +114,7 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "tagged products to include",
+                        "description": "Tagged products to include",
                         "name": "tags",
                         "in": "query"
                     }
@@ -167,6 +167,59 @@ var doc = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/model.Tag"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/{id}": {
+            "get": {
+                "description": "Get catalog",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "catalog"
+                ],
+                "summary": "Get catalog",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Product"
                             }
                         }
                     },
@@ -273,7 +326,7 @@ type swaggerInfo struct {
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
 	Host:        "localhost:8080",
-	BasePath:    "/catalog",
+	BasePath:    "/catalogue",
 	Schemes:     []string{},
 	Title:       "Catalog API",
 	Description: "This API serves the product catalog",

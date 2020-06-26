@@ -1,4 +1,4 @@
-basePath: /catalog
+basePath: /catalogue
 definitions:
   httputil.HTTPError:
     properties:
@@ -58,22 +58,57 @@ paths:
       - application/json
       description: Get catalog
       parameters:
-      - description: tagged products to include
+      - description: Tagged products to include
         in: query
         name: tags
         type: string
-      - description: order of response
+      - description: Order of response
         in: query
         name: order
         type: string
-      - description: page number
+      - description: Page number
         in: query
         name: page
         type: integer
-      - description: page size
+      - description: Page size
         in: query
         name: size
         type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Product'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Get catalog
+      tags:
+      - catalog
+  /{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get catalog
+      parameters:
+      - description: product ID
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -104,7 +139,7 @@ paths:
       - application/json
       description: Get catalog size
       parameters:
-      - description: tagged products to include
+      - description: Tagged products to include
         in: query
         name: tags
         type: string

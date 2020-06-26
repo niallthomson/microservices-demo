@@ -102,8 +102,6 @@ func (s *mySQLRepository) List(tags []string, order string, pageNum, pageSize in
 
 	query += ";"
 
-	fmt.Println(query)
-
 	err := s.db.Select(&products, query, args...)
 	if err != nil {
 		log.Println("database error", err)
