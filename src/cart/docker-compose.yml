@@ -22,7 +22,7 @@ services:
     ports:
       - "8081:8080"
   carts-db:
-    image: mongo:3
+    image: amazon/dynamodb-local:1.13.1
     hostname: carts-db
     restart: always
     cap_drop:
@@ -37,4 +37,4 @@ services:
     environment:
       - reschedule=on-node-failure
     ports:
-      - "27017-27019:27017-27019"
+      - "8080:8080"

@@ -18,27 +18,40 @@ public class DynamoDBCartService implements CartService {
 
     private DynamoCartRepository repository;
     private AmazonDynamoDB dynamoDB;
+    private boolean createTable;
 
-    public DynamoDBCartService(DynamoCartRepository repository, AmazonDynamoDB dynamoDB) {
+    public DynamoDBCartService(DynamoCartRepository repository, AmazonDynamoDB dynamoDB, boolean createTable) {
         this.repository = repository;
         this.dynamoDB = dynamoDB;
+        this.createTable = createTable;
     }
 
     @PostConstruct
     public void init() {
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDB);
+        if(createTable) {
+            DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDB);
 
-        DeleteTableRequest deleteTableRequest = dynamoDBMapper.generateDeleteTableRequest(DynamoItemEntity.class);
-        dynamoDB.deleteTable(deleteTableRequest);
+            DeleteTableRequest deleteTableRequest = dynamoDBMapper.generateDeleteTableRequest(DynamoItemEntity.class);
 
-        ProvisionedThroughput pt = new ProvisionedThroughput(1L, 1L);
+            try {
+                DescribeTableResult result = dynamoDB.describeTable(deleteTableRequest.getTableName());
 
-        CreateTableRequest tableRequest = dynamoDBMapper
-                .generateCreateTableRequest(DynamoItemEntity.class);
-        tableRequest.setProvisionedThroughput(pt);
-        tableRequest.getGlobalSecondaryIndexes().get(0).setProvisionedThroughput(pt);
-        tableRequest.getGlobalSecondaryIndexes().get(0).setProjection(new Projection().withProjectionType("ALL"));
-        dynamoDB.createTable(tableRequest);
+                log.warn("Dynamo table found, deleting to recreate....");
+                dynamoDB.deleteTable(deleteTableRequest);
+            }
+            catch (com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException rnfe) {
+                log.warn("Dynamo table not found");
+            }
+
+            ProvisionedThroughput pt = new ProvisionedThroughput(1L, 1L);
+
+            CreateTableRequest tableRequest = dynamoDBMapper
+                    .generateCreateTableRequest(DynamoItemEntity.class);
+            tableRequest.setProvisionedThroughput(pt);
+            tableRequest.getGlobalSecondaryIndexes().get(0).setProvisionedThroughput(pt);
+            tableRequest.getGlobalSecondaryIndexes().get(0).setProjection(new Projection().withProjectionType("ALL"));
+            dynamoDB.createTable(tableRequest);
+        }
     }
 
     @Override
@@ -72,7 +85,7 @@ public class DynamoDBCartService implements CartService {
 
     @Override
     public ItemEntity add(String customerId, String itemId, int quantity, float unitPrice) {
-        DynamoItemEntity item = new DynamoItemEntity(hashKey(customerId, itemId), customerId, itemId, quantity, unitPrice);
+        DynamoItemEntity item = new DynamoItemEntity(hashKey(customerId, itemId), customerId, itemId, 1, unitPrice);
 
         return this.repository.save(item);
     }

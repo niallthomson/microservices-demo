@@ -21,6 +21,9 @@ public class DynamoDBConfiguration {
     @Value("${amazon.dynamodb.endpoint}")
     private String amazonDynamoDBEndpoint;
 
+    @Value("${amazon.dynamodb.createTable}")
+    private boolean createTable;
+
     @Bean
     public AmazonDynamoDB amazonDynamoDB() {
         AmazonDynamoDB amazonDynamoDB
@@ -35,6 +38,6 @@ public class DynamoDBConfiguration {
 
     @Bean
     public CartService dynamoCartService(DynamoCartRepository repository) {
-        return new DynamoDBCartService(repository, amazonDynamoDB());
+        return new DynamoDBCartService(repository, amazonDynamoDB(), this.createTable);
     }
 }
