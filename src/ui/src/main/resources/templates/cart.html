@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'cart')}">
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <!-- breadcrumb-->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/home">Home</a></li>
+                    <li aria-current="page" class="breadcrumb-item active">Shopping cart</li>
+                </ol>
+            </nav>
+        </div>
+        <div id="basket" class="col-md-6 col-lg-8">
+            <div class="box">
+                <h1>Shopping cart</h1>
+                <p class="text-muted">You currently have <span th:text="${fullCart.items.size()}"></span> item(s) in your cart.</p>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th colspan="2">Product</th>
+                            <th>Quantity</th>
+                            <th>Unit price</th>
+                            <th>Discount</th>
+                            <th colspan="2">Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${fullCart.items}">
+                            <td><a href="#"><img th:src="${item.imageUrl}" alt="White Blouse Armani"></a></td>
+                            <td><a href="#" th:text="${item.name}">White Blouse Armani</a></td>
+                            <td th:text="${item.quantity}">
+                                1
+                            </td>
+                            <td>$<span th:text="${item.price}">123</span>.00</td>
+                            <td>$0.00</td>
+                            <td>$<span th:text="${item.totalPrice}">123</span>.00</td>
+                            <td>
+                                <form action="/cart/remove" method="POST">
+                                <input type="hidden" name="productId" th:value="${item.id}"/>
+                                <a href="#" onclick="this.closest('form').submit();return false;"><i class="fa fa-trash-o"></i></a>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th colspan="5">Total</th>
+                            <th colspan="2">$<span th:text="${fullCart.subtotal}">446</span>.00</th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <!-- /.table-responsive-->
+                <div class="box-footer d-flex justify-content-between flex-column flex-lg-row">
+                    <div class="left"><a href="/catalog" class="btn btn-outline-secondary"><i class="fa fa-chevron-left"></i> Continue shopping</a></div>
+                    <div class="right">
+                        <a href="/checkout" class="btn btn-primary">Proceed to checkout <i class="fa fa-chevron-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-->
+        </div>
+        <!-- /.col-lg-9-->
+        <div th:replace="fragments/order.html
+          :: orderSummary">
+        </div>
+        <!-- /.col-md-3-->
+    </div>
+</div>
+</body></html>

@@ -1,7 +1,0 @@
-# Ignore npm installed packages
-/node_modules
-
-# Ignore coverage reports
-/coverage
-
-.idea

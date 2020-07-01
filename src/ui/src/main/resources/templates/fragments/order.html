@@ -1,0 +1,30 @@
+<div class="col-md-12 col-lg-4" th:fragment="orderSummary">
+    <div id="order-summary" class="box">
+        <div class="box-header">
+            <h3 class="mb-0">Order summary</h3>
+        </div>
+        <p class="text-muted">Shipping and additional costs are calculated based on the values you have entered.</p>
+        <div class="table-responsive">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <td>Order subtotal</td>
+                    <th>$<span th:text="${fullCart.subtotal}">446</span>.00</th>
+                </tr>
+                <tr>
+                    <td>Shipping and handling</td>
+                    <th>$<span th:text="${fullCart.shipping}">446</span>.00</th>
+                </tr>
+                <tr>
+                    <td>Tax</td>
+                    <th>$0.00</th>
+                </tr>
+                <tr class="total">
+                    <td>Total</td>
+                    <th>$<span th:text="${fullCart.totalPrice}">446</span>.00</th>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

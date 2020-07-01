@@ -1,0 +1,6 @@
+
+spring.codec.max-in-memory-size: 10MB
+
+endpoints:
+  catalog: http://localhost:8081
+  carts: http://localhost:8082
