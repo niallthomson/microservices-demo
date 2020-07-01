@@ -6,6 +6,7 @@
 
     <groupId>works.weave.microservices-demo</groupId>
     <artifactId>carts</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>carts</name>

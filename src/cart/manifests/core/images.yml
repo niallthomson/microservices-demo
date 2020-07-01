@@ -10,7 +10,7 @@ sources:
   docker:
     build:
       file: #@ data.values.imagePath + '/java11/Dockerfile'
-      rawOptions: ["--build-arg", "JAR_PATH=target/carts-2.2.6.RELEASE.jar"]
+      rawOptions: ["--build-arg", "JAR_PATH=target/carts-0.0.1-SNAPSHOT.jar"]
 
 #@ if/end len(data.values.pushRepo) > 0:
 ---

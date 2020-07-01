@@ -13,5 +13,5 @@ if [ -z "$REPO" ]; then
   REPO="microservices-demo"
 fi
 
-docker build -f $CODE_DIR/../../images/java11/Dockerfile --build-arg JAR_PATH=target/carts-2.2.6.RELEASE.jar \
+docker build -f $CODE_DIR/../../images/java11/Dockerfile --build-arg JAR_PATH=target/carts-0.0.1-SNAPSHOT.jar \
   -t $REPO/shop-carts:$TAG $CODE_DIR
