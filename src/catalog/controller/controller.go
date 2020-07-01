@@ -43,7 +43,7 @@ func NewController(config config.AppConfiguration) (*Controller, error) {
 // @Failure 400 {object} httputil.HTTPError
 // @Failure 404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
-// @Router / [get]
+// @Router /catalogue [get]
 func (c *Controller) GetProducts(ctx *gin.Context) {
 	var tags []string
 
@@ -83,11 +83,11 @@ func (c *Controller) GetProducts(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param id path string true "product ID"
-// @Success 200 {array} model.Product
+// @Success 200 {object} model.Product
 // @Failure 400 {object} httputil.HTTPError
 // @Failure 404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
-// @Router /{id} [get]
+// @Router /catalogue/product/{id} [get]
 func (c *Controller) GetProduct(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -110,7 +110,7 @@ func (c *Controller) GetProduct(ctx *gin.Context) {
 // @Failure 400 {object} httputil.HTTPError
 // @Failure 404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
-// @Router /size [get]
+// @Router /catalogue/size [get]
 func (c *Controller) CatalogSize(ctx *gin.Context) {
 	var tags []string
 
@@ -141,7 +141,7 @@ func (c *Controller) CatalogSize(ctx *gin.Context) {
 // @Failure 400 {object} httputil.HTTPError
 // @Failure 404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
-// @Router /tags [get]
+// @Router /catalogue/tags [get]
 func (c *Controller) ListTags(ctx *gin.Context) {
 	accounts, err := c.api.GetTags()
 	if err != nil {

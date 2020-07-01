@@ -14,7 +14,7 @@ import (
 	_ "github.com/niallthomson/microservices-demo/catalog/docs"
 	"github.com/niallthomson/microservices-demo/catalog/repository"
 	"github.com/sethvargo/go-envconfig/pkg/envconfig"
-	"github.com/zsais/go-gin-prometheus"
+	ginprometheus "github.com/zsais/go-gin-prometheus"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -28,7 +28,6 @@ import (
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host localhost:8080
-// @BasePath /catalogue
 
 func main() {
 	ctx := context.Background()

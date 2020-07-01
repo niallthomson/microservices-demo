@@ -11,9 +11,8 @@
         "version": "1.0"
     },
     "host": "localhost:8080",
-    "basePath": "/catalogue",
     "paths": {
-        "/": {
+        "/catalogue": {
             "get": {
                 "description": "Get catalog",
                 "consumes": [
@@ -83,7 +82,57 @@
                 }
             }
         },
-        "/size": {
+        "/catalogue/product/{id}": {
+            "get": {
+                "description": "Get catalog",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "catalog"
+                ],
+                "summary": "Get catalog",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Product"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/catalogue/size": {
             "get": {
                 "description": "Get catalog size",
                 "consumes": [
@@ -132,7 +181,7 @@
                 }
             }
         },
-        "/tags": {
+        "/catalogue/tags": {
             "get": {
                 "description": "get tags",
                 "consumes": [
@@ -152,59 +201,6 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/model.Tag"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/{id}": {
-            "get": {
-                "description": "Get catalog",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "catalog"
-                ],
-                "summary": "Get catalog",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "product ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Product"
                             }
                         }
                     },
@@ -265,16 +261,13 @@
                     "type": "string"
                 },
                 "imageUrl": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
                 "price": {
-                    "type": "number"
+                    "type": "integer"
                 },
                 "tag": {
                     "type": "array",

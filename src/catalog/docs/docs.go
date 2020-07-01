@@ -28,7 +28,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/": {
+        "/catalogue": {
             "get": {
                 "description": "Get catalog",
                 "consumes": [
@@ -98,7 +98,57 @@ var doc = `{
                 }
             }
         },
-        "/size": {
+        "/catalogue/product/{id}": {
+            "get": {
+                "description": "Get catalog",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "catalog"
+                ],
+                "summary": "Get catalog",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Product"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/catalogue/size": {
             "get": {
                 "description": "Get catalog size",
                 "consumes": [
@@ -147,7 +197,7 @@ var doc = `{
                 }
             }
         },
-        "/tags": {
+        "/catalogue/tags": {
             "get": {
                 "description": "get tags",
                 "consumes": [
@@ -167,59 +217,6 @@ var doc = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/model.Tag"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/{id}": {
-            "get": {
-                "description": "Get catalog",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "catalog"
-                ],
-                "summary": "Get catalog",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "product ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Product"
                             }
                         }
                     },
@@ -280,16 +277,13 @@ var doc = `{
                     "type": "string"
                 },
                 "imageUrl": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
                 "price": {
-                    "type": "number"
+                    "type": "integer"
                 },
                 "tag": {
                     "type": "array",
@@ -326,7 +320,7 @@ type swaggerInfo struct {
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
 	Host:        "localhost:8080",
-	BasePath:    "/catalogue",
+	BasePath:    "",
 	Schemes:     []string{},
 	Title:       "Catalog API",
 	Description: "This API serves the product catalog",

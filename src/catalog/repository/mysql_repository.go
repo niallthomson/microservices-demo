@@ -21,7 +21,7 @@ var ErrNotFound = errors.New("not found")
 // ErrDBConnection is returned when connection with the database fails.
 var ErrDBConnection = errors.New("database connection error")
 
-var baseQuery = "SELECT product.product_id AS id, product.name, product.description, product.price, product.count, product.image_url_1, product.image_url_2, GROUP_CONCAT(tag.name) AS tag_name FROM product JOIN product_tag ON product.product_id=product_tag.product_id JOIN tag ON product_tag.tag_id=tag.tag_id"
+var baseQuery = "SELECT product.product_id AS id, product.name, product.description, product.price, product.count, product.image_url, GROUP_CONCAT(tag.name) AS tag_name FROM product JOIN product_tag ON product.product_id=product_tag.product_id JOIN tag ON product_tag.tag_id=tag.tag_id"
 
 type mySQLRepository struct {
 	db *sqlx.DB
@@ -108,7 +108,6 @@ func (s *mySQLRepository) List(tags []string, order string, pageNum, pageSize in
 		return []model.Product{}, ErrDBConnection
 	}
 	for i, s := range products {
-		products[i].ImageURL = []string{s.ImageURL_1, s.ImageURL_2}
 		products[i].Tags = strings.Split(s.TagString, ",")
 	}
 
@@ -159,6 +158,8 @@ func (s *mySQLRepository) Count(tags []string) (int, error) {
 func (s *mySQLRepository) Get(id string) (*model.Product, error) {
 	query := baseQuery + " WHERE product.product_id =? GROUP BY product.product_id;"
 
+	log.Printf("query: %s", query)
+
 	var product model.Product
 	err := s.db.Get(&product, query, id)
 	if err != nil {
@@ -166,7 +167,6 @@ func (s *mySQLRepository) Get(id string) (*model.Product, error) {
 		return nil, ErrNotFound
 	}
 
-	product.ImageURL = []string{product.ImageURL_1, product.ImageURL_2}
 	product.Tags = strings.Split(product.TagString, ",")
 
 	return &product, nil
