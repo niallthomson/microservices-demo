@@ -1,0 +1,31 @@
+#@ load("@ytt:data", "data")
+
+#@ if not len(data.values.imageTag) > 0:
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: Sources
+sources:
+- image: #@ data.values.ui.image
+  path: #@ data.values.ui.imagePath
+  docker:
+    build:
+      file: #@ data.values.imagePath + '/java11/Dockerfile'
+      rawOptions: ["--build-arg", "JAR_PATH=target/ui-0.0.1-SNAPSHOT.jar"]
+
+#@ if/end len(data.values.pushRepo) > 0:
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageDestinations
+destinations:
+- image: #@ data.values.ui.image
+  newImage: #@ data.values.pushRepo + '/shop-ui'
+#@ end
+
+#@ if/end len(data.values.imageTag) > 0:
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageOverrides
+overrides:
+- image: #@ data.values.ui.image
+  newImage: #@ 'docker.io/niallthomson/shop-ui:' + data.values.imageTag
+  preresolved: true

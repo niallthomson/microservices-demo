@@ -1,0 +1,54 @@
+#@ load("@ytt:data", "data")
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui
+  labels:
+    name: ui
+  namespace: #@ data.values.namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: ui
+  template:
+    metadata:
+      labels:
+        name: ui
+        fargate: "true"
+    spec:
+      containers:
+      - name: ui
+        image: #@ data.values.ui.image
+        ports:
+         - containerPort: 8080
+        env:
+         - name: JAVA_OPTS
+           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+        resources:
+          requests:
+            memory: "512Mi"
+          limits:
+            memory: "512Mi"
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+        - name: tmp-volume
+          emptyDir:
+            medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui
+  labels:
+    name: ui
+  namespace: #@ data.values.namespace
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    name: ui

@@ -1,0 +1,6 @@
+#@data/values
+---
+#@overlay/match missing_ok=True
+ui:
+  image: watchn-shop-ui
+  imagePath: .
