@@ -48,7 +48,6 @@
                                 <a th:href="@{/catalog(page=${page.page},size=9,tag=${selectedTag})}" class="btn btn-sm" th:classappend="${9 == page.size} ? 'btn-primary' : 'btn-outline-secondary'">9</a>
                                 <a href="#" class="btn btn-outline-secondary btn-sm">All</a><span>products</span>
                             </div>
-
                         </form>
                     </div>
                 </div>
@@ -62,7 +61,13 @@
                             <p class="price">
                                 <del></del>$<span th:text="${item.price}">143.00</span>
                             </p>
-                            <p class="buttons"><a href="detail.html" class="btn btn-outline-secondary">View detail</a><a href="basket.html" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
+                            <p class="buttons">
+                            <form action="/cart" method="POST">
+                                <input type="hidden" name="productId" th:value="${item.id}"/>
+                                <a href="detail.html" class="btn btn-outline-secondary">View detail</a>
+                                <a href="#" onclick="this.closest('form').submit();return false;" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                            </form>
+                            </p>
                         </div>
                         <!-- /.text-->
                     </div>

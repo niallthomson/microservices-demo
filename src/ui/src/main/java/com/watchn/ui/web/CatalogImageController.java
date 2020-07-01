@@ -1,5 +1,6 @@
 package com.watchn.ui.web;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +11,10 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class CatalogImageController {
+
+    @Value("${endpoints.catalog}")
+    private String catalogEndpoint;
+
     @GetMapping(value = "/catalogue/images/{image}", produces = MediaType.IMAGE_JPEG_VALUE)
     public Mono<byte[]> catalogueImage(@PathVariable String image) {
         return WebClient.builder()
@@ -18,7 +23,7 @@ public class CatalogImageController {
                     .defaultCodecs()
                     .maxInMemorySize(16 * 1024 * 1024))
             .build())
-                .baseUrl("http://localhost:8081/catalogue/images/"+image)
+                .baseUrl(this.catalogEndpoint+"/catalogue/images/"+image)
             .build().get()
                 .accept(MediaType.IMAGE_JPEG)
                 .retrieve()

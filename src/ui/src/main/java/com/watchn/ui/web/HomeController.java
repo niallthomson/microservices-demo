@@ -7,7 +7,6 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.server.WebSession;
 import org.thymeleaf.spring5.context.webflux.ReactiveDataDriverContextVariable;
 
 @Controller
@@ -32,6 +31,6 @@ public class HomeController extends BaseController {
 
         populateModel(request, model);
 
-        return "index";
+        return "home";
     }
 }
