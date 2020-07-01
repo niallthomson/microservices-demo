@@ -14,6 +14,6 @@ if [ -z "${TAG}" ]; then
   exit 1
 fi
 
-$SCRIPT_DIR/push-all.sh
-$SCRIPT_DIR/../deploy/docker-compose/scripts/create-complete-compose.sh --data-value imageTag=$TAG
-$SCRIPT_DIR/../deploy/kubernetes/scripts/create-complete-manifest.sh --data-value imageTag=$TAG
+$DIR/push-all.sh
+$DIR/../deploy/docker-compose/scripts/create-complete-compose.sh --data-value imageTag=$TAG
+$DIR/../deploy/kubernetes/scripts/create-complete-manifest.sh --data-value imageTag=$TAG

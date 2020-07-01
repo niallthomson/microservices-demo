@@ -13,9 +13,6 @@ if [ -z "${TAG}" ]; then
   export TAG=$(date +%s)
 fi
 
-$SCRIPT_DIR/../src/front-end/scripts/push.sh
-$SCRIPT_DIR/../src/catalog/scripts/push.sh
-$SCRIPT_DIR/../src/cart/scripts/push.sh
-$SCRIPT_DIR/../src/payment/scripts/push.sh
-$SCRIPT_DIR/../src/orders/scripts/push.sh
-$SCRIPT_DIR/../src/user/scripts/push.sh
+$DIR/../src/ui/scripts/push.sh
+$DIR/../src/catalog/scripts/push.sh
+$DIR/../src/cart/scripts/push.sh

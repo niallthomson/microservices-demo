@@ -257,8 +257,8 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-carts:v0.0.1
-        URL: docker.io/niallthomson/shop-carts:v0.0.1
+          URL: docker.io/niallthomson/shop-carts:0.0.2
+        URL: docker.io/niallthomson/shop-carts:0.0.2
   labels:
     name: carts
   name: carts
@@ -281,7 +281,7 @@ spec:
         - name: JAVA_OPTS
           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
-        image: docker.io/niallthomson/shop-carts:v0.0.1
+        image: docker.io/niallthomson/shop-carts:0.0.2
         name: carts
         ports:
         - containerPort: 8080
@@ -373,8 +373,8 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-catalog:v0.0.1
-        URL: docker.io/niallthomson/shop-catalog:v0.0.1
+          URL: docker.io/niallthomson/shop-catalog:0.0.2
+        URL: docker.io/niallthomson/shop-catalog:0.0.2
   labels:
     name: catalogue
   name: catalogue
@@ -391,7 +391,7 @@ spec:
         name: catalogue
     spec:
       containers:
-      - image: docker.io/niallthomson/shop-catalog:v0.0.1
+      - image: docker.io/niallthomson/shop-catalog:0.0.2
         name: catalogue
         ports:
         - containerPort: 8080
@@ -417,44 +417,58 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-front-end:v0.0.1
-        URL: docker.io/niallthomson/shop-front-end:v0.0.1
-  name: front-end
+          URL: docker.io/niallthomson/shop-ui:0.0.2
+        URL: docker.io/niallthomson/shop-ui:0.0.2
+  labels:
+    name: ui
+  name: ui
   namespace: watchn
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: front-end
+      name: ui
   template:
     metadata:
       labels:
-        name: front-end
+        fargate: "true"
+        name: ui
     spec:
       containers:
-      - image: docker.io/niallthomson/shop-front-end:v0.0.1
-        name: front-end
+      - env:
+        - name: JAVA_OPTS
+          value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
+            -Djava.security.egd=file:/dev/urandom
+        image: docker.io/niallthomson/shop-ui:0.0.2
+        name: ui
         ports:
         - containerPort: 8080
         resources:
+          limits:
+            memory: 512Mi
           requests:
-            cpu: 100m
-            memory: 100Mi
+            memory: 512Mi
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - emptyDir:
+          medium: Memory
+        name: tmp-volume
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    name: front-end
-  name: front-end
+    name: ui
+  name: ui
   namespace: watchn
 spec:
   ports:
   - port: 80
     targetPort: 8080
   selector:
-    name: front-end
-  type: NodePort
+    name: ui
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -524,8 +538,8 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-orders:v0.0.1
-        URL: docker.io/niallthomson/shop-orders:v0.0.1
+          URL: docker.io/niallthomson/shop-orders:0.0.2
+        URL: docker.io/niallthomson/shop-orders:0.0.2
   labels:
     name: orders
   name: orders
@@ -547,7 +561,7 @@ spec:
         - name: JAVA_OPTS
           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
-        image: docker.io/niallthomson/shop-orders:v0.0.1
+        image: docker.io/niallthomson/shop-orders:0.0.2
         name: orders
         ports:
         - containerPort: 8080
@@ -572,157 +586,3 @@ spec:
     targetPort: 8080
   selector:
     name: orders
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kbld.k14s.io/images: |
-      - Metas:
-        - Type: preresolved
-          URL: docker.io/niallthomson/shop-payment:v0.0.1
-        URL: docker.io/niallthomson/shop-payment:v0.0.1
-  labels:
-    name: payment
-  name: payment
-  namespace: watchn
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: payment
-  template:
-    metadata:
-      labels:
-        name: payment
-    spec:
-      containers:
-      - image: docker.io/niallthomson/shop-payment:v0.0.1
-        name: payment
-        ports:
-        - containerPort: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    name: payment
-  name: payment
-  namespace: watchn
-spec:
-  ports:
-  - port: 8080
-    targetPort: 8080
-  selector:
-    name: payment
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kbld.k14s.io/images: |
-      - Metas:
-        - Tag: 0.4.0
-          Type: resolved
-          URL: weaveworksdemos/user-db:0.4.0
-        URL: index.docker.io/weaveworksdemos/user-db@sha256:b43f0f8a76e0c908805fcec74d1ad7f4af4d93c4612632bd6dc20a87508e0b68
-  labels:
-    name: user-db
-  name: user-db
-  namespace: watchn
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: user-db
-  template:
-    metadata:
-      labels:
-        name: user-db
-    spec:
-      containers:
-      - image: index.docker.io/weaveworksdemos/user-db@sha256:b43f0f8a76e0c908805fcec74d1ad7f4af4d93c4612632bd6dc20a87508e0b68
-        name: user-db
-        ports:
-        - containerPort: 27017
-          name: mongo
-        securityContext:
-          capabilities:
-            add:
-            - CHOWN
-            - SETGID
-            - SETUID
-            drop:
-            - all
-          readOnlyRootFilesystem: true
-        volumeMounts:
-        - mountPath: /tmp
-          name: tmp-volume
-      volumes:
-      - emptyDir:
-          medium: Memory
-        name: tmp-volume
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    name: user-db
-  name: user-db
-  namespace: watchn
-spec:
-  ports:
-  - port: 27017
-    targetPort: 27017
-  selector:
-    name: user-db
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kbld.k14s.io/images: |
-      - Metas:
-        - Type: preresolved
-          URL: docker.io/niallthomson/shop-user:v0.0.1
-        URL: docker.io/niallthomson/shop-user:v0.0.1
-  labels:
-    name: user
-  name: user
-  namespace: watchn
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: user
-  template:
-    metadata:
-      labels:
-        name: user
-    spec:
-      containers:
-      - env:
-        - name: MONGO_HOST
-          value: user-db:27017
-        - name: USER_DATABASE
-          value: mongodb
-        - name: HATEAOS
-          value: user
-        image: docker.io/niallthomson/shop-user:v0.0.1
-        name: user
-        ports:
-        - containerPort: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    name: user
-  name: user
-  namespace: watchn
-spec:
-  ports:
-  - port: 8080
-    targetPort: 8080
-  selector:
-    name: user

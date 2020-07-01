@@ -8,22 +8,27 @@ services:
     environment:
     - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
     - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
+    - SPRING_PROFILES_ACTIVE=dynamodb
+    - AMAZON_DYNAMODB_endpoint=http://carts-db:8000
+    - AWS_ACCESS_KEY_ID=key
+    - AWS_SECRET_ACCESS_KEY=secret
     hostname: carts
-    image: docker.io/niallthomson/shop-carts:1593111674
+    image: docker.io/niallthomson/shop-carts:0.0.2
     read_only: true
     restart: always
     tmpfs:
     - /tmp:rw,noexec,nosuid
   carts-db:
     cap_add:
-    - NET_BIND_SERVICE
     - CHOWN
     - SETGID
     - SETUID
     cap_drop:
     - all
+    environment:
+    - reschedule=on-node-failure
     hostname: carts-db
-    image: index.docker.io/library/mongo@sha256:d314f7eca9d3f825d091b77c40d2f3c9d6fff4de88dde2962527353476f107ba
+    image: index.docker.io/amazon/dynamodb-local@sha256:648d5f0a5eb96b789040dcc56256a5b16a4097722327e7c8e1598daaa2fde385
     read_only: true
     restart: always
     tmpfs:
@@ -45,36 +50,7 @@ services:
     cap_drop:
     - all
     hostname: catalogue
-    image: docker.io/niallthomson/shop-catalog:v0.0.1
-    read_only: true
-    restart: always
-  edge-router:
-    cap_add:
-    - CHOWN
-    - SETGID
-    - SETUID
-    - DAC_OVERRIDE
-    - NET_BIND_SERVICE
-    cap_drop:
-    - all
-    hostname: edge-router
-    image: index.docker.io/weaveworksdemos/edge-router@sha256:72855b1ab6ec5b8b7e03429af9fa04a2a87f97a8c139724afc75a47970fa6438
-    ports:
-    - 80:80
-    - 8080:8080
-    read_only: true
-    restart: always
-    tmpfs:
-    - /var/run:rw,noexec,nosuid
-  front-end:
-    cap_add:
-    - NET_BIND_SERVICE
-    cap_drop:
-    - all
-    environment:
-    - PORT=8079
-    hostname: front-end
-    image: docker.io/niallthomson/shop-front-end:v0.0.1
+    image: docker.io/niallthomson/shop-catalog:0.0.2
     read_only: true
     restart: always
   orders:
@@ -84,9 +60,8 @@ services:
     - all
     environment:
     - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
-      -Dspring.zipkin.enabled=false
     hostname: orders
-    image: docker.io/niallthomson/shop-orders:v0.0.1
+    image: docker.io/niallthomson/shop-orders:0.0.2
     read_only: true
     restart: always
     tmpfs:
@@ -105,15 +80,6 @@ services:
     restart: always
     tmpfs:
     - /tmp:rw,noexec,nosuid
-  payment:
-    cap_add:
-    - NET_BIND_SERVICE
-    cap_drop:
-    - all
-    hostname: payment
-    image: docker.io/niallthomson/shop-payment:v0.0.1
-    read_only: true
-    restart: always
   queue-master:
     cap_add:
     - NET_BIND_SERVICE
@@ -147,38 +113,25 @@ services:
     - all
     environment:
     - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
-      -Dspring.zipkin.enabled=false
     hostname: shipping
     image: index.docker.io/weaveworksdemos/shipping@sha256:983305c948fded487f4a4acdeab5f898e89d577b4bc1ca3de7750076469ccad4
     read_only: true
     restart: always
     tmpfs:
     - /tmp:rw,noexec,nosuid
-  user:
+  ui:
     cap_add:
     - NET_BIND_SERVICE
     cap_drop:
     - all
     environment:
-    - MONGO_HOST=user-db:27017
-    - USER_DATABASE=mongodb
-    - HATEAOS=user
-    hostname: user
-    image: docker.io/niallthomson/shop-user:v0.0.1
+    - JAVA_OPTS=-Xms64m -Xmx256m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+    - ENDPOINTS_CATALOG=http://catalogue:8080
+    - ENDPOINTS_CARTS=http://carts:8080
+    hostname: ui
+    image: docker.io/niallthomson/shop-ui:0.0.2
+    ports:
+    - 80:8080
     read_only: true
     restart: always
-  user-db:
-    cap_add:
-    - CHOWN
-    - SETGID
-    - SETUID
-    - NET_BIND_SERVICE
-    cap_drop:
-    - all
-    hostname: user-db
-    image: index.docker.io/weaveworksdemos/user-db@sha256:b43f0f8a76e0c908805fcec74d1ad7f4af4d93c4612632bd6dc20a87508e0b68
-    read_only: true
-    restart: always
-    tmpfs:
-    - /tmp:rw,noexec,nosuid
 version: "2"

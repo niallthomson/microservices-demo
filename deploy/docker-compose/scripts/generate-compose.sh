@@ -14,16 +14,10 @@ ytt -f $DIR/../src \
     -f $APP_SRC_DIR/src/catalog/manifests/core/images.yml \
     -f $APP_SRC_DIR/src/catalog/manifests/core/values.yml \
     --data-value catalog.imagePath=$APP_SRC_DIR/src/catalog \
-    -f $APP_SRC_DIR/src/front-end/manifests/core/images.yml \
-    -f $APP_SRC_DIR/src/front-end/manifests/core/values.yml \
-    --data-value frontend.imagePath=$APP_SRC_DIR/src/front-end \
+    -f $APP_SRC_DIR/src/ui/manifests/core/images.yml \
+    -f $APP_SRC_DIR/src/ui/manifests/core/values.yml \
+    --data-value ui.imagePath=$APP_SRC_DIR/src/ui \
     -f $APP_SRC_DIR/src/orders/manifests/core/images.yml \
     -f $APP_SRC_DIR/src/orders/manifests/core/values.yml \
-    --data-value orders.imagePath=$APP_SRC_DIR/src/orders \
-    -f $APP_SRC_DIR/src/payment/manifests/core/images.yml \
-    -f $APP_SRC_DIR/src/payment/manifests/core/values.yml \
-    --data-value payment.imagePath=$APP_SRC_DIR/src/payment \
-    -f $APP_SRC_DIR/src/user/manifests/core/images.yml \
-    -f $APP_SRC_DIR/src/user/manifests/core/values.yml \
-    --data-value user.imagePath=$APP_SRC_DIR/src/user $@ \
+    --data-value orders.imagePath=$APP_SRC_DIR/src/orders $@ \
     | kbld -f - --images-annotation=false
