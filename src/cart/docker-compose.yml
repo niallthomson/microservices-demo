@@ -4,9 +4,9 @@ services:
   carts:
     build:
       context: .
-      dockerfile: ../../images/java/Dockerfile
+      dockerfile: ../../images/java11/Dockerfile
       args:
-        JAR_PATH: target/carts.jar
+        JAR_PATH: target/carts-2.2.6.RELEASE.jar
     image: microservices-demo/carts
     hostname: carts
     restart: always
@@ -19,8 +19,13 @@ services:
       - /tmp:rw,noexec,nosuid
     environment:
       - reschedule=on-node-failure
+      - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
+      - SPRING_PROFILES_ACTIVE=dynamodb
+      - AMAZON_DYNAMODB_endpoint=http://carts-db:8000
+      - AWS_ACCESS_KEY_ID=key
+      - AWS_SECRET_ACCESS_KEY=secret
     ports:
-      - "8081:8080"
+      - "8082:8080"
   carts-db:
     image: amazon/dynamodb-local:1.13.1
     hostname: carts-db
@@ -36,5 +41,3 @@ services:
       - /tmp:rw,noexec,nosuid
     environment:
       - reschedule=on-node-failure
-    ports:
-      - "8080:8080"
