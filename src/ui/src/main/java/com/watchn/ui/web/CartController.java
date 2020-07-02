@@ -48,7 +48,7 @@ public class CartController extends BaseController {
                 }).collectList().map(Cart::from)
         );
 
-        this.populateModel(request, model);
+        this.populateCart(request, model);
 
         return "cart";
     }

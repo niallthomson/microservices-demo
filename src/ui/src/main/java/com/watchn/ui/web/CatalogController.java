@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Flux;
 
 import java.util.Collections;
@@ -40,7 +39,7 @@ public class CatalogController extends BaseController {
 
         model.addAttribute("page", catalogApi.catalogueSizeGet(tag).map(r -> new PageInfo(page, size, r.getSize())));
 
-        populateModel(request, model);
+        populateCart(request, model);
 
         return "catalog";
     }
@@ -54,7 +53,7 @@ public class CatalogController extends BaseController {
             return l;
         }).flatMapMany(Flux::fromIterable));
 
-        populateModel(request, model);
+        populateCart(request, model);
 
         return "detail";
     }

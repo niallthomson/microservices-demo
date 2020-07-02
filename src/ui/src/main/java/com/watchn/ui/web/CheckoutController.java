@@ -1,15 +1,15 @@
 package com.watchn.ui.web;
 
 import com.watchn.ui.clients.carts.api.CartsApi;
-import com.watchn.ui.clients.carts.api.ItemsApi;
 import com.watchn.ui.clients.carts.model.Item;
 import com.watchn.ui.clients.catalog.api.CatalogApi;
+import com.watchn.ui.clients.orders.api.OrdersApi;
+import com.watchn.ui.clients.orders.model.CreateOrderRequest;
+import com.watchn.ui.clients.orders.model.CreateOrderRequestItem;
 import com.watchn.ui.web.payload.Cart;
-import com.watchn.ui.web.payload.CartChangeRequest;
 import com.watchn.ui.web.payload.CartItem;
 import com.watchn.ui.web.payload.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,16 +26,17 @@ public class CheckoutController extends BaseController {
 
     private CatalogApi catalogApi;
 
-    public CheckoutController(@Autowired CartsApi cartsApi, @Autowired CatalogApi catalogApi) {
+    private OrdersApi ordersApi;
+
+    public CheckoutController(@Autowired CartsApi cartsApi, @Autowired CatalogApi catalogApi, @Autowired OrdersApi ordersApi) {
         super(cartsApi);
 
         this.catalogApi = catalogApi;
+        this.ordersApi = ordersApi;
     }
 
     @GetMapping
     public String checkout(ServerHttpRequest request, Model model) {
-        Cart cart = new Cart();
-
         String sessionId = getSessionID(request);
 
         model.addAttribute("fullCart", cartsApi.getCart(sessionId)
@@ -47,15 +48,42 @@ public class CheckoutController extends BaseController {
                 }).collectList().map(Cart::from)
         );
 
-        this.populateModel(request, model);
+        this.populateCart(request, model);
 
         return "checkout";
     }
 
     @PostMapping
-    public String order(@ModelAttribute OrderRequest orderRequest, ServerHttpRequest request, Model model) {
+    public Mono<String> order(@ModelAttribute OrderRequest orderRequest, ServerHttpRequest request, Model model) {
         String sessionId = getSessionID(request);
 
-        return checkout(request, model);
+        CreateOrderRequest createOrderRequest = new CreateOrderRequest();
+        createOrderRequest.setFirstName(orderRequest.getFirstName());
+        createOrderRequest.setLastName(orderRequest.getLastName());
+
+        return cartsApi.getCart(sessionId).flatMap(
+                cart -> {
+                    for(Item item : cart.getItems()) {
+                        CreateOrderRequestItem orderItem = new CreateOrderRequestItem();
+                        orderItem.setProductId(item.getItemId());
+                        orderItem.setQuantity(item.getQuantity());
+                        orderItem.setPrice(item.getUnitPrice());
+
+                        createOrderRequest.addItemsItem(orderItem);
+                    }
+
+                    return this.ordersApi.createOrder(createOrderRequest);
+                }
+        )
+                .doOnNext(o -> {
+                    model.addAttribute("order", o);
+                })
+                .map(o -> {
+                    return this.cartsApi.deleteCart(sessionId);
+                })
+                .doOnNext(c -> {
+                    model.addAttribute("cart", c);
+                })
+                .thenReturn("order");
     }
 }

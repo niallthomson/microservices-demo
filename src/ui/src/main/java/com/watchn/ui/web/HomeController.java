@@ -29,7 +29,7 @@ public class HomeController extends BaseController {
         model.addAttribute("catalog", new ReactiveDataDriverContextVariable(
                 catalogApi.catalogueGet("", "", 1, 5)));
 
-        populateModel(request, model);
+        populateCart(request, model);
 
         return "home";
     }

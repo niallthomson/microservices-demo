@@ -3,6 +3,7 @@ package com.watchn.ui.config;
 import com.watchn.ui.clients.carts.api.CartsApi;
 import com.watchn.ui.clients.carts.api.ItemsApi;
 import com.watchn.ui.clients.catalog.api.CatalogApi;
+import com.watchn.ui.clients.orders.api.OrdersApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,9 @@ public class Clients {
 
     @Value("${endpoints.carts}")
     private String cartsEndpoint;
+
+    @Value("${endpoints.orders}")
+    private String ordersEndpoint;
 
     @Bean
     public CatalogApi catalogApi() {
@@ -32,5 +36,11 @@ public class Clients {
     public ItemsApi itemsApi() {
         return new ItemsApi(new com.watchn.ui.clients.carts.ApiClient()
                 .setBasePath(this.cartsEndpoint));
+    }
+
+    @Bean
+    public OrdersApi ordersApi() {
+        return new OrdersApi(new com.watchn.ui.clients.orders.ApiClient()
+                .setBasePath(this.ordersEndpoint));
     }
 }

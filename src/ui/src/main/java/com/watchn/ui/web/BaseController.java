@@ -17,7 +17,7 @@ public class BaseController {
         this.cartsApi = cartsApi;
     }
 
-    protected void populateModel(ServerHttpRequest request, Model model) {
+    protected void populateCart(ServerHttpRequest request, Model model) {
         String sessionId = getSessionID(request);
 
         model.addAttribute("cart", cartsApi.getCart(sessionId));
