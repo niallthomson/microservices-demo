@@ -16,3 +16,4 @@ fi
 $DIR/../src/ui/scripts/push.sh
 $DIR/../src/catalog/scripts/push.sh
 $DIR/../src/cart/scripts/push.sh
+$DIR/../src/orders/scripts/push.sh

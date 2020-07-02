@@ -12,8 +12,10 @@ services:
     - 80:8080
     environment:
     - JAVA_OPTS=-Xms64m -Xmx256m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+    - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
     - ENDPOINTS_CATALOG=http://catalogue:8080
     - ENDPOINTS_CARTS=http://carts:8080
+    - ENDPOINTS_ORDERS=http://orders:8080
     hostname: ui
     image: #@ data.values.ui.image
     read_only: true
@@ -83,7 +85,8 @@ services:
     tmpfs:
       - /tmp:rw,noexec,nosuid
     environment:
-      - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+      - JAVA_OPTS=-Xms128m -Xmx512m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+      - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
   orders-db:
     image: mongo:3.4
     hostname: orders-db
