@@ -307,6 +307,7 @@ spec:
     targetPort: 8080
   selector:
     name: ui
+  type: NodePort
 ---
 apiVersion: apps/v1
 kind: Deployment

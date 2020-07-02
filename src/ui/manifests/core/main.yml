@@ -53,6 +53,7 @@ metadata:
     name: ui
   namespace: #@ data.values.namespace
 spec:
+  type: NodePort
   ports:
   - port: 80
     targetPort: 8080
