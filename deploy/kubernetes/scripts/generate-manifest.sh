@@ -6,6 +6,11 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 APP_SRC_DIR="$DIR/../../.."
 
+if [ -z "${REPO}" ]; then
+  echo "Error: must set env variable REPO"
+  exit 1
+fi
+
 ytt -f $DIR/../src \
     --data-value imagePath=$APP_SRC_DIR/images \
     -f $APP_SRC_DIR/src/cart/manifests/core \
@@ -16,4 +21,5 @@ ytt -f $DIR/../src \
     --data-value ui.imagePath=$APP_SRC_DIR/src/ui \
     -f $APP_SRC_DIR/src/orders/manifests/core \
     --data-value orders.imagePath=$APP_SRC_DIR/src/orders $@ \
+     --data-value pushRepo=$REPO \
     | kbld -f -

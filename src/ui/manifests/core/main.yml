@@ -22,10 +22,16 @@ spec:
       - name: ui
         image: #@ data.values.ui.image
         ports:
-         - containerPort: 8080
+          - containerPort: 8080
         env:
-         - name: JAVA_OPTS
-           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+          - name: JAVA_OPTS
+            value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+          - name: ENDPOINTS_CATALOG
+            value: http://catalogue:8080
+          - name: ENDPOINTS_CARTS
+            value: http://carts:8080
+          - name: ENDPOINTS_ORDERS
+            value: http://orders:8080
         resources:
           requests:
             memory: "512Mi"

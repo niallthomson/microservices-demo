@@ -4,172 +4,6 @@ kind: Namespace
 metadata:
   name: watchn
 ---
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kbld.k14s.io/images: |
-      - Metas:
-        - Tag: 0.3.1
-          Type: resolved
-          URL: weaveworksdemos/queue-master:0.3.1
-        URL: index.docker.io/weaveworksdemos/queue-master@sha256:6292d3095f4c7aeed8d863527f8ef6d7a75d3128f20fc61e57f398c100142712
-  labels:
-    name: queue-master
-  name: queue-master
-  namespace: watchn
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: queue-master
-  template:
-    metadata:
-      labels:
-        name: queue-master
-    spec:
-      containers:
-      - image: index.docker.io/weaveworksdemos/queue-master@sha256:6292d3095f4c7aeed8d863527f8ef6d7a75d3128f20fc61e57f398c100142712
-        name: queue-master
-        ports:
-        - containerPort: 80
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    prometheus.io/path: /prometheus
-  labels:
-    name: queue-master
-  name: queue-master
-  namespace: watchn
-spec:
-  ports:
-  - port: 80
-    targetPort: 80
-  selector:
-    name: queue-master
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kbld.k14s.io/images: |
-      - Metas:
-        - Tag: 3.6.8
-          Type: resolved
-          URL: rabbitmq:3.6.8
-        URL: index.docker.io/library/rabbitmq@sha256:a9f4923559bbcd00b93b02e61615aef5eb6f1d1c98db51053bab0fa6b680db26
-  labels:
-    name: rabbitmq
-  name: rabbitmq
-  namespace: watchn
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: rabbitmq
-  template:
-    metadata:
-      labels:
-        name: rabbitmq
-    spec:
-      containers:
-      - image: index.docker.io/library/rabbitmq@sha256:a9f4923559bbcd00b93b02e61615aef5eb6f1d1c98db51053bab0fa6b680db26
-        name: rabbitmq
-        ports:
-        - containerPort: 5672
-        securityContext:
-          capabilities:
-            add:
-            - CHOWN
-            - SETGID
-            - SETUID
-            - DAC_OVERRIDE
-            drop:
-            - all
-          readOnlyRootFilesystem: true
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    name: rabbitmq
-  name: rabbitmq
-  namespace: watchn
-spec:
-  ports:
-  - port: 5672
-    targetPort: 5672
-  selector:
-    name: rabbitmq
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kbld.k14s.io/images: |
-      - Metas:
-        - Tag: 0.4.8
-          Type: resolved
-          URL: weaveworksdemos/shipping:0.4.8
-        URL: index.docker.io/weaveworksdemos/shipping@sha256:983305c948fded487f4a4acdeab5f898e89d577b4bc1ca3de7750076469ccad4
-  labels:
-    name: shipping
-  name: shipping
-  namespace: watchn
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: shipping
-  template:
-    metadata:
-      labels:
-        name: shipping
-    spec:
-      containers:
-      - env:
-        - name: ZIPKIN
-          value: zipkin.jaeger.svc.cluster.local
-        - name: JAVA_OPTS
-          value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
-            -Djava.security.egd=file:/dev/urandom
-        image: index.docker.io/weaveworksdemos/shipping@sha256:983305c948fded487f4a4acdeab5f898e89d577b4bc1ca3de7750076469ccad4
-        name: shipping
-        ports:
-        - containerPort: 80
-        securityContext:
-          capabilities:
-            add:
-            - NET_BIND_SERVICE
-            drop:
-            - all
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 10001
-        volumeMounts:
-        - mountPath: /tmp
-          name: tmp-volume
-      volumes:
-      - emptyDir:
-          medium: Memory
-        name: tmp-volume
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    name: shipping
-  name: shipping
-  namespace: watchn
-spec:
-  ports:
-  - port: 8080
-    targetPort: 80
-  selector:
-    name: shipping
----
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
@@ -257,8 +91,8 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-carts:0.0.2
-        URL: docker.io/niallthomson/shop-carts:0.0.2
+          URL: docker.io/niallthomson/shop-carts:0.0.3
+        URL: docker.io/niallthomson/shop-carts:0.0.3
   labels:
     name: carts
   name: carts
@@ -276,12 +110,10 @@ spec:
     spec:
       containers:
       - env:
-        - name: ZIPKIN
-          value: zipkin.jaeger.svc.cluster.local
         - name: JAVA_OPTS
           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
-        image: docker.io/niallthomson/shop-carts:0.0.2
+        image: docker.io/niallthomson/shop-carts:0.0.3
         name: carts
         ports:
         - containerPort: 8080
@@ -373,8 +205,8 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-catalog:0.0.2
-        URL: docker.io/niallthomson/shop-catalog:0.0.2
+          URL: docker.io/niallthomson/shop-catalog:0.0.3
+        URL: docker.io/niallthomson/shop-catalog:0.0.3
   labels:
     name: catalogue
   name: catalogue
@@ -391,7 +223,7 @@ spec:
         name: catalogue
     spec:
       containers:
-      - image: docker.io/niallthomson/shop-catalog:0.0.2
+      - image: docker.io/niallthomson/shop-catalog:0.0.3
         name: catalogue
         ports:
         - containerPort: 8080
@@ -417,8 +249,8 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-ui:0.0.2
-        URL: docker.io/niallthomson/shop-ui:0.0.2
+          URL: docker.io/niallthomson/shop-ui:0.0.3
+        URL: docker.io/niallthomson/shop-ui:0.0.3
   labels:
     name: ui
   name: ui
@@ -439,7 +271,13 @@ spec:
         - name: JAVA_OPTS
           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
-        image: docker.io/niallthomson/shop-ui:0.0.2
+        - name: ENDPOINTS_CATALOG
+          value: http://catalogue:8080
+        - name: ENDPOINTS_CARTS
+          value: http://carts:8080
+        - name: ENDPOINTS_ORDERS
+          value: http://orders:8080
+        image: docker.io/niallthomson/shop-ui:0.0.3
         name: ui
         ports:
         - containerPort: 8080
@@ -476,70 +314,9 @@ metadata:
   annotations:
     kbld.k14s.io/images: |
       - Metas:
-        - Tag: latest
-          Type: resolved
-          URL: mongo
-        URL: index.docker.io/library/mongo@sha256:29805e9a6fc2a233b9b633c7b0f382a43df3f119522b82366a72abecb302a793
-  labels:
-    name: orders-db
-  name: orders-db
-  namespace: watchn
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: orders-db
-  template:
-    metadata:
-      labels:
-        name: orders-db
-    spec:
-      containers:
-      - image: index.docker.io/library/mongo@sha256:29805e9a6fc2a233b9b633c7b0f382a43df3f119522b82366a72abecb302a793
-        name: orders-db
-        ports:
-        - containerPort: 27017
-          name: mongo
-        securityContext:
-          capabilities:
-            add:
-            - CHOWN
-            - SETGID
-            - SETUID
-            drop:
-            - all
-          readOnlyRootFilesystem: true
-        volumeMounts:
-        - mountPath: /tmp
-          name: tmp-volume
-      volumes:
-      - emptyDir:
-          medium: Memory
-        name: tmp-volume
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    name: orders-db
-  name: orders-db
-  namespace: watchn
-spec:
-  ports:
-  - port: 27017
-    targetPort: 27017
-  selector:
-    name: orders-db
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kbld.k14s.io/images: |
-      - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-orders:0.0.2
-        URL: docker.io/niallthomson/shop-orders:0.0.2
+          URL: docker.io/niallthomson/shop-orders:0.0.3
+        URL: docker.io/niallthomson/shop-orders:0.0.3
   labels:
     name: orders
   name: orders
@@ -552,19 +329,23 @@ spec:
   template:
     metadata:
       labels:
+        fargate: "true"
         name: orders
     spec:
       containers:
       - env:
-        - name: ZIPKIN
-          value: zipkin.jaeger.svc.cluster.local
         - name: JAVA_OPTS
-          value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
+          value: -Xms128m -Xmx512m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
-        image: docker.io/niallthomson/shop-orders:0.0.2
+        image: docker.io/niallthomson/shop-orders:0.0.3
         name: orders
         ports:
         - containerPort: 8080
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            memory: 512Mi
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume

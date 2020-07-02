@@ -13,7 +13,7 @@ services:
     - AWS_ACCESS_KEY_ID=key
     - AWS_SECRET_ACCESS_KEY=secret
     hostname: carts
-    image: docker.io/niallthomson/shop-carts:0.0.2
+    image: docker.io/niallthomson/shop-carts:0.0.3
     read_only: true
     restart: always
     tmpfs:
@@ -50,7 +50,7 @@ services:
     cap_drop:
     - all
     hostname: catalogue
-    image: docker.io/niallthomson/shop-catalog:0.0.2
+    image: docker.io/niallthomson/shop-catalog:0.0.3
     read_only: true
     restart: always
   orders:
@@ -59,9 +59,10 @@ services:
     cap_drop:
     - all
     environment:
-    - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+    - JAVA_OPTS=-Xms128m -Xmx512m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+    - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
     hostname: orders
-    image: docker.io/niallthomson/shop-orders:0.0.2
+    image: docker.io/niallthomson/shop-orders:0.0.3
     read_only: true
     restart: always
     tmpfs:
@@ -80,45 +81,6 @@ services:
     restart: always
     tmpfs:
     - /tmp:rw,noexec,nosuid
-  queue-master:
-    cap_add:
-    - NET_BIND_SERVICE
-    cap_drop:
-    - all
-    hostname: queue-master
-    image: index.docker.io/weaveworksdemos/queue-master@sha256:6292d3095f4c7aeed8d863527f8ef6d7a75d3128f20fc61e57f398c100142712
-    read_only: true
-    restart: always
-    tmpfs:
-    - /tmp:rw,noexec,nosuid
-    volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-  rabbitmq:
-    cap_add:
-    - CHOWN
-    - SETGID
-    - SETUID
-    - DAC_OVERRIDE
-    - NET_BIND_SERVICE
-    cap_drop:
-    - all
-    hostname: rabbitmq
-    image: index.docker.io/library/rabbitmq@sha256:a9f4923559bbcd00b93b02e61615aef5eb6f1d1c98db51053bab0fa6b680db26
-    read_only: true
-    restart: always
-  shipping:
-    cap_add:
-    - NET_BIND_SERVICE
-    cap_drop:
-    - all
-    environment:
-    - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
-    hostname: shipping
-    image: index.docker.io/weaveworksdemos/shipping@sha256:983305c948fded487f4a4acdeab5f898e89d577b4bc1ca3de7750076469ccad4
-    read_only: true
-    restart: always
-    tmpfs:
-    - /tmp:rw,noexec,nosuid
   ui:
     cap_add:
     - NET_BIND_SERVICE
@@ -126,10 +88,12 @@ services:
     - all
     environment:
     - JAVA_OPTS=-Xms64m -Xmx256m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+    - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
     - ENDPOINTS_CATALOG=http://catalogue:8080
     - ENDPOINTS_CARTS=http://carts:8080
+    - ENDPOINTS_ORDERS=http://orders:8080
     hostname: ui
-    image: docker.io/niallthomson/shop-ui:0.0.2
+    image: docker.io/niallthomson/shop-ui:0.0.3
     ports:
     - 80:8080
     read_only: true
