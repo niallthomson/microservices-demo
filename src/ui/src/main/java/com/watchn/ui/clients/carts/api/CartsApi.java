@@ -24,7 +24,7 @@ import org.springframework.http.MediaType;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-06-30T15:47:45.836028-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-07-01T20:15:13.760294-07:00[America/Los_Angeles]")
 public class CartsApi {
     private ApiClient apiClient;
 
@@ -53,9 +53,10 @@ public class CartsApi {
      * <p><b>401</b> - Unauthorized
      * <p><b>403</b> - Forbidden
      * @param customerId customerId
+     * @return Cart
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public Mono<Void> deleteCart(String customerId) throws RestClientException {
+    public Mono<Cart> deleteCart(String customerId) throws RestClientException {
         Object postBody = null;
         // verify the required parameter 'customerId' is set
         if (customerId == null) {
@@ -71,14 +72,16 @@ public class CartsApi {
         final MultiValueMap<String, String> cookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> formParams = new LinkedMultiValueMap<String, Object>();
 
-        final String[] localVarAccepts = { };
+        final String[] localVarAccepts = { 
+            "*/*"
+        };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         final String[] localVarContentTypes = { };
         final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<Void> localVarReturnType = new ParameterizedTypeReference<Void>() {};
+        ParameterizedTypeReference<Cart> localVarReturnType = new ParameterizedTypeReference<Cart>() {};
         return apiClient.invokeAPI("/carts/{customerId}", HttpMethod.DELETE, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
     /**

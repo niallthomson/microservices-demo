@@ -13,7 +13,7 @@ public interface CartService {
 
     CartEntity merge(String sessionId, String customerId);
 
-    ItemEntity add(String customerId, String itemId, int quantity, float unitPrice);
+    ItemEntity add(String customerId, String itemId, int quantity, int unitPrice);
 
     List<? extends ItemEntity> items(String customerId);
 
@@ -21,5 +21,5 @@ public interface CartService {
 
     void deleteItem(String customerId, String itemId);
 
-    Optional<? extends ItemEntity> update(String customerId, String itemId, int quantity, float unitPrice);
+    Optional<? extends ItemEntity> update(String customerId, String itemId, int quantity, int unitPrice);
 }

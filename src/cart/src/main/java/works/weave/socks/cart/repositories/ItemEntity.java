@@ -5,5 +5,5 @@ public interface ItemEntity {
 
     int getQuantity();
 
-    float getUnitPrice();
+    int getUnitPrice();
 }

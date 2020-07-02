@@ -16,9 +16,9 @@ public class MongoItemEntity implements ItemEntity {
     @NotNull(message = "Item Id must not be null")
     private String itemId;
     private int quantity;
-    private float unitPrice;
+    private int unitPrice;
 
-    public MongoItemEntity(String id, String itemId, int quantity, float unitPrice) {
+    public MongoItemEntity(String id, String itemId, int quantity, int unitPrice) {
         this.id = id;
         this.itemId = itemId;
         this.quantity = quantity;
@@ -26,11 +26,11 @@ public class MongoItemEntity implements ItemEntity {
     }
 
     public MongoItemEntity() {
-        this(null, "", 1, 0F);
+        this(null, "", 1, 0);
     }
 
     public MongoItemEntity(String itemId) {
-        this(null, itemId, 1, 0F);
+        this(null, itemId, 1, 0);
     }
 
     public MongoItemEntity(MongoItemEntity item, String id) {

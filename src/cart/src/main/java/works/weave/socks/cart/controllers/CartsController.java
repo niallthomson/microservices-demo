@@ -31,8 +31,10 @@ public class CartsController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(value = "/{customerId}")
     @ApiOperation(value = "Delete a cart", nickname = "deleteCart")
-    public void delete(@PathVariable String customerId) {
+    public Cart delete(@PathVariable String customerId) {
         this.service.delete(customerId);
+
+        return new Cart();
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)

@@ -18,9 +18,9 @@ public class DynamoItemEntity implements ItemEntity {
 
     private int quantity;
 
-    private float unitPrice;
+    private int unitPrice;
 
-    public DynamoItemEntity(String id, String customerId, String itemId, int quantity, float unitPrice) {
+    public DynamoItemEntity(String id, String customerId, String itemId, int quantity, int unitPrice) {
         this.id = id;
         this.customerId = customerId;
         this.itemId = itemId;
@@ -54,7 +54,7 @@ public class DynamoItemEntity implements ItemEntity {
     }
 
     @DynamoDBAttribute
-    public float getUnitPrice() {
+    public int getUnitPrice() {
         return unitPrice;
     }
 
@@ -74,7 +74,7 @@ public class DynamoItemEntity implements ItemEntity {
         this.quantity = quantity;
     }
 
-    public void setUnitPrice(float unitPrice) {
+    public void setUnitPrice(int unitPrice) {
         this.unitPrice = unitPrice;
     }
 }

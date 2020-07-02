@@ -84,7 +84,7 @@ public class DynamoDBCartService implements CartService {
     }
 
     @Override
-    public ItemEntity add(String customerId, String itemId, int quantity, float unitPrice) {
+    public ItemEntity add(String customerId, String itemId, int quantity, int unitPrice) {
         DynamoItemEntity item = new DynamoItemEntity(hashKey(customerId, itemId), customerId, itemId, 1, unitPrice);
 
         return this.repository.save(item);
@@ -106,7 +106,7 @@ public class DynamoDBCartService implements CartService {
     }
 
     @Override
-    public Optional<DynamoItemEntity> update(String customerId, String itemId, int quantity, float unitPrice) {
+    public Optional<DynamoItemEntity> update(String customerId, String itemId, int quantity, int unitPrice) {
         return item(customerId, itemId).map(
             item -> {
                 item.setQuantity(quantity);

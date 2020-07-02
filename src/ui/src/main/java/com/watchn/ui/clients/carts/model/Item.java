@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   Item.JSON_PROPERTY_QUANTITY,
   Item.JSON_PROPERTY_UNIT_PRICE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-06-30T15:47:45.836028-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-07-01T20:15:13.760294-07:00[America/Los_Angeles]")
 public class Item {
   public static final String JSON_PROPERTY_ITEM_ID = "itemId";
   private String itemId;
@@ -40,7 +40,7 @@ public class Item {
   private Integer quantity;
 
   public static final String JSON_PROPERTY_UNIT_PRICE = "unitPrice";
-  private Float unitPrice;
+  private Integer unitPrice;
 
 
   public Item itemId(String itemId) {
@@ -93,7 +93,7 @@ public class Item {
   }
 
 
-  public Item unitPrice(Float unitPrice) {
+  public Item unitPrice(Integer unitPrice) {
     
     this.unitPrice = unitPrice;
     return this;
@@ -108,12 +108,12 @@ public class Item {
   @JsonProperty(JSON_PROPERTY_UNIT_PRICE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public Float getUnitPrice() {
+  public Integer getUnitPrice() {
     return unitPrice;
   }
 
 
-  public void setUnitPrice(Float unitPrice) {
+  public void setUnitPrice(Integer unitPrice) {
     this.unitPrice = unitPrice;
   }
 

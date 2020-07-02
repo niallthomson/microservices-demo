@@ -3,7 +3,7 @@ package com.watchn.ui.clients.carts.auth;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-06-30T15:47:45.836028-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-07-01T20:15:13.760294-07:00[America/Los_Angeles]")
 public class ApiKeyAuth implements Authentication {
     private final String location;
     private final String paramName;

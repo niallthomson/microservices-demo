@@ -54,7 +54,7 @@ public class MongoCartService implements CartService {
     }
 
     @Override
-    public ItemEntity add(String customerId, String itemId, int quantity, float unitPrice) {
+    public ItemEntity add(String customerId, String itemId, int quantity, int unitPrice) {
         MongoCartEntity cart = get(customerId);
 
         MongoItemEntity item = new MongoItemEntity(customerId+itemId, itemId, quantity, unitPrice);
@@ -91,7 +91,7 @@ public class MongoCartService implements CartService {
     }
 
     @Override
-    public Optional<MongoItemEntity> update(String customerId, String itemId, int quantity, float unitPrice) {
+    public Optional<MongoItemEntity> update(String customerId, String itemId, int quantity, int unitPrice) {
         return item(customerId, itemId).map(
             item -> {
                 item.setQuantity(quantity);

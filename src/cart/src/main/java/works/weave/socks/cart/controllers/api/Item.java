@@ -9,7 +9,7 @@ public class Item {
 
     private int quantity;
 
-    private float unitPrice;
+    private int unitPrice;
 
     public static Item from(ItemEntity itemEntity) {
         Item item = new Item();

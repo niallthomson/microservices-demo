@@ -23,7 +23,7 @@ public class InMemoryCartService implements CartService {
     }
 
     @Override
-    public ItemEntity add(String customerId, String itemId, int quantity, float unitPrice) {
+    public ItemEntity add(String customerId, String itemId, int quantity, int unitPrice) {
         return null;
     }
 
@@ -43,7 +43,7 @@ public class InMemoryCartService implements CartService {
     }
 
     @Override
-    public Optional<? extends ItemEntity> update(String customerId, String itemId, int quantity, float unitPrice) {
+    public Optional<? extends ItemEntity> update(String customerId, String itemId, int quantity, int unitPrice) {
         return Optional.empty();
     }
 }

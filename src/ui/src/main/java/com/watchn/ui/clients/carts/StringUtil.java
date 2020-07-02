@@ -13,7 +13,7 @@
 
 package com.watchn.ui.clients.carts;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-06-30T15:47:45.836028-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-07-01T20:15:13.760294-07:00[America/Los_Angeles]")
 public class StringUtil {
   /**
    * Check if the given array contains the given value (with case-insensitive comparison).
