@@ -29,10 +29,10 @@ metadata:
   annotations:
     kbld.k14s.io/images: |
       - Metas:
-        - Tag: latest
+        - Tag: 1.13.1
           Type: resolved
-          URL: mongo
-        URL: index.docker.io/library/mongo@sha256:29805e9a6fc2a233b9b633c7b0f382a43df3f119522b82366a72abecb302a793
+          URL: amazon/dynamodb-local:1.13.1
+        URL: index.docker.io/amazon/dynamodb-local@sha256:648d5f0a5eb96b789040dcc56256a5b16a4097722327e7c8e1598daaa2fde385
   labels:
     name: carts-db
   name: carts-db
@@ -48,27 +48,11 @@ spec:
         name: carts-db
     spec:
       containers:
-      - image: index.docker.io/library/mongo@sha256:29805e9a6fc2a233b9b633c7b0f382a43df3f119522b82366a72abecb302a793
+      - image: index.docker.io/amazon/dynamodb-local@sha256:648d5f0a5eb96b789040dcc56256a5b16a4097722327e7c8e1598daaa2fde385
         name: carts-db
         ports:
-        - containerPort: 27017
-          name: mongo
-        securityContext:
-          capabilities:
-            add:
-            - CHOWN
-            - SETGID
-            - SETUID
-            drop:
-            - all
-          readOnlyRootFilesystem: true
-        volumeMounts:
-        - mountPath: /tmp
-          name: tmp-volume
-      volumes:
-      - emptyDir:
-          medium: Memory
-        name: tmp-volume
+        - containerPort: 8000
+          name: dynamodb
 ---
 apiVersion: v1
 kind: Service
@@ -79,8 +63,8 @@ metadata:
   namespace: watchn
 spec:
   ports:
-  - port: 27017
-    targetPort: 27017
+  - port: 8000
+    targetPort: 8000
   selector:
     name: carts-db
 ---
@@ -113,6 +97,14 @@ spec:
         - name: JAVA_OPTS
           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
+        - name: SPRING_PROFILES_ACTIVE
+          value: dynamodb
+        - name: AMAZON_DYNAMODB_endpoint
+          value: http://carts-db:8000
+        - name: AWS_ACCESS_KEY_ID
+          value: key
+        - name: AWS_SECRET_ACCESS_KEY
+          value: secret
         image: docker.io/niallthomson/shop-carts:0.0.3
         name: carts
         ports:
