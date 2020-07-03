@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.watchn.ui.clients.orders.model.CreateOrderRequestItem;
+import com.watchn.ui.clients.orders.model.OrderItem;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -27,26 +27,55 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
- * CreateOrderRequest
+ * Order
  */
 @JsonPropertyOrder({
-  CreateOrderRequest.JSON_PROPERTY_FIRST_NAME,
-  CreateOrderRequest.JSON_PROPERTY_ITEMS,
-  CreateOrderRequest.JSON_PROPERTY_LAST_NAME
+  Order.JSON_PROPERTY_EMAIL,
+  Order.JSON_PROPERTY_FIRST_NAME,
+  Order.JSON_PROPERTY_ITEMS,
+  Order.JSON_PROPERTY_LAST_NAME
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-07-01T16:06:42.716331-07:00[America/Los_Angeles]")
-public class CreateOrderRequest {
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-07-02T17:56:52.349214-07:00[America/Los_Angeles]")
+public class Order {
+  public static final String JSON_PROPERTY_EMAIL = "email";
+  private String email;
+
   public static final String JSON_PROPERTY_FIRST_NAME = "firstName";
   private String firstName;
 
   public static final String JSON_PROPERTY_ITEMS = "items";
-  private List<CreateOrderRequestItem> items = null;
+  private List<OrderItem> items = null;
 
   public static final String JSON_PROPERTY_LAST_NAME = "lastName";
   private String lastName;
 
 
-  public CreateOrderRequest firstName(String firstName) {
+  public Order email(String email) {
+    
+    this.email = email;
+    return this;
+  }
+
+   /**
+   * Get email
+   * @return email
+  **/
+  @javax.annotation.Nullable
+  @ApiModelProperty(value = "")
+  @JsonProperty(JSON_PROPERTY_EMAIL)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public String getEmail() {
+    return email;
+  }
+
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+
+  public Order firstName(String firstName) {
     
     this.firstName = firstName;
     return this;
@@ -71,13 +100,13 @@ public class CreateOrderRequest {
   }
 
 
-  public CreateOrderRequest items(List<CreateOrderRequestItem> items) {
+  public Order items(List<OrderItem> items) {
     
     this.items = items;
     return this;
   }
 
-  public CreateOrderRequest addItemsItem(CreateOrderRequestItem itemsItem) {
+  public Order addItemsItem(OrderItem itemsItem) {
     if (this.items == null) {
       this.items = new ArrayList<>();
     }
@@ -94,17 +123,17 @@ public class CreateOrderRequest {
   @JsonProperty(JSON_PROPERTY_ITEMS)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public List<CreateOrderRequestItem> getItems() {
+  public List<OrderItem> getItems() {
     return items;
   }
 
 
-  public void setItems(List<CreateOrderRequestItem> items) {
+  public void setItems(List<OrderItem> items) {
     this.items = items;
   }
 
 
-  public CreateOrderRequest lastName(String lastName) {
+  public Order lastName(String lastName) {
     
     this.lastName = lastName;
     return this;
@@ -137,22 +166,24 @@ public class CreateOrderRequest {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CreateOrderRequest createOrderRequest = (CreateOrderRequest) o;
-    return Objects.equals(this.firstName, createOrderRequest.firstName) &&
-        Objects.equals(this.items, createOrderRequest.items) &&
-        Objects.equals(this.lastName, createOrderRequest.lastName);
+    Order order = (Order) o;
+    return Objects.equals(this.email, order.email) &&
+        Objects.equals(this.firstName, order.firstName) &&
+        Objects.equals(this.items, order.items) &&
+        Objects.equals(this.lastName, order.lastName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(firstName, items, lastName);
+    return Objects.hash(email, firstName, items, lastName);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class CreateOrderRequest {\n");
+    sb.append("class Order {\n");
+    sb.append("    email: ").append(toIndentedString(email)).append("\n");
     sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
     sb.append("    items: ").append(toIndentedString(items)).append("\n");
     sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");

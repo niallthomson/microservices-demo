@@ -63,7 +63,7 @@ import com.watchn.ui.clients.orders.auth.HttpBasicAuth;
 import com.watchn.ui.clients.orders.auth.HttpBearerAuth;
 import com.watchn.ui.clients.orders.auth.ApiKeyAuth;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-07-01T16:06:42.716331-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-07-02T17:56:52.349214-07:00[America/Los_Angeles]")
 public class ApiClient {
     public enum CollectionFormat {
         CSV(","), TSV("\t"), SSV(" "), PIPES("|"), MULTI(null);

@@ -23,7 +23,7 @@ public class CatalogController extends BaseController {
 
     public CatalogController(@Autowired CatalogApi catalogApi, @Autowired CartsApi cartsApi) {
         super(cartsApi);
-        //this.catalogApi = new CatalogApi(new ApiClient().setBasePath("http://localhost:8081"));
+
         this.catalogApi = catalogApi;
     }
 

@@ -10,5 +10,7 @@ public class Order {
 
     private String lastName;
 
+    private String email;
+
     private List<OrderItem> items;
 }

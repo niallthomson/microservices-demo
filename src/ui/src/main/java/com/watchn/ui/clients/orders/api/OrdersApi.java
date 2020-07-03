@@ -2,8 +2,8 @@ package com.watchn.ui.clients.orders.api;
 
 import com.watchn.ui.clients.orders.ApiClient;
 
-import com.watchn.ui.clients.orders.model.CreateOrderRequest;
-import com.watchn.ui.clients.orders.model.CreateOrderResponse;
+import com.watchn.ui.clients.orders.model.ExistingOrder;
+import com.watchn.ui.clients.orders.model.Order;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +25,7 @@ import org.springframework.http.MediaType;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-07-01T16:06:42.716331-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-07-02T17:56:52.349214-07:00[America/Los_Angeles]")
 public class OrdersApi {
     private ApiClient apiClient;
 
@@ -54,15 +54,15 @@ public class OrdersApi {
      * <p><b>401</b> - Unauthorized
      * <p><b>403</b> - Forbidden
      * <p><b>404</b> - Not Found
-     * @param createOrderRequest createOrderRequest
-     * @return CreateOrderResponse
+     * @param orderRequest orderRequest
+     * @return ExistingOrder
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public Mono<CreateOrderResponse> createOrder(CreateOrderRequest createOrderRequest) throws RestClientException {
-        Object postBody = createOrderRequest;
-        // verify the required parameter 'createOrderRequest' is set
-        if (createOrderRequest == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'createOrderRequest' when calling createOrder");
+    public Mono<ExistingOrder> createOrder(Order orderRequest) throws RestClientException {
+        Object postBody = orderRequest;
+        // verify the required parameter 'orderRequest' is set
+        if (orderRequest == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'orderRequest' when calling createOrder");
         }
         // create path and map variables
         final Map<String, Object> pathParams = new HashMap<String, Object>();
@@ -83,7 +83,39 @@ public class OrdersApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<CreateOrderResponse> localVarReturnType = new ParameterizedTypeReference<CreateOrderResponse>() {};
+        ParameterizedTypeReference<ExistingOrder> localVarReturnType = new ParameterizedTypeReference<ExistingOrder>() {};
         return apiClient.invokeAPI("/orders", HttpMethod.POST, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+    }
+    /**
+     * List orders
+     * 
+     * <p><b>200</b> - OK
+     * <p><b>401</b> - Unauthorized
+     * <p><b>403</b> - Forbidden
+     * <p><b>404</b> - Not Found
+     * @return List&lt;ExistingOrder&gt;
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public Flux<ExistingOrder> listOrders() throws RestClientException {
+        Object postBody = null;
+        // create path and map variables
+        final Map<String, Object> pathParams = new HashMap<String, Object>();
+
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders headerParams = new HttpHeaders();
+        final MultiValueMap<String, String> cookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> formParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "*/*"
+        };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = { };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] {  };
+
+        ParameterizedTypeReference<ExistingOrder> localVarReturnType = new ParameterizedTypeReference<ExistingOrder>() {};
+        return apiClient.invokeFluxAPI("/orders", HttpMethod.GET, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 }

@@ -41,11 +41,10 @@ public class CartController extends BaseController {
 
         model.addAttribute("fullCart", cartsApi.getCart(sessionId)
                 .flatMapMany(c -> Flux.fromIterable(c.getItems()))
-                .flatMap(i -> {
-                    return this.catalogApi.catalogueProductIdGet(i.getItemId()).map(p -> {
-                        return CartItem.from(i, p);
-                    });
-                }).collectList().map(Cart::from)
+                .flatMap(i -> this.catalogApi.catalogueProductIdGet(i.getItemId())
+                        .map(p -> CartItem.from(i, p)))
+                .collectList()
+                .map(Cart::from)
         );
 
         this.populateCart(request, model);

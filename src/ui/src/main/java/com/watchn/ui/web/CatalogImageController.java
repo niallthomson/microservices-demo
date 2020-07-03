@@ -28,11 +28,5 @@ public class CatalogImageController {
                 .accept(MediaType.IMAGE_JPEG)
                 .retrieve()
                 .bodyToMono(byte[].class);
-
-        /*return WebClient.create("https://greatatmosphere.files.wordpress.com/2013/02/great-atmosphere-149-tenaya-lake-yosemite-national-park-2.jpg")
-                .get()
-                .accept(MediaType.IMAGE_JPEG)
-                .retrieve()
-                .bodyToMono(byte[].class);*/
     }
 }

@@ -25,10 +25,8 @@ public class OrderController {
 
     @PostMapping
     @ApiOperation(value = "Create an order", nickname = "createOrder")
-    public CreateOrderResponse order(@RequestBody Order orderRequest) {
-        OrderEntity order = this.service.create(this.orderMapper.toOrderEntity(orderRequest));
-
-        return new CreateOrderResponse(order.getId());
+    public ExistingOrder order(@RequestBody Order orderRequest) {
+        return this.orderMapper.toExistingOrder(this.service.create(this.orderMapper.toOrderEntity(orderRequest)));
     }
 
     @GetMapping

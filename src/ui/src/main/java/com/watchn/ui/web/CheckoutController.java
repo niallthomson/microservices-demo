@@ -4,8 +4,8 @@ import com.watchn.ui.clients.carts.api.CartsApi;
 import com.watchn.ui.clients.carts.model.Item;
 import com.watchn.ui.clients.catalog.api.CatalogApi;
 import com.watchn.ui.clients.orders.api.OrdersApi;
-import com.watchn.ui.clients.orders.model.CreateOrderRequest;
-import com.watchn.ui.clients.orders.model.CreateOrderRequestItem;
+import com.watchn.ui.clients.orders.model.Order;
+import com.watchn.ui.clients.orders.model.OrderItem;
 import com.watchn.ui.web.payload.Cart;
 import com.watchn.ui.web.payload.CartItem;
 import com.watchn.ui.web.payload.OrderRequest;
@@ -41,11 +41,10 @@ public class CheckoutController extends BaseController {
 
         model.addAttribute("fullCart", cartsApi.getCart(sessionId)
                 .flatMapMany(c -> Flux.fromIterable(c.getItems()))
-                .flatMap(i -> {
-                    return this.catalogApi.catalogueProductIdGet(i.getItemId()).map(p -> {
-                        return CartItem.from(i, p);
-                    });
-                }).collectList().map(Cart::from)
+                .flatMap(i -> this.catalogApi.catalogueProductIdGet(i.getItemId())
+                        .map(p -> CartItem.from(i, p)))
+                .collectList()
+                .map(Cart::from)
         );
 
         this.populateCart(request, model);
@@ -57,17 +56,18 @@ public class CheckoutController extends BaseController {
     public Mono<String> order(@ModelAttribute OrderRequest orderRequest, ServerHttpRequest request, Model model) {
         String sessionId = getSessionID(request);
 
-        CreateOrderRequest createOrderRequest = new CreateOrderRequest();
+        Order createOrderRequest = new Order();
         createOrderRequest.setFirstName(orderRequest.getFirstName());
         createOrderRequest.setLastName(orderRequest.getLastName());
+        createOrderRequest.setEmail(orderRequest.getEmail());
 
         return cartsApi.getCart(sessionId).flatMap(
                 cart -> {
                     for(Item item : cart.getItems()) {
-                        CreateOrderRequestItem orderItem = new CreateOrderRequestItem();
-                        orderItem.setProductId(item.getItemId());
-                        orderItem.setQuantity(item.getQuantity());
-                        orderItem.setPrice(item.getUnitPrice());
+                        OrderItem orderItem = new OrderItem()
+                                .productId(item.getItemId())
+                                .quantity(item.getQuantity())
+                                .price(item.getUnitPrice());
 
                         createOrderRequest.addItemsItem(orderItem);
                     }
@@ -78,9 +78,7 @@ public class CheckoutController extends BaseController {
                 .doOnNext(o -> {
                     model.addAttribute("order", o);
                 })
-                .map(o -> {
-                    return this.cartsApi.deleteCart(sessionId);
-                })
+                .map(o -> this.cartsApi.deleteCart(sessionId))
                 .doOnNext(c -> {
                     model.addAttribute("cart", c);
                 })

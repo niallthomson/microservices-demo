@@ -24,15 +24,15 @@ import io.swagger.annotations.ApiModelProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
- * CreateOrderRequestItem
+ * OrderItem
  */
 @JsonPropertyOrder({
-  CreateOrderRequestItem.JSON_PROPERTY_PRICE,
-  CreateOrderRequestItem.JSON_PROPERTY_PRODUCT_ID,
-  CreateOrderRequestItem.JSON_PROPERTY_QUANTITY
+  OrderItem.JSON_PROPERTY_PRICE,
+  OrderItem.JSON_PROPERTY_PRODUCT_ID,
+  OrderItem.JSON_PROPERTY_QUANTITY
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-07-01T16:06:42.716331-07:00[America/Los_Angeles]")
-public class CreateOrderRequestItem {
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-07-02T17:56:52.349214-07:00[America/Los_Angeles]")
+public class OrderItem {
   public static final String JSON_PROPERTY_PRICE = "price";
   private Integer price;
 
@@ -43,7 +43,7 @@ public class CreateOrderRequestItem {
   private Integer quantity;
 
 
-  public CreateOrderRequestItem price(Integer price) {
+  public OrderItem price(Integer price) {
     
     this.price = price;
     return this;
@@ -68,7 +68,7 @@ public class CreateOrderRequestItem {
   }
 
 
-  public CreateOrderRequestItem productId(String productId) {
+  public OrderItem productId(String productId) {
     
     this.productId = productId;
     return this;
@@ -93,7 +93,7 @@ public class CreateOrderRequestItem {
   }
 
 
-  public CreateOrderRequestItem quantity(Integer quantity) {
+  public OrderItem quantity(Integer quantity) {
     
     this.quantity = quantity;
     return this;
@@ -126,10 +126,10 @@ public class CreateOrderRequestItem {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CreateOrderRequestItem createOrderRequestItem = (CreateOrderRequestItem) o;
-    return Objects.equals(this.price, createOrderRequestItem.price) &&
-        Objects.equals(this.productId, createOrderRequestItem.productId) &&
-        Objects.equals(this.quantity, createOrderRequestItem.quantity);
+    OrderItem orderItem = (OrderItem) o;
+    return Objects.equals(this.price, orderItem.price) &&
+        Objects.equals(this.productId, orderItem.productId) &&
+        Objects.equals(this.quantity, orderItem.quantity);
   }
 
   @Override
@@ -141,7 +141,7 @@ public class CreateOrderRequestItem {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class CreateOrderRequestItem {\n");
+    sb.append("class OrderItem {\n");
     sb.append("    price: ").append(toIndentedString(price)).append("\n");
     sb.append("    productId: ").append(toIndentedString(productId)).append("\n");
     sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
