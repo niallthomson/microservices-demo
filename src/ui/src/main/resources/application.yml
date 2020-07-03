@@ -1,5 +1,12 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 
-spring.codec.max-in-memory-size: 10MB
+server:
+  port: ${port:8080}
+  codec.max-in-memory-size: 10MB
 
 endpoints:
   catalog: http://localhost:8081

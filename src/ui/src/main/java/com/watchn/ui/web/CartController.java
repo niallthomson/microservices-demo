@@ -57,7 +57,9 @@ public class CartController extends BaseController {
     public Mono<String> add(@ModelAttribute CartChangeRequest addRequest, ServerHttpRequest request) {
         String sessionId = getSessionID(request);
 
-        return this.itemsApi.addItem(sessionId, new Item().itemId(addRequest.getProductId()))
+        return this.catalogApi.catalogueProductIdGet(addRequest.getProductId())
+                .map(p -> new Item().itemId(p.getId()).quantity(1).unitPrice(p.getPrice()))
+                .flatMap(i -> this.itemsApi.addItem(sessionId, i))
                 .thenReturn("redirect:/cart");
     }
 
