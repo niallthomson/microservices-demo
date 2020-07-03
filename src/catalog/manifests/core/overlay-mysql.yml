@@ -1,0 +1,110 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:base64", "base64")
+#@ load("@ytt:overlay", "overlay")
+
+#@ if data.values.includeServices:
+apiVersion: v1
+kind: Secret
+metadata:
+  name: #@ data.values.catalog.services.mysqlWriter.secret
+  namespace: #@ data.values.namespace
+data:
+  endpoint: #@ base64.encode("catalog-db:3306")
+  name: #@ base64.encode("catalog")
+  username: #@ base64.encode("catalog_user")
+  password: #@ base64.encode("default_password")
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: #@ data.values.catalog.services.mysqlReader.secret
+  namespace: #@ data.values.namespace
+data:
+  endpoint: #@ base64.encode("catalog-db:3306")
+  name: #@ base64.encode("catalog")
+  username: #@ base64.encode("catalog_user")
+  password: #@ base64.encode("default_password")
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogue-db
+  labels:
+    name: catalogue-db
+  namespace: #@ data.values.namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: catalogue-db
+  template:
+    metadata:
+      labels:
+        name: catalogue-db
+    spec:
+      containers:
+      - name: catalogue-db
+        image: mysql:5.7
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: my-secret-pw
+          - name: MYSQL_DATABASE
+            value: catalog
+          - name: MYSQL_USER
+            value: catalog_user
+          - name: MYSQL_PASSWORD
+            value: default_password
+        ports:
+        - name: mysql
+          containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-db
+  labels:
+    name: catalog-db
+  namespace: #@ data.values.namespace
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  selector:
+    name: catalogue-db
+#@ end
+
+#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "catalogue"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by="name"
+      - name: catalogue
+        #@overlay/match-child-defaults missing_ok=True
+        #@overlay/match missing_ok=True
+        env:
+        #@overlay/match by="name"
+        - name: DB_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: #@ data.values.catalog.services.mysqlWriter.secret
+              key: endpoint
+        #@overlay/match by="name"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: #@ data.values.catalog.services.mysqlWriter.secret
+              key: username
+        #@overlay/match by="name"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: #@ data.values.catalog.services.mysqlWriter.secret
+              key: password
+        #@overlay/match by="name"
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: #@ data.values.catalog.services.mysqlWriter.secret
+              key: name

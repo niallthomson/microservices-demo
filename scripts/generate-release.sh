@@ -15,5 +15,5 @@ if [ -z "${TAG}" ]; then
 fi
 
 $DIR/push-all.sh
-$DIR/../deploy/docker-compose/scripts/create-complete-compose.sh --data-value imageTag=$TAG
-$DIR/../deploy/kubernetes/scripts/create-complete-manifest.sh --data-value imageTag=$TAG
+$DIR/../deploy/docker-compose/scripts/generate-manifest.sh --data-value imageTag=$TAG > $DIR/../deploy/docker-compose/docker-compose.yml
+$DIR/../deploy/kubernetes/scripts/generate-manifest.sh --data-value imageTag=$TAG --data-value includeServices=true  > $DIR/../deploy/kubernetes/complete.yml

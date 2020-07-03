@@ -4,3 +4,4 @@ namespace: watchn
 imagePath: ../../../images
 imageTag: ""
 pushRepo: ""
+includeServices: false

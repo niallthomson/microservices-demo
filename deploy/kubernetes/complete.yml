@@ -142,6 +142,93 @@ metadata:
   annotations:
     kbld.k14s.io/images: |
       - Metas:
+        - Type: preresolved
+          URL: docker.io/niallthomson/shop-catalog:v0.0.4
+        URL: docker.io/niallthomson/shop-catalog:v0.0.4
+  labels:
+    name: catalogue
+  name: catalogue
+  namespace: watchn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: catalogue
+  template:
+    metadata:
+      labels:
+        fargate: "true"
+        name: catalogue
+    spec:
+      containers:
+      - env:
+        - name: DB_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              key: endpoint
+              name: catalog-writer-db
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: catalog-writer-db
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: catalog-writer-db
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              key: name
+              name: catalog-writer-db
+        image: docker.io/niallthomson/shop-catalog:v0.0.4
+        name: catalogue
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: catalogue
+  name: catalogue
+  namespace: watchn
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    name: catalogue
+---
+apiVersion: v1
+data:
+  endpoint: Y2F0YWxvZy1kYjozMzA2
+  name: Y2F0YWxvZw==
+  password: ZGVmYXVsdF9wYXNzd29yZA==
+  username: Y2F0YWxvZ191c2Vy
+kind: Secret
+metadata:
+  name: catalog-writer-db
+  namespace: watchn
+---
+apiVersion: v1
+data:
+  endpoint: Y2F0YWxvZy1kYjozMzA2
+  name: Y2F0YWxvZw==
+  password: ZGVmYXVsdF9wYXNzd29yZA==
+  username: Y2F0YWxvZ191c2Vy
+kind: Secret
+metadata:
+  name: catalog-reader-db
+  namespace: watchn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
         - Tag: "5.7"
           Type: resolved
           URL: mysql:5.7
@@ -165,7 +252,7 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           value: my-secret-pw
         - name: MYSQL_DATABASE
-          value: watchndb
+          value: catalog
         - name: MYSQL_USER
           value: catalog_user
         - name: MYSQL_PASSWORD
@@ -189,50 +276,6 @@ spec:
     targetPort: 3306
   selector:
     name: catalogue-db
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kbld.k14s.io/images: |
-      - Metas:
-        - Type: preresolved
-          URL: docker.io/niallthomson/shop-catalog:v0.0.4
-        URL: docker.io/niallthomson/shop-catalog:v0.0.4
-  labels:
-    name: catalogue
-  name: catalogue
-  namespace: watchn
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: catalogue
-  template:
-    metadata:
-      labels:
-        fargate: "true"
-        name: catalogue
-    spec:
-      containers:
-      - image: docker.io/niallthomson/shop-catalog:v0.0.4
-        name: catalogue
-        ports:
-        - containerPort: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    name: catalogue
-  name: catalogue
-  namespace: watchn
-spec:
-  ports:
-  - port: 8080
-    targetPort: 8080
-  selector:
-    name: catalogue
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -307,6 +350,120 @@ metadata:
   annotations:
     kbld.k14s.io/images: |
       - Metas:
+        - Type: preresolved
+          URL: docker.io/niallthomson/shop-orders:v0.0.4
+        URL: docker.io/niallthomson/shop-orders:v0.0.4
+  labels:
+    name: orders
+  name: orders
+  namespace: watchn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: orders
+  template:
+    metadata:
+      labels:
+        fargate: "true"
+        name: orders
+    spec:
+      containers:
+      - env:
+        - name: JAVA_OPTS
+          value: -Xms128m -Xmx512m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
+            -Djava.security.egd=file:/dev/urandom
+        - name: SERVER_TOMCAT_ACCESSLOG_ENABLED
+          value: "true"
+        - name: SPRING_PROFILES_ACTIVE
+          value: mysql
+        - name: SPRING_DATASOURCE_WRITER_URL
+          valueFrom:
+            secretKeyRef:
+              key: url
+              name: orders-writer-db
+        - name: SPRING_DATASOURCE_WRITER_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: orders-writer-db
+        - name: SPRING_DATASOURCE_WRITER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: orders-writer-db
+        - name: SPRING_DATASOURCE_READER_URL
+          valueFrom:
+            secretKeyRef:
+              key: url
+              name: orders-reader-db
+        - name: SPRING_DATASOURCE_READER_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: orders-reader-db
+        - name: SPRING_DATASOURCE_READER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: orders-reader-db
+        image: docker.io/niallthomson/shop-orders:v0.0.4
+        name: orders
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            memory: 512Mi
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - emptyDir:
+          medium: Memory
+        name: tmp-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: orders
+  name: orders
+  namespace: watchn
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    name: orders
+---
+apiVersion: v1
+data:
+  password: ZGVmYXVsdF9wYXNzd29yZA==
+  url: amRiYzpteXNxbDovL29yZGVycy1kYjozMzA2L29yZGVycw==
+  username: b3JkZXJzX3VzZXI=
+kind: Secret
+metadata:
+  name: orders-writer-db
+  namespace: watchn
+---
+apiVersion: v1
+data:
+  password: ZGVmYXVsdF9wYXNzd29yZA==
+  url: amRiYzpteXNxbDovL29yZGVycy1kYjozMzA2L29yZGVycw==
+  username: b3JkZXJzX3VzZXI=
+kind: Secret
+metadata:
+  name: orders-reader-db
+  namespace: watchn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
         - Tag: "5.7"
           Type: resolved
           URL: mysql:5.7
@@ -354,79 +511,3 @@ spec:
     targetPort: 3306
   selector:
     name: orders-db
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kbld.k14s.io/images: |
-      - Metas:
-        - Type: preresolved
-          URL: docker.io/niallthomson/shop-orders:v0.0.4
-        URL: docker.io/niallthomson/shop-orders:v0.0.4
-  labels:
-    name: orders
-  name: orders
-  namespace: watchn
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: orders
-  template:
-    metadata:
-      labels:
-        fargate: "true"
-        name: orders
-    spec:
-      containers:
-      - env:
-        - name: JAVA_OPTS
-          value: -Xms128m -Xmx512m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
-            -Djava.security.egd=file:/dev/urandom
-        - name: SERVER_TOMCAT_ACCESSLOG_ENABLED
-          value: "true"
-        - name: SPRING_PROFILES_ACTIVE
-          value: mysql
-        - name: SPRING_DATASOURCE_WRITER_URL
-          value: jdbc:mysql://orders-db:3306/orders
-        - name: SPRING_DATASOURCE_WRITER_USERNAME
-          value: orders_user
-        - name: SPRING_DATASOURCE_WRITER_PASSWORD
-          value: default_password
-        - name: SPRING_DATASOURCE_READER_URL
-          value: jdbc:mysql://orders-db:3306/orders
-        - name: SPRING_DATASOURCE_READER_USERNAME
-          value: orders_user
-        - name: SPRING_DATASOURCE_READER_PASSWORD
-          value: default_password
-        image: docker.io/niallthomson/shop-orders:v0.0.4
-        name: orders
-        ports:
-        - containerPort: 8080
-        resources:
-          limits:
-            memory: 512Mi
-          requests:
-            memory: 512Mi
-        volumeMounts:
-        - mountPath: /tmp
-          name: tmp-volume
-      volumes:
-      - emptyDir:
-          medium: Memory
-        name: tmp-volume
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    name: orders
-  name: orders
-  namespace: watchn
-spec:
-  ports:
-  - port: 8080
-    targetPort: 8080
-  selector:
-    name: orders

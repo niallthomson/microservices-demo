@@ -4,3 +4,8 @@
 orders:
   image: watchn-shop-orders
   imagePath: .
+  services:
+    mysqlWriter:
+      secret: orders-writer-db
+    mysqlReader:
+      secret: orders-reader-db

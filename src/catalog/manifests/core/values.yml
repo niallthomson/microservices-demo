@@ -4,3 +4,8 @@
 catalog:
   image: watchn-catalog
   imagePath: .
+  services:
+    mysqlWriter:
+      secret: catalog-writer-db
+    mysqlReader:
+      secret: catalog-reader-db
