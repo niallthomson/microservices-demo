@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: ../../images/java11/Dockerfile
       args:
-        JAR_PATH: target/carts-2.2.6.RELEASE.jar
+        JAR_PATH: target/carts-0.0.1-SNAPSHOT.jar
     image: microservices-demo/carts
     hostname: carts
     restart: always

@@ -1,32 +1,32 @@
 version: '2'
 
 services:
-    catalog:
-      build:
-        context: .
-        dockerfile: Dockerfile
-        args:
-          MAIN_PATH: main.go
-      image: microservices-demo/catalog
-      hostname: catalog
-      depends_on:
-      - catalog-db
-      restart: always
-      cap_drop:
-        - all
-      read_only: true
-      environment:
-        - reschedule=on-node-failure
-      ports:
-        - "8081:8080"
-    catalog-db:
-      image: mysql:5.7
-      hostname: catalog-db
-      restart: always
-      environment:
-        - reschedule=on-node-failure
-        - MYSQL_ROOT_PASSWORD=my-secret-pw
-        - MYSQL_ALLOW_EMPTY_PASSWORD=true
-        - MYSQL_DATABASE=watchndb
-        - MYSQL_USER=catalog_user
-        - MYSQL_PASSWORD=default_password
+  catalog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MAIN_PATH: main.go
+    image: microservices-demo/catalog
+    hostname: catalog
+    depends_on:
+    - catalog-db
+    restart: always
+    cap_drop:
+      - all
+    read_only: true
+    environment:
+      - reschedule=on-node-failure
+    ports:
+      - "8081:8080"
+  catalog-db:
+    image: mysql:5.7
+    hostname: catalog-db
+    restart: always
+    environment:
+      - reschedule=on-node-failure
+      - MYSQL_ROOT_PASSWORD=my-secret-pw
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_DATABASE=watchndb
+      - MYSQL_USER=catalog_user
+      - MYSQL_PASSWORD=default_password
