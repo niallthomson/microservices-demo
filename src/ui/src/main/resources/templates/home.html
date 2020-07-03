@@ -66,9 +66,9 @@ _________________________________________________________
         <div class="product-slider owl-carousel owl-theme">
             <div class="item" th:each="item : ${catalog}">
                 <div class="product">
-                    <a href="detail.html"><img src="img/product1.jpg" th:src="${item.imageUrl}" alt="" class="img-fluid"></a>
+                    <a th:href="@{/catalog/{itemId}(itemId=${item.id})}"><img src="img/product1.jpg" th:src="${item.imageUrl}" alt="" class="img-fluid"></a>
                     <div class="text">
-                        <h3><a href="detail.html" th:text="${item.name}">Fur coat with very but very very long name</a></h3>
+                        <h3><a th:href="@{/catalog/{itemId}(itemId=${item.id})}" th:text="${item.name}">Fur coat with very but very very long name</a></h3>
                         <p class="price">
                             <del></del>$<span th:text="${item.price}">143.00</span>
                         </p>
