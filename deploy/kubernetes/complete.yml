@@ -385,7 +385,7 @@ spec:
           value: -Xms128m -Xmx512m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
         - name: SERVER_TOMCAT_ACCESSLOG_ENABLED
-          value: true
+          value: "true"
         - name: SPRING_PROFILES_ACTIVE
           value: mysql
         - name: SPRING_DATASOURCE_WRITER_URL
