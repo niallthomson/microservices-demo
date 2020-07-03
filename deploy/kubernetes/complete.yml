@@ -75,8 +75,8 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-carts:0.0.3
-        URL: docker.io/niallthomson/shop-carts:0.0.3
+          URL: docker.io/niallthomson/shop-carts:v0.0.4
+        URL: docker.io/niallthomson/shop-carts:v0.0.4
   labels:
     name: carts
   name: carts
@@ -105,7 +105,7 @@ spec:
           value: key
         - name: AWS_SECRET_ACCESS_KEY
           value: secret
-        image: docker.io/niallthomson/shop-carts:0.0.3
+        image: docker.io/niallthomson/shop-carts:v0.0.4
         name: carts
         ports:
         - containerPort: 8080
@@ -197,8 +197,8 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-catalog:0.0.3
-        URL: docker.io/niallthomson/shop-catalog:0.0.3
+          URL: docker.io/niallthomson/shop-catalog:v0.0.4
+        URL: docker.io/niallthomson/shop-catalog:v0.0.4
   labels:
     name: catalogue
   name: catalogue
@@ -215,7 +215,7 @@ spec:
         name: catalogue
     spec:
       containers:
-      - image: docker.io/niallthomson/shop-catalog:0.0.3
+      - image: docker.io/niallthomson/shop-catalog:v0.0.4
         name: catalogue
         ports:
         - containerPort: 8080
@@ -241,8 +241,8 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-ui:0.0.3
-        URL: docker.io/niallthomson/shop-ui:0.0.3
+          URL: docker.io/niallthomson/shop-ui:v0.0.4
+        URL: docker.io/niallthomson/shop-ui:v0.0.4
   labels:
     name: ui
   name: ui
@@ -269,7 +269,7 @@ spec:
           value: http://carts:8080
         - name: ENDPOINTS_ORDERS
           value: http://orders:8080
-        image: docker.io/niallthomson/shop-ui:0.0.3
+        image: docker.io/niallthomson/shop-ui:v0.0.4
         name: ui
         ports:
         - containerPort: 8080
@@ -307,9 +307,63 @@ metadata:
   annotations:
     kbld.k14s.io/images: |
       - Metas:
+        - Tag: "5.7"
+          Type: resolved
+          URL: mysql:5.7
+        URL: index.docker.io/library/mysql@sha256:32f9d9a069f7a735e28fd44ea944d53c61f990ba71460c5c183e610854ca4854
+  labels:
+    name: orders-db
+  name: orders-db
+  namespace: watchn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: orders-db
+  template:
+    metadata:
+      labels:
+        name: orders-db
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: my-secret-pw
+        - name: MYSQL_DATABASE
+          value: orders
+        - name: MYSQL_USER
+          value: orders_user
+        - name: MYSQL_PASSWORD
+          value: default_password
+        image: index.docker.io/library/mysql@sha256:32f9d9a069f7a735e28fd44ea944d53c61f990ba71460c5c183e610854ca4854
+        name: orders-db
+        ports:
+        - containerPort: 3306
+          name: mysql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: orders-db
+  name: orders-db
+  namespace: watchn
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  selector:
+    name: orders-db
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-orders:0.0.3
-        URL: docker.io/niallthomson/shop-orders:0.0.3
+          URL: docker.io/niallthomson/shop-orders:v0.0.4
+        URL: docker.io/niallthomson/shop-orders:v0.0.4
   labels:
     name: orders
   name: orders
@@ -330,7 +384,23 @@ spec:
         - name: JAVA_OPTS
           value: -Xms128m -Xmx512m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
-        image: docker.io/niallthomson/shop-orders:0.0.3
+        - name: SERVER_TOMCAT_ACCESSLOG_ENABLED
+          value: true
+        - name: SPRING_PROFILES_ACTIVE
+          value: mysql
+        - name: SPRING_DATASOURCE_WRITER_URL
+          value: jdbc:mysql://orders-db:3306/orders
+        - name: SPRING_DATASOURCE_WRITER_USERNAME
+          value: orders_user
+        - name: SPRING_DATASOURCE_WRITER_PASSWORD
+          value: default_password
+        - name: SPRING_DATASOURCE_READER_URL
+          value: jdbc:mysql://orders-db:3306/orders
+        - name: SPRING_DATASOURCE_READER_USERNAME
+          value: orders_user
+        - name: SPRING_DATASOURCE_READER_PASSWORD
+          value: default_password
+        image: docker.io/niallthomson/shop-orders:v0.0.4
         name: orders
         ports:
         - containerPort: 8080

@@ -11,7 +11,8 @@ if [ -z "${REPO}" ]; then
   exit 1
 fi
 
-ytt -f $DIR/../src \
+ytt -f $DIR/../src/core \
+    -f $DIR/../src/ops/ingress.yml \
     --data-value imagePath=$APP_SRC_DIR/images \
     -f $APP_SRC_DIR/src/cart/manifests/core \
     --data-value cart.imagePath=$APP_SRC_DIR/src/cart \

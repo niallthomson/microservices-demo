@@ -1,10 +1,6 @@
 ---
 services:
   carts:
-    cap_add:
-    - NET_BIND_SERVICE
-    cap_drop:
-    - all
     environment:
     - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
     - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
@@ -13,26 +9,14 @@ services:
     - AWS_ACCESS_KEY_ID=key
     - AWS_SECRET_ACCESS_KEY=secret
     hostname: carts
-    image: docker.io/niallthomson/shop-carts:0.0.3
-    read_only: true
+    image: docker.io/niallthomson/shop-carts:v0.0.4
     restart: always
-    tmpfs:
-    - /tmp:rw,noexec,nosuid
   carts-db:
-    cap_add:
-    - CHOWN
-    - SETGID
-    - SETUID
-    cap_drop:
-    - all
     environment:
     - reschedule=on-node-failure
     hostname: carts-db
     image: index.docker.io/amazon/dynamodb-local@sha256:648d5f0a5eb96b789040dcc56256a5b16a4097722327e7c8e1598daaa2fde385
-    read_only: true
     restart: always
-    tmpfs:
-    - /tmp:rw,noexec,nosuid
   catalog-db:
     environment:
     - reschedule=on-node-failure
@@ -45,47 +29,35 @@ services:
     image: index.docker.io/library/mysql@sha256:32f9d9a069f7a735e28fd44ea944d53c61f990ba71460c5c183e610854ca4854
     restart: always
   catalogue:
-    cap_add:
-    - NET_BIND_SERVICE
-    cap_drop:
-    - all
     hostname: catalogue
-    image: docker.io/niallthomson/shop-catalog:0.0.3
-    read_only: true
+    image: docker.io/niallthomson/shop-catalog:v0.0.4
     restart: always
   orders:
-    cap_add:
-    - NET_BIND_SERVICE
-    cap_drop:
-    - all
     environment:
-    - JAVA_OPTS=-Xms128m -Xmx512m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+    - reschedule=on-node-failure
     - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
+    - SPRING_PROFILES_ACTIVE=mysql
+    - SPRING_DATASOURCE_WRITER_URL=jdbc:mysql://orders-db:3306/orders
+    - SPRING_DATASOURCE_WRITER_USERNAME=orders_user
+    - SPRING_DATASOURCE_WRITER_PASSWORD=default_password
+    - SPRING_DATASOURCE_READER_URL=jdbc:mysql://orders-db:3306/orders
+    - SPRING_DATASOURCE_READER_USERNAME=orders_user
+    - SPRING_DATASOURCE_READER_PASSWORD=default_password
     hostname: orders
-    image: docker.io/niallthomson/shop-orders:0.0.3
-    read_only: true
+    image: docker.io/niallthomson/shop-orders:v0.0.4
     restart: always
-    tmpfs:
-    - /tmp:rw,noexec,nosuid
   orders-db:
-    cap_add:
-    - CHOWN
-    - SETGID
-    - SETUID
-    - NET_BIND_SERVICE
-    cap_drop:
-    - all
+    environment:
+    - reschedule=on-node-failure
+    - MYSQL_ROOT_PASSWORD=my-secret-pw
+    - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    - MYSQL_DATABASE=orders
+    - MYSQL_USER=orders_user
+    - MYSQL_PASSWORD=default_password
     hostname: orders-db
-    image: index.docker.io/library/mongo@sha256:d314f7eca9d3f825d091b77c40d2f3c9d6fff4de88dde2962527353476f107ba
-    read_only: true
+    image: index.docker.io/library/mysql@sha256:32f9d9a069f7a735e28fd44ea944d53c61f990ba71460c5c183e610854ca4854
     restart: always
-    tmpfs:
-    - /tmp:rw,noexec,nosuid
   ui:
-    cap_add:
-    - NET_BIND_SERVICE
-    cap_drop:
-    - all
     environment:
     - JAVA_OPTS=-Xms64m -Xmx256m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
     - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
@@ -93,9 +65,8 @@ services:
     - ENDPOINTS_CARTS=http://carts:8080
     - ENDPOINTS_ORDERS=http://orders:8080
     hostname: ui
-    image: docker.io/niallthomson/shop-ui:0.0.3
+    image: docker.io/niallthomson/shop-ui:v0.0.4
     ports:
     - 80:8080
-    read_only: true
     restart: always
 version: "2"
