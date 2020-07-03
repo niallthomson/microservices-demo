@@ -5,8 +5,9 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Entity
+@Table(name="CUSTOMER_ORDER_ITEM")
 @Data
-public class OrderItem {
+public class OrderItemEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
@@ -18,5 +19,5 @@ public class OrderItem {
     private int price;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Order order;
+    private OrderEntity order;
 }

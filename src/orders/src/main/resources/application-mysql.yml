@@ -1,0 +1,21 @@
+spring:
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+
+  datasource:
+    writer:
+      jdbc-url: ${spring.datasource.writer.url}
+      username:
+      password:
+      driverClassName: com.mysql.jdbc.Driver
+
+    reader:
+      jdbc-url: ${spring.datasource.reader.url}
+      username:
+      password:
+      driverClassName: com.mysql.jdbc.Driver

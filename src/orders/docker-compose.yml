@@ -1,0 +1,42 @@
+version: '2'
+
+services:
+  orders:
+    build:
+      context: .
+      dockerfile: ../../images/java11/Dockerfile
+      args:
+        JAR_PATH: target/orders-0.0.1-SNAPSHOT.jar
+    image: microservices-demo/orders
+    hostname: orders
+    restart: always
+    cap_drop:
+      - all
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid
+    environment:
+      - reschedule=on-node-failure
+      - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
+      - SPRING_PROFILES_ACTIVE=mysql
+      - SPRING_DATASOURCE_WRITER_URL=jdbc:mysql://orders-db:3306/orders
+      - SPRING_DATASOURCE_WRITER_USERNAME=orders_user
+      - SPRING_DATASOURCE_WRITER_PASSWORD=default_password
+      - SPRING_DATASOURCE_READER_URL=jdbc:mysql://orders-db:3306/orders
+      - SPRING_DATASOURCE_READER_USERNAME=orders_user
+      - SPRING_DATASOURCE_READER_PASSWORD=default_password
+    ports:
+      - "8083:8080"
+  orders-db:
+    image: mysql:5.7
+    hostname: orders-db
+    restart: always
+    environment:
+      - reschedule=on-node-failure
+      - MYSQL_ROOT_PASSWORD=my-secret-pw
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_DATABASE=orders
+      - MYSQL_USER=orders_user
+      - MYSQL_PASSWORD=default_password

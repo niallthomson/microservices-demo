@@ -1,5 +1,6 @@
 package com.watchn.orders.entities;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -9,7 +10,7 @@ import java.util.List;
 @Entity
 @Table(name="CUSTOMER_ORDER")
 @Data
-public class Order {
+public class OrderEntity {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -20,7 +21,8 @@ public class Order {
     @OneToMany(
             mappedBy = "order",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
     )
-    private List<OrderItem> items = new ArrayList<>();
+    private List<OrderItemEntity> items = new ArrayList<>();
 }

@@ -5,10 +5,10 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class CreateOrderRequest {
+public class Order {
     private String firstName;
 
     private String lastName;
 
-    private List<CreateOrderRequestItem> items;
+    private List<OrderItem> items;
 }

@@ -3,7 +3,7 @@ package com.watchn.orders.web.payload;
 import lombok.Data;
 
 @Data
-public class CreateOrderRequestItem {
+public class OrderItem {
     private String productId;
 
     private int quantity;
