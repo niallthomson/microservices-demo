@@ -30,8 +30,8 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-carts:v0.0.4
-        URL: docker.io/niallthomson/shop-carts:v0.0.4
+          URL: docker.io/niallthomson/shop-carts:v0.0.5
+        URL: docker.io/niallthomson/shop-carts:v0.0.5
   labels:
     name: carts
   name: carts
@@ -59,7 +59,7 @@ spec:
             configMapKeyRef:
               key: table
               name: carts-db
-        image: docker.io/niallthomson/shop-carts:v0.0.4
+        image: docker.io/niallthomson/shop-carts:v0.0.5
         name: carts
         ports:
         - containerPort: 8080
@@ -97,8 +97,8 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-catalog:v0.0.4
-        URL: docker.io/niallthomson/shop-catalog:v0.0.4
+          URL: docker.io/niallthomson/shop-catalog:v0.0.5
+        URL: docker.io/niallthomson/shop-catalog:v0.0.5
   labels:
     name: catalogue
   name: catalogue
@@ -136,7 +136,7 @@ spec:
             secretKeyRef:
               key: name
               name: catalog-writer-db
-        image: docker.io/niallthomson/shop-catalog:v0.0.4
+        image: docker.io/niallthomson/shop-catalog:v0.0.5
         name: catalogue
         ports:
         - containerPort: 8080
@@ -162,8 +162,8 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-ui:v0.0.4
-        URL: docker.io/niallthomson/shop-ui:v0.0.4
+          URL: docker.io/niallthomson/shop-ui:v0.0.5
+        URL: docker.io/niallthomson/shop-ui:v0.0.5
   labels:
     name: ui
   name: ui
@@ -190,7 +190,7 @@ spec:
           value: http://carts:8080
         - name: ENDPOINTS_ORDERS
           value: http://orders:8080
-        image: docker.io/niallthomson/shop-ui:v0.0.4
+        image: docker.io/niallthomson/shop-ui:v0.0.5
         name: ui
         ports:
         - containerPort: 8080
@@ -229,8 +229,8 @@ metadata:
     kbld.k14s.io/images: |
       - Metas:
         - Type: preresolved
-          URL: docker.io/niallthomson/shop-orders:v0.0.4
-        URL: docker.io/niallthomson/shop-orders:v0.0.4
+          URL: docker.io/niallthomson/shop-orders:v0.0.5
+        URL: docker.io/niallthomson/shop-orders:v0.0.5
   labels:
     name: orders
   name: orders
@@ -285,7 +285,7 @@ spec:
             secretKeyRef:
               key: password
               name: orders-reader-db
-        image: docker.io/niallthomson/shop-orders:v0.0.4
+        image: docker.io/niallthomson/shop-orders:v0.0.5
         name: orders
         ports:
         - containerPort: 8080

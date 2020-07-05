@@ -29,6 +29,81 @@ metadata:
   annotations:
     kbld.k14s.io/images: |
       - Metas:
+        - Type: preresolved
+          URL: docker.io/niallthomson/shop-carts:v0.0.4
+        URL: docker.io/niallthomson/shop-carts:v0.0.4
+  labels:
+    name: carts
+  name: carts
+  namespace: watchn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: carts
+  template:
+    metadata:
+      labels:
+        fargate: "true"
+        name: carts
+    spec:
+      containers:
+      - env:
+        - name: JAVA_OPTS
+          value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
+            -Djava.security.egd=file:/dev/urandom
+        - name: SPRING_PROFILES_ACTIVE
+          value: dynamodb
+        - name: CARTS_DYNAMODB_ENDPOINT
+          value: http://carts-db:8000
+        - name: CARTS_DYNAMODB_CREATETABLE
+          value: "true"
+        - name: AWS_ACCESS_KEY_ID
+          value: key
+        - name: AWS_SECRET_ACCESS_KEY
+          value: secret
+        - name: CARTS_DYNAMODB_TABLENAME
+          valueFrom:
+            configMapKeyRef:
+              key: table
+              name: catalog-db
+        image: docker.io/niallthomson/shop-carts:v0.0.4
+        name: carts
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            memory: 512Mi
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - emptyDir:
+          medium: Memory
+        name: tmp-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: carts
+  name: carts
+  namespace: watchn
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    name: carts
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
         - Tag: 1.13.1
           Type: resolved
           URL: amazon/dynamodb-local:1.13.1
@@ -68,73 +143,13 @@ spec:
   selector:
     name: carts-db
 ---
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kbld.k14s.io/images: |
-      - Metas:
-        - Type: preresolved
-          URL: docker.io/niallthomson/shop-carts:v0.0.4
-        URL: docker.io/niallthomson/shop-carts:v0.0.4
-  labels:
-    name: carts
-  name: carts
-  namespace: watchn
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: carts
-  template:
-    metadata:
-      labels:
-        fargate: "true"
-        name: carts
-    spec:
-      containers:
-      - env:
-        - name: JAVA_OPTS
-          value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
-            -Djava.security.egd=file:/dev/urandom
-        - name: SPRING_PROFILES_ACTIVE
-          value: dynamodb
-        - name: AMAZON_DYNAMODB_endpoint
-          value: http://carts-db:8000
-        - name: AWS_ACCESS_KEY_ID
-          value: key
-        - name: AWS_SECRET_ACCESS_KEY
-          value: secret
-        image: docker.io/niallthomson/shop-carts:v0.0.4
-        name: carts
-        ports:
-        - containerPort: 8080
-        resources:
-          limits:
-            memory: 512Mi
-          requests:
-            memory: 512Mi
-        volumeMounts:
-        - mountPath: /tmp
-          name: tmp-volume
-      volumes:
-      - emptyDir:
-          medium: Memory
-        name: tmp-volume
----
 apiVersion: v1
-kind: Service
+data:
+  table: Items
+kind: ConfigMap
 metadata:
-  labels:
-    name: carts
-  name: carts
+  name: catalog-db
   namespace: watchn
-spec:
-  ports:
-  - port: 8080
-    targetPort: 8080
-  selector:
-    name: carts
 ---
 apiVersion: apps/v1
 kind: Deployment
