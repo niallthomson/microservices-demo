@@ -1,5 +1,6 @@
 import http from 'k6/http';
-import { sleep } from 'k6';
+import { sleep, fail } from 'k6';
+import { Counter } from 'k6/metrics';
 
 // TODO: Make this pull products from API instead of hardcoding
 const productData = [
@@ -11,7 +12,22 @@ const productData = [
   "f4ebd070-b4ba-11ea-b3de-0242ac130004"
 ]
 
-export let options = {
+let baseUrl = __ENV.WATCHN_BASE_URL
+
+if(!baseUrl) {
+  console.log("Error: WATCHN_BASE_URL must be set")
+  fail(1)
+}
+
+let region = __ENV.WATCHN_REGION
+
+if(!region) {
+  region = "default"
+}
+
+let errorCounter = new Counter('errors');
+
+/*export let options = {
   tags: {
     region: __ENV.WATCHN_REGION
   },
@@ -20,39 +36,55 @@ export let options = {
     { duration: "10m", target: 20 }, // Work
     { duration: "2m", target: 0 },   // Down
   ]
-}
+}*/
 
 export default function () {
   let numProducts = Math.ceil(Math.random() * 10)
 
   let products = Array.from({length: numProducts}, () => productData[Math.floor(Math.random() * productData.length)]);
 
-  http.get(`${__ENV.WATCHN_BASE_URL}/home`);
+  let home = http.get(`${__ENV.WATCHN_BASE_URL}/home`);
+  if(home.status >= 400) {
+    errorCounter.add(1)
+  }
 
   sleep(1);
 
   let product;
+  let addToCard;
 
-  products.forEach((product) => {
-    product = http.get(`${__ENV.WATCHN_BASE_URL}/catalog/`+product);
+  products.forEach((productId) => {
+    product = http.get(`${__ENV.WATCHN_BASE_URL}/catalog/`+productId);
+    if(product.status >= 400) {
+      errorCounter.add(1)
+    }
 
-    product.submitForm({
+    addToCard = product.submitForm({
       formSelector: 'form#addToCart',
       fields: { 
-        productId: product
+        productId: productId
       },
     });
+    if(addToCard.status >= 400) {
+      errorCounter.add(1)
+    }
 
     sleep(1);
   });
 
-  http.get(`${__ENV.WATCHN_BASE_URL}/cart`);
+  let cart = http.get(`${__ENV.WATCHN_BASE_URL}/cart`);
+  if(cart.status >= 400) {
+    errorCounter.add(1)
+  }
 
   sleep(1);
 
   let checkout = http.get(`${__ENV.WATCHN_BASE_URL}/checkout`);
+  if(checkout.status >= 400) {
+    errorCounter.add(1)
+  }
 
-  checkout.submitForm({
+  let order = checkout.submitForm({
     formSelector: 'form#checkoutForm',
     fields: { 
       firstName: 'John', 
@@ -69,4 +101,7 @@ export default function () {
       ccCvv: '123'
     },
   });
+  if(order.status >= 400) {
+    errorCounter.add(1)
+  }
 };
