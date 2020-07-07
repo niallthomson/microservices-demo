@@ -40,5 +40,6 @@ services:
       - K6_OUT=influxdb=http://influxdb:8086/k6
       - WATCHN_BASE_URL=${WATCHN_BASE_URL}
       - WATCHN_REGION=${WATCHN_REGION}
+      - WATCHN_TARGET=${WATCHN_TARGET}
     volumes:
       - ./scripts:/scripts
