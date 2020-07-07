@@ -20,7 +20,9 @@ services:
     networks:
       - grafana
     ports:
-      - "3000:3000"
+      - "80:3000"
+    cap_add:
+      - CAP_NET_BIND_SERVICE
     environment:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_AUTH_ANONYMOUS_ENABLED=true
@@ -37,5 +39,6 @@ services:
     environment:
       - K6_OUT=influxdb=http://influxdb:8086/k6
       - WATCHN_BASE_URL=${WATCHN_BASE_URL}
+      - WATCHN_REGION=${WATCHN_REGION}
     volumes:
       - ./scripts:/scripts
