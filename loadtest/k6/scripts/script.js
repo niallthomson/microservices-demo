@@ -25,18 +25,27 @@ if(!region) {
   region = "default"
 }
 
+let target = __ENV.WATCHN_TARGET
+
+if(!target) {
+  target = 20
+}
+else {
+  target = parseInt(target)
+}
+
 let errorCounter = new Counter('errors');
 
-/*export let options = {
+export let options = {
   tags: {
     region: __ENV.WATCHN_REGION
   },
   stages: [
-    { duration: "2m", target: 20 },  // Ramp
-    { duration: "10m", target: 20 }, // Work
+    { duration: "2m", target: target },  // Ramp
+    { duration: "10m", target: target }, // Work
     { duration: "2m", target: 0 },   // Down
   ]
-}*/
+}
 
 export default function () {
   let numProducts = Math.ceil(Math.random() * 10)
