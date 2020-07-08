@@ -1,6 +1,6 @@
 resource "aws_ecr_repository" "components" {
   count                = length(var.components)
-  name                 = "shop-${var.component[count.index]}"
+  name                 = "shop-${var.components[count.index]}"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
