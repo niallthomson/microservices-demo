@@ -3,50 +3,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: carts-db
-  labels:
-    name: carts-db
-  namespace: #@ data.values.namespace
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: carts-db
-  template:
-    metadata:
-      labels:
-        name: carts-db
-    spec:
-      containers:
-      - name: carts-db
-        image: amazon/dynamodb-local:1.13.1
-        ports:
-        - name: dynamodb
-          containerPort: 8000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: carts-db
-  labels:
-    name: carts-db
-  namespace: #@ data.values.namespace
-spec:
-  ports:
-  - port: 8000
-    targetPort: 8000
-  selector:
-    name: carts-db
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: carts
   labels:
     name: carts
   namespace: #@ data.values.namespace
 spec:
-  replicas: 1
+  replicas: #@ data.values.cart.replicas
   selector:
     matchLabels:
       name: carts
@@ -54,7 +16,6 @@ spec:
     metadata:
       labels:
         name: carts
-        fargate: "true"
     spec:
       containers:
       - name: carts
@@ -66,12 +27,6 @@ spec:
             value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
           - name: SPRING_PROFILES_ACTIVE
             value: dynamodb
-          - name: AMAZON_DYNAMODB_endpoint
-            value: http://carts-db:8000    
-          - name: AWS_ACCESS_KEY_ID
-            value: key
-          - name: AWS_SECRET_ACCESS_KEY
-            value: secret
         resources:
           requests:
             memory: "512Mi"

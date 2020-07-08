@@ -91,6 +91,12 @@ spec:
               name: #@ data.values.catalog.services.mysqlWriter.secret
               key: endpoint
         #@overlay/match by="name"
+        - name: DB_READ_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: #@ data.values.catalog.services.mysqlReader.secret
+              key: endpoint
+        #@overlay/match by="name"
         - name: DB_USER
           valueFrom:
             secretKeyRef:

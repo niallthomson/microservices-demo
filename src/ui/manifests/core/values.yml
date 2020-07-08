@@ -4,3 +4,4 @@
 ui:
   image: watchn-shop-ui
   imagePath: .
+  replicas: 1

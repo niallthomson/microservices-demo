@@ -1,4 +1,5 @@
-amazon:
+carts:
   dynamodb:
-    endpoint: http://localhost:8888/
-    createTable: true
+    endpoint:
+    createTable: false
+    tableName: Items

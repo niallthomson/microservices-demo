@@ -31,7 +31,7 @@
                         <p class="goToDescription"><a href="#details" class="scroll-to">Scroll to product details, material &amp; care and sizing</a></p>
                         <p class="price">$<span th:text="${item.price}">124.00</span></p>
                         <p class="text-center buttons">
-                        <form action="/cart" method="POST">
+                        <form action="/cart" id="addToCart" method="POST">
                             <input type="hidden" name="productId" th:value="${item.id}"/>
                             <a href="#" class="btn btn-primary" onclick="this.closest('form').submit();return false;"><i class="fa fa-shopping-cart"></i> Add to cart</a>
 

@@ -24,14 +24,13 @@ var ErrDBConnection = errors.New("database connection error")
 var baseQuery = "SELECT product.product_id AS id, product.name, product.description, product.price, product.count, product.image_url, GROUP_CONCAT(tag.name) AS tag_name FROM product JOIN product_tag ON product.product_id=product_tag.product_id JOIN tag ON product_tag.tag_id=tag.tag_id"
 
 type mySQLRepository struct {
-	db *sqlx.DB
+	db       *sqlx.DB
+	readerDb *sqlx.DB
 	//logger log.Logger
 }
 
 func newMySQLRepository(config config.DatabaseConfiguration) (Repository, error) {
 	connectionString := fmt.Sprintf("%s:%s@tcp(%s)/%s", config.User, config.Password, config.Endpoint, config.Name)
-
-	log.Printf("Connecting to %s\n", connectionString)
 
 	if config.Migrate {
 		err := migrateMySQL(connectionString)
@@ -41,22 +40,47 @@ func newMySQLRepository(config config.DatabaseConfiguration) (Repository, error)
 		}
 	}
 
+	var readerDb *sqlx.DB
+
+	db, err := createConnection(connectionString)
+	if err != nil {
+		log.Println("Error: Unable to connect to database", err)
+		return nil, err
+	}
+
+	if len(config.ReadEndpoint) > 0 {
+		readerConnectionString := fmt.Sprintf("%s:%s@tcp(%s)/%s", config.User, config.Password, config.ReadEndpoint, config.Name)
+
+		readerDb, err = createConnection(readerConnectionString)
+		if err != nil {
+			log.Println("Error: Unable to connect to reader database", err)
+			return nil, err
+		}
+	} else {
+		readerDb = db
+	}
+
+	return &mySQLRepository{
+		db:       db,
+		readerDb: readerDb,
+	}, nil
+}
+
+func createConnection(connectionString string) (*sqlx.DB, error) {
+	log.Printf("Connecting to %s\n", connectionString)
+
 	db, err := sqlx.Open("mysql", connectionString)
 	if err != nil {
-		log.Println("Error: Unable to create connection to database", err)
 		return nil, err
 	}
 
 	// Check if DB connection can be made, only for logging purposes, should not fail/exit
 	err = db.Ping()
 	if err != nil {
-		log.Println("Error: Unable to connect to database")
 		return nil, err
 	}
 
-	return &mySQLRepository{
-		db: db,
-	}, nil
+	return db, nil
 }
 
 func migrateMySQL(connectionString string) error {
@@ -102,7 +126,7 @@ func (s *mySQLRepository) List(tags []string, order string, pageNum, pageSize in
 
 	query += ";"
 
-	err := s.db.Select(&products, query, args...)
+	err := s.readerDb.Select(&products, query, args...)
 	if err != nil {
 		log.Println("database error", err)
 		return []model.Product{}, ErrDBConnection
@@ -136,7 +160,7 @@ func (s *mySQLRepository) Count(tags []string) (int, error) {
 
 	query += ";"
 
-	sel, err := s.db.Prepare(query)
+	sel, err := s.readerDb.Prepare(query)
 
 	if err != nil {
 		log.Println("database error", err)
@@ -161,7 +185,7 @@ func (s *mySQLRepository) Get(id string) (*model.Product, error) {
 	log.Printf("query: %s", query)
 
 	var product model.Product
-	err := s.db.Get(&product, query, id)
+	err := s.readerDb.Get(&product, query, id)
 	if err != nil {
 		log.Println("database error", err)
 		return nil, ErrNotFound
@@ -175,7 +199,7 @@ func (s *mySQLRepository) Get(id string) (*model.Product, error) {
 func (s *mySQLRepository) Tags() ([]model.Tag, error) {
 	var tags []model.Tag
 	query := "SELECT name, display_name FROM tag;"
-	rows, err := s.db.Query(query)
+	rows, err := s.readerDb.Query(query)
 	if err != nil {
 		log.Println("database error", err)
 		return []model.Tag{}, ErrDBConnection

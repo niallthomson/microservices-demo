@@ -4,3 +4,6 @@
 cart:
   image: watchn-shop-carts
   imagePath: .
+  replicas: 1
+  services:
+    persistence: dynamodb

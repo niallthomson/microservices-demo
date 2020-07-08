@@ -7,9 +7,6 @@ metadata:
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    kubernetes.io/ingress.class: alb
   labels:
     name: front-end
   name: front-end
@@ -44,11 +41,11 @@ spec:
   template:
     metadata:
       labels:
-        fargate: "true"
         name: carts
     spec:
       containers:
-      - env:
+      - automountServiceAccountToken: true
+        env:
         - name: JAVA_OPTS
           value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
             -Djava.security.egd=file:/dev/urandom
@@ -68,6 +65,7 @@ spec:
             memory: 512Mi
           requests:
             memory: 512Mi
+        serviceAccountName: carts
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume
@@ -121,6 +119,11 @@ spec:
             secretKeyRef:
               key: endpoint
               name: catalog-writer-db
+        - name: DB_READ_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              key: endpoint
+              name: catalog-reader-db
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -137,6 +140,7 @@ spec:
               key: name
               name: catalog-writer-db
         image: docker.io/niallthomson/shop-catalog:v0.0.5
+        imagePullPolicy: Always
         name: catalogue
         ports:
         - containerPort: 8080

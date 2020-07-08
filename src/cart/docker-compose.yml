@@ -18,10 +18,10 @@ services:
     tmpfs:
       - /tmp:rw,noexec,nosuid
     environment:
-      - reschedule=on-node-failure
       - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
       - SPRING_PROFILES_ACTIVE=dynamodb
-      - AMAZON_DYNAMODB_endpoint=http://carts-db:8000
+      - CARTS_DYNAMODB_ENDPOINT=http://carts-db:8000
+      - CARTS_DYNAMODB_CREATETABLE=true
       - AWS_ACCESS_KEY_ID=key
       - AWS_SECRET_ACCESS_KEY=secret
     ports:
@@ -39,5 +39,3 @@ services:
     read_only: true
     tmpfs:
       - /tmp:rw,noexec,nosuid
-    environment:
-      - reschedule=on-node-failure

@@ -8,7 +8,7 @@ metadata:
     name: ui
   namespace: #@ data.values.namespace
 spec:
-  replicas: 1
+  replicas: #@ data.values.ui.replicas
   selector:
     matchLabels:
       name: ui

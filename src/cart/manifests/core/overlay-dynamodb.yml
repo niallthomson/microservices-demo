@@ -1,0 +1,99 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:base64", "base64")
+#@ load("@ytt:overlay", "overlay")
+
+#@ if data.values.includeServices:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: carts-db
+  labels:
+    name: carts-db
+  namespace: #@ data.values.namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: carts-db
+  template:
+    metadata:
+      labels:
+        name: carts-db
+    spec:
+      containers:
+      - name: carts-db
+        image: amazon/dynamodb-local:1.13.1
+        ports:
+        - name: dynamodb
+          containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carts-db
+  labels:
+    name: carts-db
+  namespace: #@ data.values.namespace
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+  selector:
+    name: carts-db
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: carts-db
+  namespace: #@ data.values.namespace
+data:
+  table: Items
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: carts
+  namespace: #@ data.values.namespace
+
+#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "carts"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by="name"
+      - name: carts
+        #@overlay/match-child-defaults missing_ok=True
+        env:
+        #@overlay/match by="name"
+        - name: CARTS_DYNAMODB_ENDPOINT
+          value: http://carts-db:8000
+        #@overlay/match by="name"
+        - name: CARTS_DYNAMODB_CREATETABLE
+          value: "true"
+        #@overlay/match by="name"    
+        - name: AWS_ACCESS_KEY_ID
+          value: key
+        #@overlay/match by="name"
+        - name: AWS_SECRET_ACCESS_KEY
+          value: secret
+#@ end
+
+#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "carts"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match-child-defaults missing_ok=True
+      #@overlay/match by="name"
+      - name: carts
+        serviceAccountName: carts
+        automountServiceAccountToken: true
+        env:
+        #@overlay/match by="name"
+        - name: CARTS_DYNAMODB_TABLENAME
+          valueFrom:
+            configMapKeyRef:
+              name: carts-db
+              key: table

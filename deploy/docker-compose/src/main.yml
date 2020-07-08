@@ -24,7 +24,6 @@ services:
       hostname: catalog-db
       restart: always
       environment:
-        - reschedule=on-node-failure
         - MYSQL_ROOT_PASSWORD=my-secret-pw
         - MYSQL_ALLOW_EMPTY_PASSWORD=true
         - MYSQL_DATABASE=watchndb
@@ -38,21 +37,19 @@ services:
       - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
       - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
       - SPRING_PROFILES_ACTIVE=dynamodb
-      - AMAZON_DYNAMODB_endpoint=http://carts-db:8000
+      - CARTS_DYNAMODB_ENDPOINT=http://carts-db:8000
+      - CARTS_DYNAMODB_CREATETABLE=true
       - AWS_ACCESS_KEY_ID=key
       - AWS_SECRET_ACCESS_KEY=secret
   carts-db:
     image: amazon/dynamodb-local:1.13.1
     hostname: carts-db
     restart: always
-    environment:
-      - reschedule=on-node-failure
   orders:
     image: #@ data.values.orders.image
     hostname: orders
     restart: always
     environment:
-      - reschedule=on-node-failure
       - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
       - SPRING_PROFILES_ACTIVE=mysql
       - SPRING_DATASOURCE_WRITER_URL=jdbc:mysql://orders-db:3306/orders
@@ -66,7 +63,6 @@ services:
     hostname: orders-db
     restart: always
     environment:
-      - reschedule=on-node-failure
       - MYSQL_ROOT_PASSWORD=my-secret-pw
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
       - MYSQL_DATABASE=orders

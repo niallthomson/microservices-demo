@@ -4,6 +4,7 @@
 catalog:
   image: watchn-catalog
   imagePath: .
+  replicas: 1
   services:
     mysqlWriter:
       secret: catalog-writer-db

@@ -8,7 +8,7 @@ metadata:
     name: catalogue
   namespace: #@ data.values.namespace
 spec:
-  replicas: 1
+  replicas: #@ data.values.catalog.replicas
   selector:
     matchLabels:
       name: catalogue
@@ -21,8 +21,14 @@ spec:
       containers:
       - name: catalogue
         image: #@ data.values.catalog.image
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
+        resources:
+          requests:
+            memory: "256Mi"
+          limits:
+            memory: "256Mi"
 ---
 apiVersion: v1
 kind: Service

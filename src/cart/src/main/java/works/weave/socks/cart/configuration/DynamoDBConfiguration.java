@@ -1,43 +1,59 @@
 package works.weave.socks.cart.configuration;
 
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
-import org.springframework.beans.factory.annotation.Value;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverterFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.util.StringUtils;
-import works.weave.socks.cart.repositories.dynamo.DynamoCartRepository;
 import works.weave.socks.cart.services.CartService;
 import works.weave.socks.cart.services.DynamoDBCartService;
 
 @Configuration
 @Profile("dynamodb")
-@EnableDynamoDBRepositories
-        (basePackages = "works.weave.socks.cart.repositories.dynamo")
 public class DynamoDBConfiguration {
 
-    @Value("${amazon.dynamodb.endpoint}")
-    private String amazonDynamoDBEndpoint;
-
-    @Value("${amazon.dynamodb.createTable}")
-    private boolean createTable;
-
     @Bean
-    public AmazonDynamoDB amazonDynamoDB() {
-        AmazonDynamoDB amazonDynamoDB
-                = new AmazonDynamoDBClient();
-
-        if (!StringUtils.isEmpty(amazonDynamoDBEndpoint)) {
-            amazonDynamoDB.setEndpoint(amazonDynamoDBEndpoint);
+    public AmazonDynamoDB amazonDynamoDB(DynamoDBProperties properties) {
+        if (!StringUtils.isEmpty(properties.getEndpoint())) {
+            return AmazonDynamoDBClientBuilder.standard().withEndpointConfiguration(
+                    new AwsClientBuilder.EndpointConfiguration(properties.getEndpoint(), "us-west-2")
+            ).build();
         }
 
-        return amazonDynamoDB;
+        return AmazonDynamoDBClientBuilder.standard().build();
     }
 
     @Bean
-    public CartService dynamoCartService(DynamoCartRepository repository) {
-        return new DynamoDBCartService(repository, amazonDynamoDB(), this.createTable);
+    public DynamoDBMapperConfig dynamoDBMapperConfig(DynamoDBProperties properties) {
+        // Create empty DynamoDBMapperConfig builder
+        DynamoDBMapperConfig.Builder builder = new DynamoDBMapperConfig.Builder();
+        // Inject missing defaults from the deprecated method
+        builder.withTypeConverterFactory(DynamoDBTypeConverterFactory.standard());
+        builder.withTableNameResolver((aClass, dynamoDBMapperConfig) -> {
+            System.out.println("Mapping class "+aClass.getSimpleName()+" to "+properties.getTableName());
+
+            return properties.getTableName();
+
+        });
+        //builder.withTableNameOverride(DynamoDBMapperConfig.TableNameOverride.withTableNameReplacement(properties.getTableName()));
+
+        return builder.build();
+    }
+
+    @Bean
+    public DynamoDBMapper dynamoDBMapper(AmazonDynamoDB amazonDynamoDB, DynamoDBMapperConfig config) {
+        return new DynamoDBMapper(amazonDynamoDB, config);
+    }
+
+    @Bean
+    public CartService dynamoCartService(DynamoDBMapper mapper, AmazonDynamoDB amazonDynamoDB, DynamoDBProperties properties) {
+        return new DynamoDBCartService(mapper, amazonDynamoDB, properties.isCreateTable());
     }
 }

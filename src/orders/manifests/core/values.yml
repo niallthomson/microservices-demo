@@ -4,6 +4,7 @@
 orders:
   image: watchn-shop-orders
   imagePath: .
+  replicas: 1
   services:
     mysqlWriter:
       secret: orders-writer-db

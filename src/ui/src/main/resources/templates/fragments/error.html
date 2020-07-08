@@ -8,18 +8,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
     <!-- Bootstrap CSS-->
-    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{~/assets/vendor/bootstrap/css/bootstrap.min.css}">
     <!-- Font Awesome CSS-->
-    <link rel="stylesheet" href="/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" th:href="@{~/assets/vendor/font-awesome/css/font-awesome.min.css}">
     <!-- Google fonts - Roboto -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700">
     <!-- owl carousel-->
-    <link rel="stylesheet" href="/vendor/owl.carousel/assets/owl.carousel.css">
-    <link rel="stylesheet" href="/vendor/owl.carousel/assets/owl.theme.default.css">
+    <link rel="stylesheet" th:href="@{~/assets/vendor/owl.carousel/assets/owl.carousel.css}">
+    <link rel="stylesheet" th:href="@{~/assets/vendor/owl.carousel/assets/owl.theme.default.css}">
     <!-- theme stylesheet-->
-    <link rel="stylesheet" href="/css/style.default.css" id="theme-stylesheet">
+    <link rel="stylesheet" th:href="@{~/assets/css/style.default.css}" id="theme-stylesheet">
     <!-- Custom stylesheet - for your changes-->
-    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" th:href="@{~/assets/css/custom.css}">
 </head>
 <body style="height: 100%">
 <!-- navbar-->
@@ -31,7 +31,7 @@
                     <div id="error-page" class="row">
                         <div class="col-md-6 mx-auto">
                             <div class="box text-center py-5 mt-5">
-                                <p class="text-center"><img src="/img/watchn.png" alt="Watchn"></p>
+                                <p class="text-center"><img th:src="@{~/assets/img/watchn.png}" alt="Watchn"></p>
                                 <h3>We are sorry - an error occurred.</h3>
                                 <h4 class="text-muted">Error <span th:text="${code}">404</span></h4>
                                 <p class="buttons"><a href="/home" class="btn btn-primary"><i class="fa fa-home"></i> Go to Homepage</a></p>
