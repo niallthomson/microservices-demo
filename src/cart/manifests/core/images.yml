@@ -27,5 +27,5 @@ apiVersion: kbld.k14s.io/v1alpha1
 kind: ImageOverrides
 overrides:
 - image: #@ data.values.cart.image
-  newImage: #@ 'docker.io/niallthomson/shop-carts:' + data.values.imageTag
+  newImage: #@ 'docker.io/niallthomson/shop-cart:' + data.values.imageTag
   preresolved: true
