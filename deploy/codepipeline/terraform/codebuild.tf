@@ -5,7 +5,7 @@ data "template_file" "buildspec" {
   vars = {
     env                = var.environment_name
     component          = var.components[count.index]
-    ecr_repository_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com"
+    repository_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com"
   }
 }
 
