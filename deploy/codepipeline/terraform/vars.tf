@@ -10,6 +10,10 @@ variable "repository_owner" {
   default = "niallthomson"
 }
 
+variable "repository_branch" {
+  default = "demo"
+}
+
 variable "components" {
   type = list(string)
   default = ["ui", "cart", "catalog", "orders"]

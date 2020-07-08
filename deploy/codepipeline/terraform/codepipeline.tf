@@ -19,10 +19,10 @@ resource "aws_codepipeline" "pipeline" {
     action {
       category = "Source"
       configuration = {
-        "Branch"               = github_branch.development.branch
+        "Branch"               = var.repository_branch
         "Owner"                = var.repository_owner
         "PollForSourceChanges" = "false"
-        "Repo"                 = github_branch.development.repository
+        "Repo"                 = var.repository_name
       }
       input_artifacts = []
       name            = "Source"
