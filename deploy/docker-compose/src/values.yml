@@ -1,5 +1,8 @@
 #@data/values
 ---
-imagePath: ../../../images
-imageTag: ""
-pushRepo: ""
+image:
+  tag: ""
+  repository: "docker.io/niallthomson"
+  push: false
+  build:
+    path: ../../../images

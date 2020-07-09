@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: catalogue
-        image: #@ data.values.catalog.image
+        image: #@ data.values.catalog.image.build.id
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -29,6 +29,10 @@ spec:
             memory: "256Mi"
           limits:
             memory: "256Mi"
+        #@ if/end len(data.values.catalog.configMap.name) > 0:
+        envFrom:
+        - configMapRef:
+            name: #@ data.values.catalog.configMap.name
 ---
 apiVersion: v1
 kind: Service

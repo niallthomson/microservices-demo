@@ -83,13 +83,11 @@ spec:
 ---
 spec:
   template:
+    #@overlay/match-child-defaults missing_ok=True
     spec:
       containers:
-      #@overlay/match-child-defaults missing_ok=True
       #@overlay/match by="name"
       - name: carts
-        serviceAccountName: carts
-        automountServiceAccountToken: true
         env:
         #@overlay/match by="name"
         - name: CARTS_DYNAMODB_TABLENAME
@@ -97,3 +95,5 @@ spec:
             configMapKeyRef:
               name: carts-db
               key: table
+      serviceAccountName: carts
+      automountServiceAccountToken: true

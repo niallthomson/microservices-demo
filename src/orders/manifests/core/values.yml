@@ -2,8 +2,11 @@
 ---
 #@overlay/match missing_ok=True
 orders:
-  image: watchn-shop-orders
-  imagePath: .
+  image: 
+    name: watchn-orders
+    build:
+      id: watchn-orders
+      path: .
   replicas: 1
   services:
     mysqlWriter:

@@ -2,6 +2,9 @@
 ---
 #@overlay/match missing_ok=True
 ui:
-  image: watchn-shop-ui
-  imagePath: .
+  image: 
+    name: watchn-ui
+    build:
+      id: watchn-ui
+      path: .
   replicas: 1

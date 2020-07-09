@@ -1,7 +1,22 @@
 #@data/values
 ---
 namespace: watchn
-imagePath: ../../../images
-imageTag: ""
-pushRepo: ""
+image:
+  tag: ""
+  repository: "docker.io/niallthomson"
+  push: false
+  build:
+    path: ../../../images
 includeServices: false
+ingress:
+  enabled: false
+  hosts:
+  - example.local
+  annotations:
+    #! kubernetes.io/ingress.class: nginx
+    #! kubernetes.io/tls-acme: "true"
+  tls:
+    #! Secrets must be manually created in the namespace.
+    #! - secretName: chart-example-tls
+    #!   hosts:
+    #!     - chart-example.local

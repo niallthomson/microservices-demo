@@ -2,8 +2,11 @@
 ---
 #@overlay/match missing_ok=True
 cart:
-  image: watchn-shop-carts
-  imagePath: .
+  image:
+    name: watchn-carts
+    build:
+      id: watchn-carts
+      path: .
   replicas: 1
   services:
     persistence: dynamodb

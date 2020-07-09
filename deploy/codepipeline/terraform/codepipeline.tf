@@ -36,7 +36,7 @@ resource "aws_codepipeline" "pipeline" {
     }
   }
   stage {
-    name = "Build"
+    name = "Build Image"
 
     action {
       category = "Build"

@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: carts
-        image: #@ data.values.cart.image
+        image: #@ data.values.cart.image.build.id
         ports:
          - containerPort: 8080
         env:

@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: orders
-        image: #@ data.values.orders.image
+        image: #@ data.values.orders.image.build.id
         ports:
          - containerPort: 8080
         env:
