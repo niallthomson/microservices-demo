@@ -3,9 +3,9 @@
 #@overlay/match missing_ok=True
 cart:
   image:
-    name: watchn-carts
+    name: watchn-cart
     build:
-      id: watchn-carts
+      id: watchn-cart
       path: .
   replicas: 1
   services:

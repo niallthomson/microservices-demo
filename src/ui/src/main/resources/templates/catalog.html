@@ -64,7 +64,7 @@
                             <p class="buttons">
                             <form action="/cart" method="POST">
                                 <input type="hidden" name="productId" th:value="${item.id}"/>
-                                <a href="detail.html" class="btn btn-outline-secondary">View detail</a>
+                                <a href="#" th:href="@{/catalog/{itemId}(itemId=${item.id})}" class="btn btn-outline-secondary">View detail</a>
                                 <a href="#" onclick="this.closest('form').submit();return false;" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                             </form>
                             </p>
