@@ -22,5 +22,4 @@ ytt -f $DIR/../src/core \
     -f $APP_SRC_DIR/src/orders/manifests/core \
     --data-value orders.image.build.path=$APP_SRC_DIR/src/orders \
     --data-value image.repository=$REPO \
-    --data-value image.push="true" \
      $@ | kbld -f -
