@@ -37,6 +37,12 @@ spec:
             memory: "512Mi"
           limits:
             memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 3
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume

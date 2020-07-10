@@ -33,6 +33,12 @@ spec:
         envFrom:
         - configMapRef:
             name: #@ data.values.catalog.configMap.name
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 3
 ---
 apiVersion: v1
 kind: Service

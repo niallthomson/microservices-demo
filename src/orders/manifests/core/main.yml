@@ -39,6 +39,12 @@ spec:
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume
+        livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 3
       volumes:
         - name: tmp-volume
           emptyDir:
