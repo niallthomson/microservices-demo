@@ -8,6 +8,13 @@ metadata:
     name: carts
   namespace: #@ data.values.namespace
 spec:
+  minReadySeconds: 5
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 180
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
   replicas: #@ data.values.cart.replicas
   selector:
     matchLabels:
