@@ -8,3 +8,16 @@ ui:
       id: watchn-ui
       path: .
   replicas: 1
+
+ingress:
+  enabled: false
+  hosts:
+  - example.local
+  annotations:
+    #! kubernetes.io/ingress.class: nginx
+    #! kubernetes.io/tls-acme: "true"
+  tls:
+    #! Secrets must be manually created in the namespace.
+    #! - secretName: chart-example-tls
+    #!   hosts:
+    #!     - chart-example.local
