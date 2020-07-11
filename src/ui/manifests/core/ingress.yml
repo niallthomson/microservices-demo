@@ -17,8 +17,7 @@ spec:
     - host: #@ host
       http:
         paths:
-          - path: /*
-            backend:
+          - backend:
               serviceName: ui
               servicePort: 80
   #@ if/end data.values.ingress.tls:
