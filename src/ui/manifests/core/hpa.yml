@@ -1,3 +1,5 @@
+#@ load("@ytt:data", "data")
+
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:

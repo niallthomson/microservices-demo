@@ -15,7 +15,7 @@ spec:
     rollingUpdate:
       maxUnavailable: 1
     type: RollingUpdate
-  #@ if/end not data.values.hpa:
+  #@ if/end not data.values.deployment.hpa:
   replicas: #@ data.values.ui.replicas
   selector:
     matchLabels:

@@ -9,6 +9,7 @@ ui:
       path: .
   replicas: 1
 
+#@overlay/match missing_ok=True
 ingress:
   enabled: false
   hosts:
