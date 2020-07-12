@@ -5,7 +5,7 @@ data "template_file" "buildspec" {
   vars = {
     env                = var.environment_name
     component          = var.components[count.index]
-    ecr_repository_url = aws_ecr_repository.components[count.index].repository_url
+    repository_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com"
   }
 }
 
@@ -22,14 +22,14 @@ resource "aws_codebuild_project" "component_build" {
   }
 
   artifacts {
-    type = "NO_ARTIFACTS"
+    type = "CODEPIPELINE"
   }
 
   environment {
     compute_type                = "BUILD_GENERAL1_SMALL"
     image                       = "aws/codebuild/amazonlinux2-x86_64-standard:2.0"
     image_pull_credentials_type = "CODEBUILD"
-    privileged_mode             = false
+    privileged_mode             = true
     type                        = "LINUX_CONTAINER"
   }
 
@@ -88,6 +88,19 @@ resource "aws_iam_role_policy" "codebuild" {
         "logs:CreateLogGroup",
         "logs:CreateLogStream",
         "logs:PutLogEvents"
+      ]
+    },
+    {
+      "Effect":"Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetBucketVersioning",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.codepipeline_bucket.arn}",
+        "${aws_s3_bucket.codepipeline_bucket.arn}/*"
       ]
     }
   ]

@@ -8,6 +8,14 @@ metadata:
     name: ui
   namespace: #@ data.values.namespace
 spec:
+  minReadySeconds: 5
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 180
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  #@ if/end not data.values.deployment.hpa:
   replicas: #@ data.values.ui.replicas
   selector:
     matchLabels:
@@ -18,9 +26,21 @@ spec:
         name: ui
         fargate: "true"
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: name
+                  operator: In
+                  values:
+                  - ui
+              topologyKey: failure-domain.beta.kubernetes.io/zone
+            weight: 100
       containers:
       - name: ui
-        image: #@ data.values.ui.image
+        image: #@ data.values.ui.image.build.id
         ports:
           - containerPort: 8080
         env:
@@ -37,6 +57,12 @@ spec:
             memory: "512Mi"
           limits:
             memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 3
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume

@@ -1,14 +1,25 @@
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-
 server:
   port: ${port:8080}
   codec.max-in-memory-size: 10MB
+  compression.enabled: true
 
 endpoints:
   catalog: http://localhost:8081
   carts: http://localhost:8082
   orders: http://localhost:8083
+
+spring:
+  resources:
+    cache:
+      cachecontrol:
+        cache-public: true
+        no-cache: false
+        no-store: false
+        must-revalidate: false
+        max-age: 31536000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

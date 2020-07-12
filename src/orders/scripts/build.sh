@@ -14,4 +14,4 @@ if [ -z "$REPO" ]; then
 fi
 
 docker build -f $CODE_DIR/../../images/java11/Dockerfile --build-arg JAR_PATH=target/orders-0.0.1-SNAPSHOT.jar \
-  -t $REPO/shop-orders:$TAG $CODE_DIR
+  -t $REPO/watchn-orders:$TAG $CODE_DIR

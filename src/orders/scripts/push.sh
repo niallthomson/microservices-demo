@@ -15,4 +15,4 @@ fi
 
 TAG=$TAG $SCRIPT_DIR/build.sh
 
-docker push $REPO/shop-orders:$TAG
+docker push $REPO/watchn-orders:$TAG

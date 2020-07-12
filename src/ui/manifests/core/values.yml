@@ -2,6 +2,23 @@
 ---
 #@overlay/match missing_ok=True
 ui:
-  image: watchn-shop-ui
-  imagePath: .
+  image: 
+    name: watchn-ui
+    build:
+      id: watchn-ui
+      path: .
   replicas: 1
+
+#@overlay/match missing_ok=True
+ingress:
+  enabled: false
+  hosts:
+  - example.local
+  annotations:
+    #! kubernetes.io/ingress.class: nginx
+    #! kubernetes.io/tls-acme: "true"
+  tls:
+    #! Secrets must be manually created in the namespace.
+    #! - secretName: chart-example-tls
+    #!   hosts:
+    #!     - chart-example.local

@@ -1,7 +1,15 @@
 #@data/values
 ---
 namespace: watchn
-imagePath: ../../../images
-imageTag: ""
-pushRepo: ""
+
+image:
+  tag: ""
+  repository: "docker.io/niallthomson"
+  push: false
+  build:
+    path: ../../../images
+
+deployment:
+  hpa: false
+
 includeServices: false

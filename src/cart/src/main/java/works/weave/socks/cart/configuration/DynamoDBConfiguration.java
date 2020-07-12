@@ -37,12 +37,8 @@ public class DynamoDBConfiguration {
         // Inject missing defaults from the deprecated method
         builder.withTypeConverterFactory(DynamoDBTypeConverterFactory.standard());
         builder.withTableNameResolver((aClass, dynamoDBMapperConfig) -> {
-            System.out.println("Mapping class "+aClass.getSimpleName()+" to "+properties.getTableName());
-
             return properties.getTableName();
-
         });
-        //builder.withTableNameOverride(DynamoDBMapperConfig.TableNameOverride.withTableNameReplacement(properties.getTableName()));
 
         return builder.build();
     }

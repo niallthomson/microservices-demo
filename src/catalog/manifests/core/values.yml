@@ -2,11 +2,16 @@
 ---
 #@overlay/match missing_ok=True
 catalog:
-  image: watchn-catalog
-  imagePath: .
+  image: 
+    name: watchn-catalog
+    build:
+      id: watchn-catalog
+      path: .
   replicas: 1
   services:
     mysqlWriter:
       secret: catalog-writer-db
     mysqlReader:
       secret: catalog-reader-db
+  configMap:
+    name: ""

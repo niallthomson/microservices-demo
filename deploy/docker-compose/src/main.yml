@@ -13,10 +13,10 @@ services:
     - ENDPOINTS_CARTS=http://carts:8080
     - ENDPOINTS_ORDERS=http://orders:8080
     hostname: ui
-    image: #@ data.values.ui.image
+    image: #@ data.values.ui.image.build.id
     restart: always
   catalogue:
-    image: #@ data.values.catalog.image
+    image: #@ data.values.catalog.image.build.id
     hostname: catalogue
     restart: always
   catalog-db:
@@ -30,7 +30,7 @@ services:
         - MYSQL_USER=catalog_user
         - MYSQL_PASSWORD=default_password
   carts:
-    image: #@ data.values.cart.image
+    image: #@ data.values.cart.image.build.id
     hostname: carts
     restart: always
     environment:
@@ -46,7 +46,7 @@ services:
     hostname: carts-db
     restart: always
   orders:
-    image: #@ data.values.orders.image
+    image: #@ data.values.orders.image.build.id
     hostname: orders
     restart: always
     environment:

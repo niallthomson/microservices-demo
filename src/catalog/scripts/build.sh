@@ -14,4 +14,4 @@ if [ -z "$REPO" ]; then
 fi
 
 docker build -f $CODE_DIR/Dockerfile \
-  -t $REPO/shop-catalog:$TAG $CODE_DIR
+  -t $REPO/watchn-catalog:$TAG $CODE_DIR
