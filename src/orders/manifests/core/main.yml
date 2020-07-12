@@ -33,16 +33,16 @@ spec:
          - containerPort: 8080
         env:
           - name: JAVA_OPTS
-            value: -Xms128m -Xmx512m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+            value: -Djava.security.egd=file:/dev/urandom
           - name: SERVER_TOMCAT_ACCESSLOG_ENABLED
             value: "true"
           - name: SPRING_PROFILES_ACTIVE
             value: mysql
         resources:
           requests:
-            memory: "512Mi"
+            memory: "1024Mi"
           limits:
-            memory: "512Mi"
+            memory: "1024Mi"
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume
@@ -50,7 +50,7 @@ spec:
             httpGet:
               path: /actuator/health
               port: 8080
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             periodSeconds: 3
       volumes:
         - name: tmp-volume
