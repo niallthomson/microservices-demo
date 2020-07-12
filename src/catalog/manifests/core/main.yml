@@ -40,6 +40,8 @@ spec:
         envFrom:
         - configMapRef:
             name: #@ data.values.catalog.configMap.name
+
+#@ if data.values.services.enabled:
 ---
 apiVersion: v1
 kind: Service
@@ -54,3 +56,4 @@ spec:
     targetPort: 8080
   selector:
     name: catalogue
+#@ end

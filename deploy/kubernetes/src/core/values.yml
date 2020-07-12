@@ -9,6 +9,9 @@ image:
   build:
     path: ../../../images
 
+services:
+  enabled: true
+
 deployment:
   hpa: false
 

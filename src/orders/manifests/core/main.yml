@@ -56,6 +56,8 @@ spec:
         - name: tmp-volume
           emptyDir:
             medium: Memory
+
+#@ if data.values.services.enabled:
 ---
 apiVersion: v1
 kind: Service
@@ -70,3 +72,4 @@ spec:
     targetPort: 8080
   selector:
     name: orders
+#@ end
