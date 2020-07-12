@@ -43,7 +43,7 @@ spec:
           httpGet:
             path: /actuator/health
             port: 8080
-          initialDelaySeconds: 30
+          initialDelaySeconds: 45
           periodSeconds: 3
         volumeMounts:
         - mountPath: /tmp
@@ -52,6 +52,8 @@ spec:
         - name: tmp-volume
           emptyDir:
             medium: Memory
+
+#@ if data.values.services.enabled:
 ---
 apiVersion: v1
 kind: Service
@@ -66,3 +68,4 @@ spec:
     targetPort: 8080
   selector:
     name: carts
+#@ end
