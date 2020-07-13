@@ -33,7 +33,7 @@ spec:
          - containerPort: 8080
         env:
           - name: JAVA_OPTS
-            value: -Djava.security.egd=file:/dev/urandom
+            value: -XX:+UseContainerSupport -XX:MaxRAMFraction=2 -Djava.security.egd=file:/dev/urandom
           - name: SERVER_TOMCAT_ACCESSLOG_ENABLED
             value: "true"
           - name: SPRING_PROFILES_ACTIVE
