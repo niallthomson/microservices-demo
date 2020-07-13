@@ -16,6 +16,7 @@ spec:
     rollingUpdate:
       maxUnavailable: 1
     type: RollingUpdate
+  #@ if/end not data.values.hpa.enabled:
   replicas: #@ data.values.orders.replicas
   selector:
     matchLabels:
@@ -24,7 +25,14 @@ spec:
     metadata:
       labels:
         name: orders
+        #@ if/end data.values.eks.fargate.enabled:
         fargate: "true"
+      #@ if data.values.metrics.prometheus.enabled:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8080'
+        prometheus.io/path: '/actuator/prometheus'
+      #@ end
     spec:
       containers:
       - name: orders
