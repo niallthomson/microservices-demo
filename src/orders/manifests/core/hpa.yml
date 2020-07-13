@@ -4,13 +4,13 @@
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: ui
+  name: orders
   namespace: #@ data.values.namespace
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: ui
+    name: orders
   minReplicas: 3
   maxReplicas: 6
   metrics:
