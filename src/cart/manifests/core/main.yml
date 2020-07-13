@@ -15,6 +15,7 @@ spec:
     rollingUpdate:
       maxUnavailable: 1
     type: RollingUpdate
+  #@ if/end not data.values.hpa.enabled:
   replicas: #@ data.values.cart.replicas
   selector:
     matchLabels:
