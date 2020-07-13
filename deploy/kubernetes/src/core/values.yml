@@ -15,4 +15,8 @@ services:
 hpa:
   enabled: false
 
+metrics:
+  prometheus:
+    enabled: false
+
 includeServices: false
