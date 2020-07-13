@@ -12,7 +12,7 @@ image:
 services:
   enabled: true
 
-deployment:
-  hpa: false
+hpa:
+  enabled: false
 
 includeServices: false
