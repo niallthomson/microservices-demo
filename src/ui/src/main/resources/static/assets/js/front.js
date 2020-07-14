@@ -1,5 +1,7 @@
 $(function () {
 
+    $('[data-toggle="popover"]').popover({html: true});
+
     $('.shop-detail-carousel').owlCarousel({
         items: 1,
         thumbs: true,

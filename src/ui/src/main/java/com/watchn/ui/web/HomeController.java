@@ -2,6 +2,7 @@ package com.watchn.ui.web;
 
 import com.watchn.ui.clients.carts.api.CartsApi;
 import com.watchn.ui.clients.catalog.api.CatalogApi;
+import com.watchn.ui.services.MetadataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
@@ -14,8 +15,8 @@ public class HomeController extends BaseController {
 
     private CatalogApi catalogApi;
 
-    public HomeController(@Autowired CatalogApi catalogApi, @Autowired CartsApi cartsApi) {
-        super(cartsApi);
+    public HomeController(@Autowired CatalogApi catalogApi, @Autowired CartsApi cartsApi, @Autowired MetadataService metadataService) {
+        super(cartsApi, metadataService);
         this.catalogApi = catalogApi;
     }
 
@@ -29,7 +30,7 @@ public class HomeController extends BaseController {
         model.addAttribute("catalog", new ReactiveDataDriverContextVariable(
                 catalogApi.catalogueGet("", "", 1, 5)));
 
-        populateCart(request, model);
+        populateCommon(request, model);
 
         return "home";
     }

@@ -26,13 +26,14 @@ public class OrderService {
     public OrderEntity create(OrderEntity order) {
         for(OrderItemEntity item : order.getItems()) {
             item.setOrder(order);
+
+            OrderItemEntity.Key key = new OrderItemEntity.Key();
+            //key.setProductId(item.getProductId());
+
+            item.setId(key);
         }
 
-        long start = System.currentTimeMillis();
-
         OrderEntity entity = repository.save(order);
-
-        log.info("Persisted order {} in {}ms", entity.getId(), System.currentTimeMillis() - start);
 
         return entity;
     }

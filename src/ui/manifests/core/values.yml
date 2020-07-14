@@ -9,6 +9,9 @@ ui:
       path: .
   replicas: 1
 
+  configMap:
+    name: ""
+
 #@overlay/match missing_ok=True
 ingress:
   enabled: false

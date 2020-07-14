@@ -2,6 +2,7 @@ package com.watchn.ui.web;
 
 import com.watchn.ui.clients.carts.api.CartsApi;
 import com.watchn.ui.clients.catalog.api.CatalogApi;
+import com.watchn.ui.services.MetadataService;
 import com.watchn.ui.web.util.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -21,8 +22,8 @@ public class CatalogController extends BaseController {
 
     private CatalogApi catalogApi;
 
-    public CatalogController(@Autowired CatalogApi catalogApi, @Autowired CartsApi cartsApi) {
-        super(cartsApi);
+    public CatalogController(@Autowired CatalogApi catalogApi, @Autowired CartsApi cartsApi, @Autowired MetadataService metadataService) {
+        super(cartsApi, metadataService);
 
         this.catalogApi = catalogApi;
     }
@@ -39,7 +40,7 @@ public class CatalogController extends BaseController {
 
         model.addAttribute("page", catalogApi.catalogueSizeGet(tag).map(r -> new PageInfo(page, size, r.getSize())));
 
-        populateCart(request, model);
+        populateCommon(request, model);
 
         return "catalog";
     }
@@ -53,7 +54,7 @@ public class CatalogController extends BaseController {
             return l;
         }).flatMapMany(Flux::fromIterable));
 
-        populateCart(request, model);
+        populateCommon(request, model);
 
         return "detail";
     }

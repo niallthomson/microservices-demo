@@ -21,7 +21,6 @@ public class OrderEntity {
 
     @OneToMany(
             mappedBy = "order",
-            cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
