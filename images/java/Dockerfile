@@ -24,4 +24,4 @@ COPY --from=build-env /app.jar /
 
 EXPOSE 8080
 
-ENTRYPOINT ["sh","-c","java -jar /app.jar"]
+ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar /app.jar"]
