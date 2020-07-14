@@ -27,6 +27,7 @@ services:
       - SPRING_DATASOURCE_READER_URL=jdbc:mysql://orders-db:3306/orders
       - SPRING_DATASOURCE_READER_USERNAME=orders_user
       - SPRING_DATASOURCE_READER_PASSWORD=default_password
+      - SPRING_DATASOURCE_WRITER_MAXIMUMPOOLSIZE=20
     ports:
       - "8083:8080"
   orders-db:
