@@ -1,12 +1,10 @@
 package works.weave.socks.cart.repositories.dynamo.entities;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.*;
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import works.weave.socks.cart.repositories.ItemEntity;
-
-import javax.validation.constraints.NotNull;
 
 @DynamoDBTable(tableName="Items")
 public class DynamoItemEntity implements ItemEntity {
