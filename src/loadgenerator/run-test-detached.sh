@@ -34,8 +34,8 @@ cd $DIR
 export WATCHN_BASE_URL=$base_url
 export WATCHN_REGION=$region
 export WATCHN_TARGET=$target
-export WATCHN_INFLUXDB_URL="influxdb=$influx_url"
+export WATCHN_K6_OUT="influxdb=$influx_url"
 
-docker-compose run -v \
-    $PWD/scripts:/scripts \
-    k6 run /scripts/script.js
+docker-compose run -d -v \
+    $PWD/js:/js \
+    k6 run /js/script.js

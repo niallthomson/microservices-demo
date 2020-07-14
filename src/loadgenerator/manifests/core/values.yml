@@ -1,0 +1,14 @@
+#@data/values
+---
+#@overlay/match missing_ok=True
+loadgenerator:
+  image:
+    name: watchn-loadgenerator
+    build:
+      id: watchn-loadgenerator
+      path: .
+  baseUrl: http://ui.watchn.svc
+  target: 10
+  region: none
+  k6:
+    out: influxdb=http://influxdb:8086/k6

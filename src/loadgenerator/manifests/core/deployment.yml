@@ -1,0 +1,58 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadgenerator
+  namespace: #@ data.values.namespace
+  labels:
+    app: loadgenerator
+spec:
+  replicas: 1
+  strategy: 
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: loadgenerator
+  template:
+    metadata:
+      labels:
+        app: loadgenerator
+    spec:
+      containers:
+      - name: loadgenerator
+        image: #@ data.values.loadgenerator.image.build.id
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: WATCHN_BASE_URL
+            value: #@ data.values.loadgenerator.baseUrl
+          - name: WATCHN_TARGET
+            value: #@ data.values.loadgenerator.target
+          - name: WATCHN_REGION
+            value: #@ data.values.loadgenerator.region
+          - name: WATCHN_K6_OUT
+            value: #@ data.values.loadgenerator.k6.out
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb
+  namespace: #@ data.values.namespace
+  labels:
+    app: influxdb
+spec:
+  replicas: 1
+  strategy: 
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: influxdb
+  template:
+    metadata:
+      labels:
+        app: influxdb
+    spec:
+      containers:
+      - name: influxdb
+        image: influxdb:1.6.4
+        imagePullPolicy: IfNotPresent

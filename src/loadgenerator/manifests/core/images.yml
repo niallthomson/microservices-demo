@@ -1,0 +1,27 @@
+#@ load("@ytt:data", "data")
+
+#@ if not len(data.values.image.tag) > 0:
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: Sources
+sources:
+- image: #@ data.values.loadgenerator.image.build.id
+  path: #@ data.values.loadgenerator.image.build.path
+
+#@ if/end data.values.image.push:
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageDestinations
+destinations:
+- image: #@ data.values.loadgenerator.image.build.id
+  newImage: #@ data.values.image.repository + '/' + data.values.loadgenerator.image.name
+#@ end
+
+#@ if/end len(data.values.image.tag) > 0:
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageOverrides
+overrides:
+- image: #@ data.values.loadgenerator.image.build.id
+  newImage: #@ data.values.image.repository + '/' + data.values.loadgenerator.image.name + ':' + data.values.image.tag
+  preresolved: true

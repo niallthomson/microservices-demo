@@ -37,9 +37,9 @@ services:
     ports:
       - "6565:6565"
     environment:
-      - K6_OUT=${WATCHN_INFLUXDB_URL}
+      - K6_OUT=${WATCHN_K6_OUT}
       - WATCHN_BASE_URL=${WATCHN_BASE_URL}
       - WATCHN_REGION=${WATCHN_REGION}
       - WATCHN_TARGET=${WATCHN_TARGET}
     volumes:
-      - ./scripts:/scripts
+      - ./js:/js
