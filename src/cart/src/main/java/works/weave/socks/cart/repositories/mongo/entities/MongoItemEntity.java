@@ -5,15 +5,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import works.weave.socks.cart.repositories.ItemEntity;
 
-import javax.validation.constraints.NotNull;
-
 @Document
 @Data
 public class MongoItemEntity implements ItemEntity {
     @Id
     private String id;
 
-    @NotNull(message = "Item Id must not be null")
     private String itemId;
     private int quantity;
     private int unitPrice;
