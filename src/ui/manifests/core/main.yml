@@ -59,6 +59,10 @@ spec:
             value: http://carts:8080
           - name: ENDPOINTS_ORDERS
             value: http://orders:8080
+        #@ if/end len(data.values.ui.configMap.name) > 0:
+        envFrom:
+        - configMapRef:
+            name: #@ data.values.ui.configMap.name
         resources:
           requests:
             memory: "768Mi"
