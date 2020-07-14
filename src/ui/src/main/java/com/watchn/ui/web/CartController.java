@@ -4,6 +4,7 @@ import com.watchn.ui.clients.carts.api.CartsApi;
 import com.watchn.ui.clients.carts.api.ItemsApi;
 import com.watchn.ui.clients.carts.model.Item;
 import com.watchn.ui.clients.catalog.api.CatalogApi;
+import com.watchn.ui.services.MetadataService;
 import com.watchn.ui.web.payload.Cart;
 import com.watchn.ui.web.payload.CartItem;
 import com.watchn.ui.web.payload.CartChangeRequest;
@@ -26,8 +27,8 @@ public class CartController extends BaseController {
 
     private CatalogApi catalogApi;
 
-    public CartController(@Autowired ItemsApi itemsApi, @Autowired CartsApi cartsApi, @Autowired CatalogApi catalogApi) {
-        super(cartsApi);
+    public CartController(@Autowired ItemsApi itemsApi, @Autowired CartsApi cartsApi, @Autowired CatalogApi catalogApi, @Autowired MetadataService metadataService) {
+        super(cartsApi, metadataService);
 
         this.itemsApi = itemsApi;
         this.catalogApi = catalogApi;
@@ -47,7 +48,7 @@ public class CartController extends BaseController {
                 .map(Cart::from)
         );
 
-        this.populateCart(request, model);
+        this.populateCommon(request, model);
 
         return "cart";
     }

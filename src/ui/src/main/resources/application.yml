@@ -8,15 +8,10 @@ endpoints:
   carts: http://localhost:8082
   orders: http://localhost:8083
 
-spring:
-  resources:
-    cache:
-      cachecontrol:
-        cache-public: true
-        no-cache: false
-        no-store: false
-        must-revalidate: false
-        max-age: 31536000
+watchn:
+  ui:
+    metadata:
+      region: "none"
 
 management:
   endpoints:

@@ -6,6 +6,7 @@ import com.watchn.ui.clients.catalog.api.CatalogApi;
 import com.watchn.ui.clients.orders.api.OrdersApi;
 import com.watchn.ui.clients.orders.model.Order;
 import com.watchn.ui.clients.orders.model.OrderItem;
+import com.watchn.ui.services.MetadataService;
 import com.watchn.ui.web.payload.Cart;
 import com.watchn.ui.web.payload.CartItem;
 import com.watchn.ui.web.payload.OrderRequest;
@@ -28,8 +29,8 @@ public class CheckoutController extends BaseController {
 
     private OrdersApi ordersApi;
 
-    public CheckoutController(@Autowired CartsApi cartsApi, @Autowired CatalogApi catalogApi, @Autowired OrdersApi ordersApi) {
-        super(cartsApi);
+    public CheckoutController(@Autowired CartsApi cartsApi, @Autowired CatalogApi catalogApi, @Autowired OrdersApi ordersApi, @Autowired MetadataService metadataService) {
+        super(cartsApi, metadataService);
 
         this.catalogApi = catalogApi;
         this.ordersApi = ordersApi;
@@ -47,7 +48,7 @@ public class CheckoutController extends BaseController {
                 .map(Cart::from)
         );
 
-        this.populateCart(request, model);
+        this.populateCommon(request, model);
 
         return "checkout";
     }
@@ -60,6 +61,8 @@ public class CheckoutController extends BaseController {
         createOrderRequest.setFirstName(orderRequest.getFirstName());
         createOrderRequest.setLastName(orderRequest.getLastName());
         createOrderRequest.setEmail(orderRequest.getEmail());
+
+        populateMetadata(model);
 
         return cartsApi.getCart(sessionId).flatMap(
                 cart -> {
