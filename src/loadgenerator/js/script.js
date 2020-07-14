@@ -62,20 +62,25 @@ export default function () {
   let product;
   let addToCard;
 
+  // For now only buy 1 item on each iteration
+  var itemId = products[Math.floor(Math.random() * products.length)];
+
   products.forEach((productId) => {
     product = http.get(`${__ENV.WATCHN_BASE_URL}/catalog/`+productId);
     if(product.status >= 400) {
       errorCounter.add(1)
     }
 
-    addToCard = product.submitForm({
-      formSelector: 'form#addToCart',
-      fields: { 
-        productId: productId
-      },
-    });
-    if(addToCard.status >= 400) {
-      errorCounter.add(1)
+    if (productId == itemId) {
+      addToCard = product.submitForm({
+        formSelector: 'form#addToCart',
+        fields: { 
+          productId: productId
+        },
+      });
+      if(addToCard.status >= 400) {
+        errorCounter.add(1)
+      }
     }
 
     sleep(1);
