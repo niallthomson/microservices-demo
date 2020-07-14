@@ -48,7 +48,7 @@ spec:
             memory: "1Gi"
         livenessProbe:
           httpGet:
-            path: /actuator/health
+            path: /actuator/health/liveness
             port: 8080
           initialDelaySeconds: 45
           periodSeconds: 3
