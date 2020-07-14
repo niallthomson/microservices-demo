@@ -41,16 +41,16 @@ spec:
          - containerPort: 8080
         env:
           - name: JAVA_OPTS
-            value: -XX:+UseContainerSupport -XX:MaxRAMFraction=2 -Djava.security.egd=file:/dev/urandom
+            value: -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
           - name: SERVER_TOMCAT_ACCESSLOG_ENABLED
             value: "true"
           - name: SPRING_PROFILES_ACTIVE
             value: mysql
         resources:
           requests:
-            memory: "1024Mi"
+            memory: "1Gi"
           limits:
-            memory: "1024Mi"
+            memory: "1Gi"
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume

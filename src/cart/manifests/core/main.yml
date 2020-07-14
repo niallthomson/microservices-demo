@@ -38,14 +38,14 @@ spec:
          - containerPort: 8080
         env:
           - name: JAVA_OPTS
-            value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+            value: -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
           - name: SPRING_PROFILES_ACTIVE
             value: dynamodb
         resources:
           requests:
-            memory: "512Mi"
+            memory: "1Gi"
           limits:
-            memory: "512Mi"
+            memory: "1Gi"
         livenessProbe:
           httpGet:
             path: /actuator/health
