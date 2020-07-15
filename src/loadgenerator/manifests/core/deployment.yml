@@ -32,27 +32,3 @@ spec:
             value: #@ data.values.loadgenerator.region
           - name: WATCHN_K6_OUT
             value: #@ data.values.loadgenerator.k6.out
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: influxdb
-  namespace: #@ data.values.namespace
-  labels:
-    app: influxdb
-spec:
-  replicas: 1
-  strategy: 
-    type: RollingUpdate
-  selector:
-    matchLabels:
-      app: influxdb
-  template:
-    metadata:
-      labels:
-        app: influxdb
-    spec:
-      containers:
-      - name: influxdb
-        image: influxdb:1.6.4
-        imagePullPolicy: IfNotPresent
