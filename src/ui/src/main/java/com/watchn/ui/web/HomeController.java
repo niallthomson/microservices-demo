@@ -28,7 +28,8 @@ public class HomeController extends BaseController {
     @GetMapping("/home")
     public String home(final Model model, final ServerHttpRequest request) {
         model.addAttribute("catalog", new ReactiveDataDriverContextVariable(
-                catalogApi.catalogueGet("", "", 1, 5)));
+                catalogApi.catalogueGet("", "", 1, 5)
+                        .retryWhen(retrySpec("get catalog"))));
 
         populateCommon(request, model);
 

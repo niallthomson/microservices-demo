@@ -46,6 +46,7 @@ public class CheckoutController extends BaseController {
         String sessionId = getSessionID(request);
 
         model.addAttribute("fullCart", cartsApi.getCart(sessionId)
+                .retryWhen(retrySpec("get cart"))
                 .flatMapMany(c -> Flux.fromIterable(c.getItems()))
                 .flatMap(i -> this.catalogApi.catalogueProductIdGet(i.getItemId())
                         .map(p -> CartItem.from(i, p)))
@@ -70,8 +71,7 @@ public class CheckoutController extends BaseController {
         populateMetadata(model);
 
         return cartsApi.getCart(sessionId)
-                .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
-                .doBeforeRetry(context -> log.warn("Retrying cart get"))).flatMap(
+                .retryWhen(retrySpec("get cart")).flatMap(
                 cart -> {
                     for(Item item : cart.getItems()) {
                         OrderItem orderItem = new OrderItem()

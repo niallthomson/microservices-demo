@@ -35,10 +35,8 @@ public class CatalogImageController {
                 .accept(MediaType.IMAGE_JPEG)
                 .retrieve()
                 .bodyToMono(byte[].class)
-                .map(payload -> {
-                    return ResponseEntity.ok()
-                            .cacheControl(CacheControl.maxAge(30, TimeUnit.DAYS))
-                            .body(payload);
-                });
+                .map(payload -> ResponseEntity.ok()
+                        .cacheControl(CacheControl.maxAge(30, TimeUnit.DAYS))
+                        .body(payload));
     }
 }
