@@ -8,7 +8,9 @@ import com.watchn.ui.services.MetadataService;
 import com.watchn.ui.web.payload.Cart;
 import com.watchn.ui.web.payload.CartItem;
 import com.watchn.ui.web.payload.CartChangeRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,9 +20,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
 
 @Controller
 @RequestMapping("/cart")
+@Slf4j
 public class CartController extends BaseController {
 
     private ItemsApi itemsApi;
@@ -41,6 +47,8 @@ public class CartController extends BaseController {
         String sessionId = getSessionID(request);
 
         model.addAttribute("fullCart", cartsApi.getCart(sessionId)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
+                        .doBeforeRetry(context -> log.warn("Retrying cart get")))
                 .flatMapMany(c -> Flux.fromIterable(c.getItems()))
                 .flatMap(i -> this.catalogApi.catalogueProductIdGet(i.getItemId())
                         .map(p -> CartItem.from(i, p)))
@@ -58,6 +66,8 @@ public class CartController extends BaseController {
         String sessionId = getSessionID(request);
 
         return this.catalogApi.catalogueProductIdGet(addRequest.getProductId())
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
+                .doBeforeRetry(context -> log.warn("Retrying catalog item get")))
                 .map(p -> new Item().itemId(p.getId()).quantity(1).unitPrice(p.getPrice()))
                 .flatMap(i -> this.itemsApi.addItem(sessionId, i))
                 .thenReturn("redirect:/cart");

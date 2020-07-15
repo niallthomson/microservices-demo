@@ -5,6 +5,9 @@ import com.watchn.ui.services.MetadataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.ui.Model;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
 
 @Slf4j
 public class BaseController {
@@ -26,7 +29,10 @@ public class BaseController {
     protected void populateCart1(ServerHttpRequest request, Model model) {
         String sessionId = getSessionID(request);
 
-        model.addAttribute("cart", cartsApi.getCart(sessionId));
+        model.addAttribute("cart", cartsApi.getCart(sessionId)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
+                .doBeforeRetry(context -> log.warn("Retrying cart get")))
+        );
     }
 
     protected void populateMetadata(Model model) {

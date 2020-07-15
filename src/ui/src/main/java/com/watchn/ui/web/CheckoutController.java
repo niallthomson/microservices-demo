@@ -10,6 +10,7 @@ import com.watchn.ui.services.MetadataService;
 import com.watchn.ui.web.payload.Cart;
 import com.watchn.ui.web.payload.CartItem;
 import com.watchn.ui.web.payload.OrderRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
@@ -20,9 +21,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
 
 @Controller
 @RequestMapping("/checkout")
+@Slf4j
 public class CheckoutController extends BaseController {
 
     private CatalogApi catalogApi;
@@ -64,7 +69,9 @@ public class CheckoutController extends BaseController {
 
         populateMetadata(model);
 
-        return cartsApi.getCart(sessionId).flatMap(
+        return cartsApi.getCart(sessionId)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
+                .doBeforeRetry(context -> log.warn("Retrying cart get"))).flatMap(
                 cart -> {
                     for(Item item : cart.getItems()) {
                         OrderItem orderItem = new OrderItem()

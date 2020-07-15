@@ -4,6 +4,7 @@ import com.watchn.ui.clients.carts.api.CartsApi;
 import com.watchn.ui.clients.catalog.api.CatalogApi;
 import com.watchn.ui.services.MetadataService;
 import com.watchn.ui.web.util.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
@@ -13,11 +14,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Flux;
+import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.util.Collections;
 
 @Controller
 @RequestMapping("/catalog")
+@Slf4j
 public class CatalogController extends BaseController {
 
     private CatalogApi catalogApi;
@@ -38,7 +42,13 @@ public class CatalogController extends BaseController {
 
         model.addAttribute("catalog", catalogApi.catalogueGet(tag, "", page, size));
 
-        model.addAttribute("page", catalogApi.catalogueSizeGet(tag).map(r -> new PageInfo(page, size, r.getSize())));
+        model.addAttribute("page", catalogApi
+                .catalogueSizeGet(tag)
+                .retryWhen(Retry
+                        .backoff(3, Duration.ofSeconds(1))
+                        .doBeforeRetry(context -> log.warn("Retrying catalog get")))
+                .map(r -> new PageInfo(page, size, r.getSize()))
+        );
 
         populateCommon(request, model);
 
@@ -48,7 +58,10 @@ public class CatalogController extends BaseController {
     @GetMapping("/{id}")
     public String item(@PathVariable String id,
                        ServerHttpRequest request, Model model) {
-        model.addAttribute("item", catalogApi.catalogueProductIdGet(id));
+        model.addAttribute("item", catalogApi.catalogueProductIdGet(id)
+                .retryWhen(Retry
+                .backoff(3, Duration.ofSeconds(1))
+                .doBeforeRetry(context -> log.warn("Retrying catalog item get"))));
         model.addAttribute("recommendations", catalogApi.catalogueGet("", "", 1, 3).collectList().map(l -> {
             Collections.shuffle(l);
             return l;
