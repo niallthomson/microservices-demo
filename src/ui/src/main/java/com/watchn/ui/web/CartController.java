@@ -6,8 +6,9 @@ import com.watchn.ui.clients.carts.model.Item;
 import com.watchn.ui.clients.catalog.api.CatalogApi;
 import com.watchn.ui.services.MetadataService;
 import com.watchn.ui.web.payload.Cart;
-import com.watchn.ui.web.payload.CartItem;
 import com.watchn.ui.web.payload.CartChangeRequest;
+import com.watchn.ui.web.payload.CartItem;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import reactor.core.publisher.Mono;
 
 @Controller
 @RequestMapping("/cart")
+@Slf4j
 public class CartController extends BaseController {
 
     private ItemsApi itemsApi;
@@ -36,11 +38,10 @@ public class CartController extends BaseController {
 
     @GetMapping
     public String cart(ServerHttpRequest request, Model model) {
-        Cart cart = new Cart();
-
         String sessionId = getSessionID(request);
 
         model.addAttribute("fullCart", cartsApi.getCart(sessionId)
+                .retryWhen(retrySpec("get cart"))
                 .flatMapMany(c -> Flux.fromIterable(c.getItems()))
                 .flatMap(i -> this.catalogApi.catalogueProductIdGet(i.getItemId())
                         .map(p -> CartItem.from(i, p)))
@@ -58,6 +59,7 @@ public class CartController extends BaseController {
         String sessionId = getSessionID(request);
 
         return this.catalogApi.catalogueProductIdGet(addRequest.getProductId())
+                .retryWhen(retrySpec("get catalog item"))
                 .map(p -> new Item().itemId(p.getId()).quantity(1).unitPrice(p.getPrice()))
                 .flatMap(i -> this.itemsApi.addItem(sessionId, i))
                 .thenReturn("redirect:/cart");

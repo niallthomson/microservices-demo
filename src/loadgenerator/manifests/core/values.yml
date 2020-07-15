@@ -2,6 +2,7 @@
 ---
 #@overlay/match missing_ok=True
 loadgenerator:
+  replicas: 1
   image:
     name: watchn-loadgenerator
     build:
