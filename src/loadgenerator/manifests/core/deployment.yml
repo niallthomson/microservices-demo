@@ -30,5 +30,5 @@ spec:
             value: #@ str(data.values.loadgenerator.target)
           - name: WATCHN_REGION
             value: #@ data.values.loadgenerator.region
-          - name: WATCHN_K6_OUT
+          - name: K6_OUT
             value: #@ data.values.loadgenerator.k6.out
