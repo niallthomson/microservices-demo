@@ -41,7 +41,9 @@ export let options = {
     region: __ENV.WATCHN_REGION
   },
   stages: [
-    { duration: "120m", target: target } // Work
+    { duration: "2m", target: target },  // Ramp
+    { duration: "120m", target: target }, // Work
+    { duration: "2m", target: 0 },   // Down
   ]
 }
 
