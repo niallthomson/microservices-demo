@@ -8,7 +8,7 @@ metadata:
   labels:
     app: loadgenerator
 spec:
-  replicas: 1
+  replicas: #@ data.values.loadgenerator.replicas
   strategy: 
     type: RollingUpdate
   selector:
