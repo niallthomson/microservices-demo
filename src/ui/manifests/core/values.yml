@@ -12,16 +12,30 @@ ui:
   configMap:
     name: ""
 
-#@overlay/match missing_ok=True
-ingress:
-  enabled: false
-  hosts:
-  - example.local
-  annotations:
-    #! kubernetes.io/ingress.class: nginx
-    #! kubernetes.io/tls-acme: "true"
-  tls:
-    #! Secrets must be manually created in the namespace.
-    #! - secretName: chart-example-tls
-    #!   hosts:
-    #!     - chart-example.local
+  metrics:
+    enabled: "true"
+    service:
+      port: 9122
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: 9122
+        prometheus.io/path: "/metrics"
+
+  hpa:
+    enabled: false
+    minReplicas: 3
+    maxReplicas: 6
+
+  #@overlay/match missing_ok=True
+  ingress:
+    enabled: false
+    hosts:
+    - example.local
+    annotations:
+      #! kubernetes.io/ingress.class: nginx
+      #! kubernetes.io/tls-acme: "true"
+    tls:
+      #! Secrets must be manually created in the namespace.
+      #! - secretName: chart-example-tls
+      #!   hosts:
+      #!     - chart-example.local
