@@ -1,6 +1,6 @@
 #@ load("@ytt:data", "data")
 
-#@ if data.values.hpa.enabled:
+#@ if data.values.orders.hpa.enabled:
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -11,8 +11,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: orders
-  minReplicas: 2
-  maxReplicas: 2
+  minReplicas: #@ data.values.orders.hpa.minReplicas
+  maxReplicas: #@ data.values.orders.hpa.maxReplicas
   metrics:
   - type: Resource
     resource:

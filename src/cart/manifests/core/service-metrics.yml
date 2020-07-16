@@ -1,0 +1,18 @@
+#@ load("@ytt:data", "data")
+
+#@ if data.values.cart.metrics.enabled:
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carts-metrics
+  namespace: #@ data.values.namespace
+  annotations: #@ data.values.cart.metrics.service.annotations
+spec:
+  type: ClusterIP
+  ports:
+  - port: #@ data.values.cart.metrics.service.port
+    targetPort: http
+  selector:
+    name: carts
+#@ end

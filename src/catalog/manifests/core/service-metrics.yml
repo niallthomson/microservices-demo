@@ -1,0 +1,18 @@
+#@ load("@ytt:data", "data")
+
+#@ if data.values.catalog.metrics.enabled:
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-metrics
+  namespace: #@ data.values.namespace
+  annotations: #@ data.values.catalog.metrics.service.annotations
+spec:
+  type: ClusterIP
+  ports:
+  - port: #@ data.values.catalog.metrics.service.port
+    targetPort: http
+  selector:
+    name: catalogue
+#@ end

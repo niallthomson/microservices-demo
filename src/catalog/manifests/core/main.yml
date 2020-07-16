@@ -15,7 +15,7 @@ spec:
     rollingUpdate:
       maxUnavailable: 1
     type: RollingUpdate
-  #@ if/end not data.values.hpa.enabled:
+  #@ if/end not data.values.catalog.hpa.enabled:
   replicas: #@ data.values.catalog.replicas
   selector:
     matchLabels:
@@ -24,11 +24,6 @@ spec:
     metadata:
       labels:
         name: catalogue
-      #@ if data.values.metrics.prometheus.enabled:
-      annotations:
-        prometheus.io/scrape: 'true'
-        prometheus.io/port: '8080'
-      #@ end
     spec:
       containers:
       - name: catalogue

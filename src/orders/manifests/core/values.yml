@@ -13,3 +13,17 @@ orders:
       secret: orders-writer-db
     mysqlReader:
       secret: orders-reader-db
+
+  metrics:
+    enabled: false
+    service:
+      port: 8080
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+
+  hpa:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 4

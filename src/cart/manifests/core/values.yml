@@ -10,3 +10,17 @@ cart:
   replicas: 1
   services:
     persistence: dynamodb
+
+  metrics:
+    enabled: false
+    service:
+      port: 8080
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+
+  hpa:
+    enabled: false
+    minReplicas: 3
+    maxReplicas: 6

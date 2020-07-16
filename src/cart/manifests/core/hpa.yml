@@ -11,8 +11,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: carts
-  minReplicas: 3
-  maxReplicas: 6
+  minReplicas: #@ data.values.cart.hpa.minReplicas
+  maxReplicas: #@ data.values.cart.hpa.maxReplicas
   metrics:
   - type: Resource
     resource:
