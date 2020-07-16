@@ -24,14 +24,6 @@ spec:
     metadata:
       labels:
         name: ui
-        #@ if/end data.values.eks.fargate.enabled:
-        fargate: "true"
-      #@ if data.values.metrics.prometheus.enabled:
-      annotations:
-        prometheus.io/scrape: 'true'
-        prometheus.io/port: '8080'
-        prometheus.io/path: '/actuator/prometheus'
-      #@ end
     spec:
       affinity:
         podAntiAffinity:
@@ -49,7 +41,8 @@ spec:
       - name: ui
         image: #@ data.values.ui.image.build.id
         ports:
-          - containerPort: 8080
+          - name: http
+            containerPort: 8080
         env:
           - name: JAVA_OPTS
             value: -Xms64m -Xmx512m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
@@ -95,7 +88,7 @@ spec:
   type: NodePort
   ports:
   - port: 80
-    targetPort: 8080
+    targetPort: http
   selector:
     name: ui
 #@ end

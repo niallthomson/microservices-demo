@@ -19,8 +19,4 @@ metrics:
   prometheus:
     enabled: false
 
-eks:
-  fargate:
-    enabled: false
-
 includeServices: false

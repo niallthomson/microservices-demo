@@ -25,8 +25,6 @@ spec:
     metadata:
       labels:
         name: orders
-        #@ if/end data.values.eks.fargate.enabled:
-        fargate: "true"
       #@ if data.values.metrics.prometheus.enabled:
       annotations:
         prometheus.io/scrape: 'true'

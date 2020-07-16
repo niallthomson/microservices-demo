@@ -24,8 +24,6 @@ spec:
     metadata:
       labels:
         name: catalogue
-        #@ if/end data.values.eks.fargate.enabled:
-        fargate: "true"
       #@ if data.values.metrics.prometheus.enabled:
       annotations:
         prometheus.io/scrape: 'true'
