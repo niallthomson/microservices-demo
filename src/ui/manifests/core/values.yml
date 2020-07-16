@@ -15,10 +15,10 @@ ui:
   metrics:
     enabled: "true"
     service:
-      port: 9122
+      port: 8080
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "9122"
+        prometheus.io/port: "8080"
         prometheus.io/path: "/metrics"
 
   hpa:
