@@ -20,8 +20,10 @@ COMPONENT_SRC_DIR="$APP_SRC_DIR/src/$COMPONENT"
 
 cd $COMPONENT_SRC_DIR
 
-ytt -f $DIR/../src/core/values.yml \
+yaml=$(ytt -f $DIR/../src/core/values.yml \
     --data-value image.build.path=$APP_SRC_DIR/images \
     -f $COMPONENT_SRC_DIR/manifests/core \
     --data-value image.repository=$REPO \
-     $@ | kbld -f -
+     $@)
+
+echo "$yaml" | kbld -f -
