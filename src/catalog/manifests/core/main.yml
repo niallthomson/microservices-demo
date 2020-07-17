@@ -30,7 +30,8 @@ spec:
         image: #@ data.values.catalog.image.build.id
         imagePullPolicy: Always
         ports:
-        - containerPort: 8080
+        - name: http
+          containerPort: 8080
         resources:
           requests:
             memory: "256Mi"
@@ -53,7 +54,7 @@ metadata:
 spec:
   ports:
   - port: 8080
-    targetPort: 8080
+    targetPort: http
   selector:
     name: catalogue
 #@ end

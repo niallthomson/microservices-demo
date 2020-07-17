@@ -30,7 +30,8 @@ spec:
       - name: orders
         image: #@ data.values.orders.image.build.id
         ports:
-         - containerPort: 8080
+         - name: http
+           containerPort: 8080
         env:
           - name: JAVA_OPTS
             value: -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
@@ -69,7 +70,7 @@ metadata:
 spec:
   ports:
   - port: 8080
-    targetPort: 8080
+    targetPort: http
   selector:
     name: orders
 #@ end
