@@ -56,12 +56,12 @@ spec:
               port: 8080
             initialDelaySeconds: 90
             periodSeconds: 3
+        securityContext:
+          readOnlyRootFilesystem: #@ data.values.orders.securityContext.readOnlyRootFilesystem
       volumes:
         - name: tmp-volume
           emptyDir:
             medium: Memory
-      securityContext:
-        readOnlyRootFilesystem: #@ data.values.orders.securityContext.readOnlyRootFilesystem
 
 #@ if/end data.values.orders.configMap.create:
 ---
