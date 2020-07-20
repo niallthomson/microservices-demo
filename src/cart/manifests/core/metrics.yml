@@ -1,17 +1,17 @@
 #@ load("@ytt:data", "data")
+#@ load("@ytt:overlay", "overlay")
 
 #@ if/end data.values.cart.metrics.enabled:
+#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "carts"}})
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: carts-metrics
-  namespace: #@ data.values.namespace
-  annotations: #@ data.values.cart.metrics.service.annotations
 spec:
-  type: ClusterIP
-  ports:
-  - port: #@ data.values.cart.metrics.service.port
-    targetPort: http
-  selector:
-    name: carts
+  template:
+    #@overlay/match-child-defaults missing_ok=True
+    metadata:
+      annotations:
+        #@overlay/match by="name"
+        prometheus.io/scrape: "true"
+        #@overlay/match by="name"
+        prometheus.io/port: "8080"
+        #@overlay/match by="name"
+        prometheus.io/path: "/actuator/prometheus"
