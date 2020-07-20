@@ -7,14 +7,23 @@ catalog:
     build:
       id: watchn-catalog
       path: .
+
   replicas: 1
-  services:
-    mysqlWriter:
+
+  mysql:
+    create: true
+    writer:
       secret: catalog-writer-db
-    mysqlReader:
+    reader:
       secret: catalog-reader-db
+
+  service:
+    create: true
+    name: catalogue
+
   configMap:
-    name: ""
+    name: catalogue
+    create: true
 
   metrics:
     enabled: false

@@ -18,5 +18,3 @@ hpa:
 metrics:
   prometheus:
     enabled: false
-
-includeServices: false

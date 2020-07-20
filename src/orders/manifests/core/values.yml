@@ -7,12 +7,23 @@ orders:
     build:
       id: watchn-orders
       path: .
+
   replicas: 1
-  services:
-    mysqlWriter:
+
+  mysql:
+    create: true
+    writer:
       secret: orders-writer-db
-    mysqlReader:
+    reader:
       secret: orders-reader-db
+
+  service:
+    create: true
+    name: orders
+
+  configMap:
+    name: orders
+    create: true
 
   metrics:
     enabled: false
@@ -27,3 +38,6 @@ orders:
     enabled: false
     minReplicas: 2
     maxReplicas: 4
+
+  securityContext:
+    readOnlyRootFilesystem: true

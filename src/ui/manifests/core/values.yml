@@ -7,10 +7,22 @@ ui:
     build:
       id: watchn-ui
       path: .
+  
+  endpoints:
+    catalog: http://catalogue:8080
+    carts: http://carts:8080
+    orders: http://orders:8080
+
   replicas: 1
 
   configMap:
-    name: ""
+    create: true
+    name: ui
+
+  service:
+    create: true
+    name: ui
+    type: NodePort
 
   metrics:
     enabled: false

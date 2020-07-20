@@ -37,19 +37,26 @@ spec:
             memory: "256Mi"
           limits:
             memory: "256Mi"
-        #@ if/end len(data.values.catalog.configMap.name) > 0:
         envFrom:
         - configMapRef:
             name: #@ data.values.catalog.configMap.name
 
-#@ if data.values.services.enabled:
+#@ if/end data.values.catalog.configMap.create:
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: #@ data.values.catalog.configMap.name
+  namespace: #@ data.values.namespace
+
+#@ if/end data.values.catalog.service.create:
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: catalogue
+  name: #@ data.values.catalog.service.name
   labels:
-    name: catalogue
+    name: #@ data.values.catalog.service.name
   namespace: #@ data.values.namespace
 spec:
   ports:
@@ -57,4 +64,3 @@ spec:
     targetPort: http
   selector:
     name: catalogue
-#@ end

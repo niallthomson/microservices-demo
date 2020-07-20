@@ -2,56 +2,54 @@
 #@ load("@ytt:base64", "base64")
 #@ load("@ytt:overlay", "overlay")
 
-#@ if data.values.includeServices:
+#@ if data.values.orders.mysql.create:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: #@ data.values.catalog.services.mysqlWriter.secret
+  name: #@ data.values.orders.mysql.writer.secret
   namespace: #@ data.values.namespace
 data:
-  endpoint: #@ base64.encode("catalog-db:3306")
-  name: #@ base64.encode("catalog")
-  username: #@ base64.encode("catalog_user")
+  url: #@ base64.encode("jdbc:mysql://orders-db:3306/orders")
+  username: #@ base64.encode("orders_user")
   password: #@ base64.encode("default_password")
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: #@ data.values.catalog.services.mysqlReader.secret
+  name: #@ data.values.orders.mysql.reader.secret
   namespace: #@ data.values.namespace
 data:
-  endpoint: #@ base64.encode("catalog-db:3306")
-  name: #@ base64.encode("catalog")
-  username: #@ base64.encode("catalog_user")
+  url: #@ base64.encode("jdbc:mysql://orders-db:3306/orders")
+  username: #@ base64.encode("orders_user")
   password: #@ base64.encode("default_password")
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: catalogue-db
+  name: orders-db
   labels:
-    name: catalogue-db
+    name: orders-db
   namespace: #@ data.values.namespace
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: catalogue-db
+      name: orders-db
   template:
     metadata:
       labels:
-        name: catalogue-db
+        name: orders-db
     spec:
       containers:
-      - name: catalogue-db
+      - name: orders-db
         image: mysql:5.7
         env:
           - name: MYSQL_ROOT_PASSWORD
             value: my-secret-pw
           - name: MYSQL_DATABASE
-            value: catalog
+            value: orders
           - name: MYSQL_USER
-            value: catalog_user
+            value: orders_user
           - name: MYSQL_PASSWORD
             value: default_password
         ports:
@@ -61,56 +59,61 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: catalog-db
+  name: orders-db
   labels:
-    name: catalog-db
+    name: orders-db
   namespace: #@ data.values.namespace
 spec:
   ports:
   - port: 3306
     targetPort: 3306
   selector:
-    name: catalogue-db
+    name: orders-db
 #@ end
 
-#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "catalogue"}})
+#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "orders"}})
 ---
 spec:
   template:
     spec:
       containers:
       #@overlay/match by="name"
-      - name: catalogue
+      - name: orders
         #@overlay/match-child-defaults missing_ok=True
-        #@overlay/match missing_ok=True
         env:
         #@overlay/match by="name"
-        - name: DB_ENDPOINT
+        - name: SPRING_DATASOURCE_WRITER_URL
           valueFrom:
             secretKeyRef:
-              name: #@ data.values.catalog.services.mysqlWriter.secret
-              key: endpoint
+              name: #@ data.values.orders.mysql.writer.secret
+              key: url
         #@overlay/match by="name"
-        - name: DB_READ_ENDPOINT
+        - name: SPRING_DATASOURCE_WRITER_USERNAME
           valueFrom:
             secretKeyRef:
-              name: #@ data.values.catalog.services.mysqlReader.secret
-              key: endpoint
-        #@overlay/match by="name"
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: #@ data.values.catalog.services.mysqlWriter.secret
+              name: #@ data.values.orders.mysql.writer.secret
               key: username
         #@overlay/match by="name"
-        - name: DB_PASSWORD
+        - name: SPRING_DATASOURCE_WRITER_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: #@ data.values.catalog.services.mysqlWriter.secret
+              name: #@ data.values.orders.mysql.writer.secret
               key: password
         #@overlay/match by="name"
-        - name: DB_NAME
+        - name: SPRING_DATASOURCE_READER_URL
           valueFrom:
             secretKeyRef:
-              name: #@ data.values.catalog.services.mysqlWriter.secret
-              key: name
+              name: #@ data.values.orders.mysql.reader.secret
+              key: url
+        #@overlay/match by="name"
+        - name: SPRING_DATASOURCE_READER_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: #@ data.values.orders.mysql.reader.secret
+              key: username
+        #@overlay/match by="name"
+        - name: SPRING_DATASOURCE_READER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: #@ data.values.orders.mysql.reader.secret
+              key: password

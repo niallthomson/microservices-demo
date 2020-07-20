@@ -39,6 +39,9 @@ spec:
             value: "true"
           - name: SPRING_PROFILES_ACTIVE
             value: mysql
+        envFrom:
+          - configMapRef:
+              name: #@ data.values.orders.configMap.name
         resources:
           requests:
             memory: "1Gi"
@@ -57,15 +60,25 @@ spec:
         - name: tmp-volume
           emptyDir:
             medium: Memory
+      securityContext:
+        readOnlyRootFilesystem: #@ data.values.orders.securityContext.readOnlyRootFilesystem
 
-#@ if data.values.services.enabled:
+#@ if/end data.values.orders.configMap.create:
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: #@ data.values.orders.configMap.name
+  namespace: #@ data.values.namespace
+
+#@ if/end data.values.orders.service.create:
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: orders
+  name: #@ data.values.orders.service.name
   labels:
-    name: orders
+    name: #@ data.values.orders.service.name
   namespace: #@ data.values.namespace
 spec:
   ports:
@@ -73,4 +86,3 @@ spec:
     targetPort: http
   selector:
     name: orders
-#@ end

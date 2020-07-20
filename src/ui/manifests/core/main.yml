@@ -46,13 +46,6 @@ spec:
         env:
           - name: JAVA_OPTS
             value: -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
-          - name: ENDPOINTS_CATALOG
-            value: http://catalogue:8080
-          - name: ENDPOINTS_CARTS
-            value: http://carts:8080
-          - name: ENDPOINTS_ORDERS
-            value: http://orders:8080
-        #@ if/end len(data.values.ui.configMap.name) > 0:
         envFrom:
         - configMapRef:
             name: #@ data.values.ui.configMap.name
@@ -75,17 +68,29 @@ spec:
           emptyDir:
             medium: Memory
 
-#@ if data.values.services.enabled:
+#@ if/end data.values.ui.configMap.create:
+---
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: #@ data.values.ui.configMap.name
+    namespace: #@ data.values.namespace
+  data:
+    ENDPOINTS_CATALOG: #@ data.values.ui.endpoints.catalog
+    ENDPOINTS_CARTS: #@ data.values.ui.endpoints.carts
+    ENDPOINTS_ORDERS: #@ data.values.ui.endpoints.orders
+
+#@ if data.values.ui.service.create:
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ui
+  name: #@ data.values.ui.service.name
   labels:
-    name: ui
+    name: #@ data.values.ui.service.name
   namespace: #@ data.values.namespace
 spec:
-  type: NodePort
+  type: #@ data.values.ui.service.type
   ports:
   - port: 80
     targetPort: http

@@ -7,9 +7,23 @@ cart:
     build:
       id: watchn-cart
       path: .
+
   replicas: 1
-  services:
-    persistence: dynamodb
+
+  configMap:
+    create: true
+    name: carts
+
+  persistence: dynamodb
+
+  serviceAccount:
+    name: carts
+    create: true
+    annotations: {}
+
+  service:
+    create: true
+    name: carts
 
   metrics:
     enabled: false
@@ -24,3 +38,8 @@ cart:
     enabled: false
     minReplicas: 3
     maxReplicas: 6
+
+  dynamodb:
+    tableName: Items
+    createTable: false
+    create: true

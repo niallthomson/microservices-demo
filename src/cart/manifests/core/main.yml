@@ -34,8 +34,9 @@ spec:
         env:
           - name: JAVA_OPTS
             value: -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
-          - name: SPRING_PROFILES_ACTIVE
-            value: dynamodb
+        envFrom:
+          - configMapRef:
+              name: #@ data.values.cart.configMap.name
         resources:
           requests:
             memory: "1Gi"
@@ -50,19 +51,41 @@ spec:
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume
+      serviceAccountName: #@ data.values.cart.serviceAccount.name
+      automountServiceAccountToken: true
       volumes:
         - name: tmp-volume
           emptyDir:
             medium: Memory
 
-#@ if data.values.services.enabled:
+#@ if/end data.values.cart.configMap.create:
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: #@ data.values.cart.configMap.name
+  namespace: #@ data.values.namespace
+data:
+  SPRING_PROFILES_ACTIVE: dynamodb
+
+#@ if/end data.values.cart.serviceAccount.create:
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: #@ data.values.cart.serviceAccount.name
+  namespace: #@ data.values.namespace
+  #@ if/end data.values.cart.serviceAccount.annotations:
+  annotations: #@ data.values.cart.serviceAccount.annotations
+
+#@ if/end data.values.cart.service.create:
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: carts
+  name: #@ data.values.cart.service.name
   labels:
-    name: carts
+    name: #@ data.values.cart.service.name
   namespace: #@ data.values.namespace
 spec:
   ports:
@@ -70,4 +93,3 @@ spec:
     targetPort: http
   selector:
     name: carts
-#@ end

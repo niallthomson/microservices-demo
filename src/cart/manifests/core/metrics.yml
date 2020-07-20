@@ -1,6 +1,6 @@
 #@ load("@ytt:data", "data")
 
-#@ if data.values.cart.metrics.enabled:
+#@ if/end data.values.cart.metrics.enabled:
 ---
 apiVersion: v1
 kind: Service
@@ -15,4 +15,3 @@ spec:
     targetPort: http
   selector:
     name: carts
-#@ end
