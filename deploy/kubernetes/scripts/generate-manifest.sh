@@ -11,7 +11,7 @@ if [ -z "${REPO}" ]; then
   exit 1
 fi
 
-ytt -f $DIR/../src/core \
+yaml=$(ytt -f $DIR/../src/core \
     --data-value image.build.path=$APP_SRC_DIR/images \
     -f $APP_SRC_DIR/src/cart/manifests/core \
     --data-value cart.image.build.path=$APP_SRC_DIR/src/cart \
@@ -22,4 +22,6 @@ ytt -f $DIR/../src/core \
     -f $APP_SRC_DIR/src/orders/manifests/core \
     --data-value orders.image.build.path=$APP_SRC_DIR/src/orders \
     --data-value image.repository=$REPO \
-     $@ | kbld -f -
+     $@)
+     
+echo "$yaml" | kbld -f -
