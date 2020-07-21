@@ -32,3 +32,6 @@ catalog:
     enabled: false
     minReplicas: 3
     maxReplicas: 6
+
+  securityContext:
+    readOnlyRootFilesystem: true

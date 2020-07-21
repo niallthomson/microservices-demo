@@ -33,6 +33,9 @@ cart:
     minReplicas: 3
     maxReplicas: 6
 
+  securityContext:
+    readOnlyRootFilesystem: true
+
   dynamodb:
     tableName: Items
     createTable: false

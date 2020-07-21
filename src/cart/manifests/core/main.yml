@@ -48,6 +48,8 @@ spec:
             port: 8080
           initialDelaySeconds: 45
           periodSeconds: 3
+        securityContext:
+          readOnlyRootFilesystem: #@ data.values.cart.securityContext.readOnlyRootFilesystem
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume

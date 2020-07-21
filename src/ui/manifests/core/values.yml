@@ -32,6 +32,9 @@ ui:
     minReplicas: 3
     maxReplicas: 6
 
+  securityContext:
+    readOnlyRootFilesystem: true
+
   #@overlay/match missing_ok=True
   ingress:
     enabled: false

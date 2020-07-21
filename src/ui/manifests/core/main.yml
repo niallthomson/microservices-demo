@@ -60,6 +60,8 @@ spec:
             port: 8080
           initialDelaySeconds: 60
           periodSeconds: 3
+        securityContext:
+          readOnlyRootFilesystem: #@ data.values.ui.securityContext.readOnlyRootFilesystem
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume

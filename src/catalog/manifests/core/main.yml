@@ -40,6 +40,8 @@ spec:
         envFrom:
         - configMapRef:
             name: #@ data.values.catalog.configMap.name
+        securityContext:
+          readOnlyRootFilesystem: #@ data.values.catalog.securityContext.readOnlyRootFilesystem
 
 #@ if/end data.values.catalog.configMap.create:
 ---
