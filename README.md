@@ -16,3 +16,16 @@ It looks to explore:
 - Working with a monorepo model
 
 These facets will be gradually worked through over time, and none of them are guaranteed to be in place at any given time.
+
+## Application Architecture
+
+The application has been deliberately over-engineered to generate multiple de-coupled components. These components generally have different infrastructure dependencies, and may support multiple "backends" (example: Carts service supports MongoDB or DynamoDB).
+
+![Screenshot](/docs/images/architecture.png)
+
+| Component | Language | Dependencies        | Description                                                                 |
+|-----------|----------|---------------------|-----------------------------------------------------------------------------|
+| UI        | Java     | None                | Aggregates API calls to the various other services and renders the HTML UI. |
+| Catalog   | Go       | MySQL               | Serves the product catalog API and related images                           |
+| Carts     | Java     | MongoDB or DynamoDB | Provides an API for user shopping carts                                     |
+| Orders    | Java     | MySQL               | Stores user orders after they have been completed through checkout          |
