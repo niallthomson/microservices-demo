@@ -1,14 +1,9 @@
 package com.watchn.ui.web;
 
-import com.watchn.ui.clients.carts.api.CartsApi;
-import com.watchn.ui.clients.carts.model.Item;
-import com.watchn.ui.clients.catalog.api.CatalogApi;
-import com.watchn.ui.clients.orders.api.OrdersApi;
 import com.watchn.ui.clients.orders.model.Order;
-import com.watchn.ui.clients.orders.model.OrderItem;
-import com.watchn.ui.services.MetadataService;
-import com.watchn.ui.web.payload.Cart;
-import com.watchn.ui.web.payload.CartItem;
+import com.watchn.ui.services.Metadata;
+import com.watchn.ui.services.carts.CartsService;
+import com.watchn.ui.services.orders.OrdersService;
 import com.watchn.ui.web.payload.OrderRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,40 +14,29 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.retry.Retry;
-
-import java.time.Duration;
 
 @Controller
 @RequestMapping("/checkout")
 @Slf4j
 public class CheckoutController extends BaseController {
 
-    private CatalogApi catalogApi;
+    private CartsService cartsService;
 
-    private OrdersApi ordersApi;
+    private OrdersService ordersService;
 
-    public CheckoutController(@Autowired CartsApi cartsApi, @Autowired CatalogApi catalogApi, @Autowired OrdersApi ordersApi, @Autowired MetadataService metadataService) {
-        super(cartsApi, metadataService);
+    public CheckoutController(@Autowired CartsService cartsService, @Autowired OrdersService ordersService, @Autowired Metadata metadata) {
+        super(cartsService, metadata);
 
-        this.catalogApi = catalogApi;
-        this.ordersApi = ordersApi;
+        this.cartsService = cartsService;
+        this.ordersService = ordersService;
     }
 
     @GetMapping
     public String checkout(ServerHttpRequest request, Model model) {
         String sessionId = getSessionID(request);
 
-        model.addAttribute("fullCart", cartsApi.getCart(sessionId)
-                .retryWhen(retrySpec("get cart"))
-                .flatMapMany(c -> Flux.fromIterable(c.getItems()))
-                .flatMap(i -> this.catalogApi.catalogueProductIdGet(i.getItemId())
-                        .map(p -> CartItem.from(i, p)))
-                .collectList()
-                .map(Cart::from)
-        );
+        model.addAttribute("fullCart", this.cartsService.getCart(sessionId));
 
         this.populateCommon(request, model);
 
@@ -70,25 +54,11 @@ public class CheckoutController extends BaseController {
 
         populateMetadata(model);
 
-        return cartsApi.getCart(sessionId)
-                .retryWhen(retrySpec("get cart")).flatMap(
-                cart -> {
-                    for(Item item : cart.getItems()) {
-                        OrderItem orderItem = new OrderItem()
-                                .productId(item.getItemId())
-                                .quantity(item.getQuantity())
-                                .price(item.getUnitPrice());
-
-                        createOrderRequest.addItemsItem(orderItem);
-                    }
-
-                    return this.ordersApi.createOrder(createOrderRequest);
-                }
-        )
+        return this.ordersService.order(sessionId, orderRequest.getFirstName(), orderRequest.getLastName(), orderRequest.getEmail())
                 .doOnNext(o -> {
                     model.addAttribute("order", o);
                 })
-                .map(o -> this.cartsApi.deleteCart(sessionId))
+                .map(o -> this.cartsService.deleteCart(sessionId))
                 .doOnNext(c -> {
                     model.addAttribute("cart", c);
                 })

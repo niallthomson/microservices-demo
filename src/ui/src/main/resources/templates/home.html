@@ -64,7 +64,7 @@ _________________________________________________________
     </div>
     <div class="container">
         <div class="product-slider owl-carousel owl-theme">
-            <div class="item" th:each="item : ${catalog}">
+            <div class="item" th:each="item : ${catalog.products}">
                 <div class="product">
                     <a th:href="@{/catalog/{itemId}(itemId=${item.id})}"><img src="img/product1.jpg" th:src="${item.imageUrl}" alt="" class="img-fluid"></a>
                     <div class="text">

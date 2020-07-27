@@ -1,6 +1,9 @@
 $(function () {
 
-    $('[data-toggle="popover"]').popover({html: true});
+    $('[data-toggle="popover"]').popover({
+        html: true,
+        content: $('#metadata').html()
+    });
 
     $('.shop-detail-carousel').owlCarousel({
         items: 1,

@@ -1,12 +1,10 @@
 package com.watchn.ui.web;
 
-import com.watchn.ui.clients.carts.api.CartsApi;
-import com.watchn.ui.clients.catalog.api.CatalogApi;
-import com.watchn.ui.services.MetadataService;
-import com.watchn.ui.web.util.PageInfo;
+import com.watchn.ui.services.Metadata;
+import com.watchn.ui.services.carts.CartsService;
+import com.watchn.ui.services.catalog.CatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,15 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
-import reactor.util.retry.Retry;
-import reactor.util.retry.RetryBackoffSpec;
-import reactor.util.retry.RetrySpec;
 
-import java.net.ConnectException;
-import java.time.Duration;
 import java.util.Collections;
 
 @Controller
@@ -30,12 +21,12 @@ import java.util.Collections;
 @Slf4j
 public class CatalogController extends BaseController {
 
-    private CatalogApi catalogApi;
+    private CatalogService catalogService;
 
-    public CatalogController(@Autowired CatalogApi catalogApi, @Autowired CartsApi cartsApi, @Autowired MetadataService metadataService) {
-        super(cartsApi, metadataService);
+    public CatalogController(@Autowired CatalogService catalogService, @Autowired CartsService cartsService, @Autowired Metadata metadata) {
+        super(cartsService, metadata);
 
-        this.catalogApi = catalogApi;
+        this.catalogService = catalogService;
     }
 
     @GetMapping("")
@@ -43,16 +34,10 @@ public class CatalogController extends BaseController {
                           @RequestParam(required = false, defaultValue = "1") int page,
                           @RequestParam(required = false, defaultValue = "3") int size,
                           ServerHttpRequest request, Model model) {
-        model.addAttribute("tags", catalogApi.catalogueTagsGet());
+        model.addAttribute("tags", this.catalogService.getTags());
         model.addAttribute("selectedTag", tag);
 
-        model.addAttribute("catalog", catalogApi.catalogueGet(tag, "", page, size));
-
-        model.addAttribute("page", catalogApi
-                .catalogueSizeGet(tag)
-                .retryWhen(retrySpec("get catalog"))
-                .map(r -> new PageInfo(page, size, r.getSize()))
-        );
+        model.addAttribute("catalog", catalogService.getProducts(tag, "", page, size));
 
         populateCommon(request, model);
 
@@ -62,12 +47,10 @@ public class CatalogController extends BaseController {
     @GetMapping("/{id}")
     public String item(@PathVariable String id,
                        ServerHttpRequest request, Model model) {
-        model.addAttribute("item", catalogApi.catalogueProductIdGet(id)
-                .retryWhen(retrySpec("get catalog item"))
-        );
-        model.addAttribute("recommendations", catalogApi.catalogueGet("", "", 1, 3).collectList().map(l -> {
-            Collections.shuffle(l);
-            return l;
+        model.addAttribute("item", catalogService.getProduct(id));
+        model.addAttribute("recommendations", catalogService.getProducts("", "", 1, 3).map(p -> {
+            Collections.shuffle(p.getProducts());
+            return p.getProducts();
         }).flatMapMany(Flux::fromIterable));
 
         populateCommon(request, model);

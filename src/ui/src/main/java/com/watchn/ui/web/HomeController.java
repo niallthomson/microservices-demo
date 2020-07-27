@@ -1,23 +1,23 @@
 package com.watchn.ui.web;
 
-import com.watchn.ui.clients.carts.api.CartsApi;
-import com.watchn.ui.clients.catalog.api.CatalogApi;
-import com.watchn.ui.services.MetadataService;
+import com.watchn.ui.services.Metadata;
+import com.watchn.ui.services.carts.CartsService;
+import com.watchn.ui.services.catalog.CatalogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.thymeleaf.spring5.context.webflux.ReactiveDataDriverContextVariable;
 
 @Controller
 public class HomeController extends BaseController {
 
-    private CatalogApi catalogApi;
+    private CatalogService catalogService;
 
-    public HomeController(@Autowired CatalogApi catalogApi, @Autowired CartsApi cartsApi, @Autowired MetadataService metadataService) {
-        super(cartsApi, metadataService);
-        this.catalogApi = catalogApi;
+    public HomeController(@Autowired CatalogService catalogService, @Autowired CartsService cartsService, @Autowired Metadata metadata) {
+        super(cartsService, metadata);
+
+        this.catalogService = catalogService;
     }
 
     @GetMapping("/")
@@ -27,9 +27,7 @@ public class HomeController extends BaseController {
 
     @GetMapping("/home")
     public String home(final Model model, final ServerHttpRequest request) {
-        model.addAttribute("catalog", new ReactiveDataDriverContextVariable(
-                catalogApi.catalogueGet("", "", 1, 5)
-                        .retryWhen(retrySpec("get catalog"))));
+        model.addAttribute("catalog", this.catalogService.getProducts("", "" ,1, 5));
 
         populateCommon(request, model);
 

@@ -1,26 +1,26 @@
 package com.watchn.ui.web;
 
 import com.watchn.ui.clients.carts.api.CartsApi;
-import com.watchn.ui.services.MetadataService;
+import com.watchn.ui.services.Metadata;
+import com.watchn.ui.services.carts.CartsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.ui.Model;
 import reactor.util.retry.Retry;
 import reactor.util.retry.RetryBackoffSpec;
 
-import java.net.ConnectException;
 import java.time.Duration;
 
 @Slf4j
 public class BaseController {
 
-    protected CartsApi cartsApi;
+    protected CartsService cartsService;
 
-    protected MetadataService metadataService;
+    protected Metadata metadata;
 
-    public BaseController(CartsApi cartsApi, MetadataService metadataService) {
-        this.cartsApi = cartsApi;
-        this.metadataService = metadataService;
+    public BaseController(CartsService cartsService, Metadata metadata) {
+        this.cartsService = cartsService;
+        this.metadata = metadata;
     }
 
     protected static RetryBackoffSpec retrySpec(String path) {
@@ -37,13 +37,11 @@ public class BaseController {
     protected void populateCart(ServerHttpRequest request, Model model) {
         String sessionId = getSessionID(request);
 
-        model.addAttribute("cart", cartsApi.getCart(sessionId)
-                .retryWhen(retrySpec("get cart"))
-        );
+        model.addAttribute("cart", this.cartsService.getCart(sessionId));
     }
 
     protected void populateMetadata(Model model) {
-        model.addAttribute("metadata", metadataService.getMetadata());
+        model.addAttribute("metadata", metadata);
     }
 
     protected String getSessionID(ServerHttpRequest request) {
