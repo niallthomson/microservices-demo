@@ -21,7 +21,7 @@ These facets will be gradually worked through over time, and none of them are gu
 
 The application has been deliberately over-engineered to generate multiple de-coupled components. These components generally have different infrastructure dependencies, and may support multiple "backends" (example: Carts service supports MongoDB or DynamoDB).
 
-![Screenshot](/docs/images/architecture.png)
+![Architecture](/docs/images/architecture.png)
 
 | Component | Language | Dependencies        | Description                                                                 |
 |-----------|----------|---------------------|-----------------------------------------------------------------------------|
