@@ -35,3 +35,6 @@ orders:
 
   securityContext:
     readOnlyRootFilesystem: true
+
+  resources:
+    memory: 512Mi

@@ -51,9 +51,9 @@ spec:
             name: #@ data.values.ui.configMap.name
         resources:
           requests:
-            memory: "768Mi"
+            memory: #@ data.values.ui.resources.memory
           limits:
-            memory: "768Mi"
+            memory: #@ data.values.ui.resources.memory
         livenessProbe:
           httpGet:
             path: /actuator/health/liveness

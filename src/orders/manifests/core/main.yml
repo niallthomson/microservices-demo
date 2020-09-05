@@ -44,9 +44,9 @@ spec:
               name: #@ data.values.orders.configMap.name
         resources:
           requests:
-            memory: "1Gi"
+            memory: #@ data.values.orders.resources.memory
           limits:
-            memory: "1Gi"
+            memory: #@ data.values.orders.resources.memory
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume

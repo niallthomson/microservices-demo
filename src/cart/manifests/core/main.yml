@@ -39,9 +39,9 @@ spec:
               name: #@ data.values.cart.configMap.name
         resources:
           requests:
-            memory: "1Gi"
+            memory: #@ data.values.cart.resources.memory
           limits:
-            memory: "1Gi"
+            memory: #@ data.values.cart.resources.memory
         livenessProbe:
           httpGet:
             path: /actuator/health/liveness
