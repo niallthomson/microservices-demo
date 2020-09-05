@@ -40,3 +40,6 @@ cart:
     tableName: Items
     createTable: false
     create: true
+
+  resources:
+    memory: 512Mi
