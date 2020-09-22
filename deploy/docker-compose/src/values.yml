@@ -1,8 +1,0 @@
-#@data/values
----
-image:
-  tag: ""
-  repository: "docker.io/niallthomson"
-  push: false
-  build:
-    path: ../../../images
