@@ -10,7 +10,8 @@ if [ -z "${REPO}" ]; then
 fi
 
 if [ -z "${TAG}" ]; then
-  export TAG=$(date +%s)
+  timestamp=$(date +%s)
+  export TAG="build.$timestamp"
 fi
 
 $DIR/../src/ui/scripts/push.sh
