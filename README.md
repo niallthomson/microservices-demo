@@ -29,3 +29,71 @@ The application has been deliberately over-engineered to generate multiple de-co
 | Catalog   | Go       | MySQL               | Serves the product catalog API and related images                           |
 | Carts     | Java     | MongoDB or DynamoDB | Provides an API for user shopping carts                                     |
 | Orders    | Java     | MySQL               | Stores user orders after they have been completed through checkout          |
+
+
+## Quickstart
+
+The following sections provide quickstart instructions for various platforms. All of these assume that you have cloned this repository locally and are using a CLI thats current directory is the root of the code repository.
+
+```
+git clone https://github.com/niallthomson/microservices-demo.git
+
+cd microservices-demo
+```
+
+### Minikube
+
+This deployment method will run the application on your local machine using `minikube`, and will reference pre-built container images by default.
+
+Pre-requisites:
+- Minikube installed locally
+- Helm and Helmfile utilities installed
+
+To run the application on Minikube we'll need at least 2Gb of memory for the cluster:
+
+```
+minikube start --memory=2g
+```
+
+Change directory to the Kubernetes deploy directory:
+
+```
+cd deploy/kubernetes
+```
+
+Use `helmfile` to install all of the components via their Helm charts:
+
+```
+helmfile apply
+```
+
+Open the frontend in a browser window:
+
+```
+minikube service -n watchn ui
+```
+
+### Docker Compose
+
+This deployment method will run the application on your local machine using `docker-compose`, and will build the containers as part of the deployment.
+
+Pre-requisites:
+- Docker and Docker Compose installed locally
+
+Change directory to the Docker Compose deploy directory:
+
+```
+cd deploy/docker-compose
+```
+
+Use `docker-compose` to run the application containers:
+
+```
+docker-compose up
+```
+
+Open the frontend in a browser window:
+
+```
+http://localhost
+```
