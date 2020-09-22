@@ -1,0 +1,28 @@
+repositories:
+# Stable repo of official helm charts
+- name: "stable"
+  url: "https://kubernetes-charts.storage.googleapis.com"
+
+releases:
+- name: "catalog"
+  namespace: "watchn"
+  chart: ../../src/catalog/chart
+  wait: true
+
+- name: "carts"
+  namespace: "watchn"
+  chart: ../../src/cart/chart
+  wait: true
+
+- name: "orders"
+  namespace: "watchn"
+  chart: ../../src/orders/chart
+  wait: true
+
+- name: "ui"
+  namespace: "watchn"
+  chart: ../../src/ui/chart
+  wait: true
+  values:
+    - service:
+        type: LoadBalancer
