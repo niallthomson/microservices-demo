@@ -1,0 +1,9 @@
+apiVersion: v2
+name: catalog
+description: A Helm chart for Watchn catalog service
+
+type: application
+
+version: 0.1.0
+
+appVersion: 1.16.0

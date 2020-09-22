@@ -1,0 +1,9 @@
+apiVersion: v2
+name: ui
+description: A Helm chart for Watchn UI service
+
+type: application
+
+version: 0.1.0
+
+appVersion: 1.16.0

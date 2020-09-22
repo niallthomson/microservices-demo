@@ -10,7 +10,7 @@ if [ -z "$TAG" ]; then
 fi
 
 if [ -z "$REPO" ]; then
-  REPO="microservices-demo"
+  REPO="watchn"
 fi
 
 docker build -f $CODE_DIR/../../images/java11/Dockerfile --build-arg JAR_PATH=target/orders-0.0.1-SNAPSHOT.jar \
