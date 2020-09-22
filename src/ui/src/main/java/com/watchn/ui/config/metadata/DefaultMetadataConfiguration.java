@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnMissingBean(Metadata.class)
 public class DefaultMetadataConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean(Metadata.class)
     public Metadata metadata() {
         return new Metadata().add("environment", "local");
     }
