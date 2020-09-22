@@ -1,4 +1,4 @@
-# build stage build the jar with all our resources
+# Build Stage
 FROM maven:3.5-jdk-11 as build-env
 
 ARG JAR_PATH
@@ -15,13 +15,27 @@ COPY ./src ./src
 RUN mvn -DskipTests package
 RUN mv /$JAR_PATH /app.jar
 
-# package stage
+# Package Stage
 FROM openjdk:11-jdk-slim
-WORKDIR /
 
-# copy only the built jar and nothing else
-COPY --from=build-env /app.jar /
+ENV APPUSER=appuser
+ENV APPUID=1000
+ENV APPGID=1000
+
+RUN addgroup --gid $APPGID "$APPUSER" \
+    && adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/app" \
+    --ingroup "$APPUSER" \
+    --uid "$APPUID" \
+    "$APPUSER"
+
+WORKDIR /app
+USER appuser
+
+COPY --chown=appuser:appuser --from=build-env /app.jar .
 
 EXPOSE 8080
 
-ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar /app.jar"]
+ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar /app/app.jar"]

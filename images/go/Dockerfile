@@ -1,3 +1,4 @@
+# Build Stage
 FROM golang:1.13.0-alpine as build-env
 
 ARG MAIN_PATH
@@ -11,16 +12,30 @@ WORKDIR /src
 COPY go.mod .
 COPY go.sum .
 
-# Add this go mod download command to pull in any dependencies
 RUN go mod download
 
 COPY . .
 
-# Our project will now successfully build with the necessary go libraries included.
 RUN go build -o main $MAIN_PATH
 
-# Final stage
-FROM alpine
+# Package Stage
+FROM alpine:3.12
+
+ENV APPUSER=appuser
+ENV APPUID=1000
+ENV APPGID=1000
+
+RUN addgroup --gid $APPGID "$APPUSER" \
+    && adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/app" \
+    --ingroup "$APPUSER" \
+    --uid "$APPUID" \
+    "$APPUSER"
+
 WORKDIR /app
-COPY --from=build-env /src/main /app/
+USER appuser
+
+COPY --chown=appuser:appuser --from=build-env /src/main /app/
 ENTRYPOINT /app/main
