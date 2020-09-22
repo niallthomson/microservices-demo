@@ -1,5 +1,5 @@
 # Build Stage
-FROM maven:3.5-jdk-11 as build-env
+FROM maven:3.6.3-adoptopenjdk-11 as build-env
 
 ARG JAR_PATH
 
@@ -16,7 +16,7 @@ RUN mvn -DskipTests package
 RUN mv /$JAR_PATH /app.jar
 
 # Package Stage
-FROM openjdk:11-jdk-slim
+FROM adoptopenjdk:11-jre-openj9
 
 ENV APPUSER=appuser
 ENV APPUID=1000
