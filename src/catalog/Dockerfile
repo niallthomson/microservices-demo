@@ -18,9 +18,26 @@ COPY . .
 RUN go build -o main main.go
 
 # Final stage
-FROM alpine
+FROM alpine:3.12
+
+ENV APPUSER=appuser
+ENV APPUID=1000
+ENV APPGID=1000
+
+RUN addgroup --gid $APPGID "$APPUSER" \
+    && adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/app" \
+    --ingroup "$APPUSER" \
+    --uid "$APPUID" \
+    "$APPUSER"
+
 WORKDIR /app
-COPY --from=build-env /src/main /app/
-COPY images/ /app/images/
-COPY db/ /app/db/
+USER appuser
+
+COPY --chown=appuser:appuser --from=build-env /src/main /app/
+COPY --chown=appuser:appuser images/ /app/images/
+COPY --chown=appuser:appuser db/ /app/db/
+
 ENTRYPOINT /app/main
