@@ -37,7 +37,6 @@ WORKDIR /app
 USER appuser
 
 COPY --chown=appuser:appuser --from=build-env /src/main /app/
-COPY --chown=appuser:appuser images/ /app/images/
 COPY --chown=appuser:appuser db/ /app/db/
 
 ENTRYPOINT /app/main

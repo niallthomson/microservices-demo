@@ -4,7 +4,7 @@ FROM golang:1.13.0-alpine as build-env
 ARG MAIN_PATH
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh
+    apk add --no-cache bash git openssh curl
 
 RUN mkdir /src
 WORKDIR /src

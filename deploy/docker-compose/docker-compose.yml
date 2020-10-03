@@ -10,6 +10,7 @@ services:
       - ENDPOINTS_CATALOG=http://catalog:8080
       - ENDPOINTS_CARTS=http://carts:8080
       - ENDPOINTS_ORDERS=http://orders:8080
+      - ENDPOINTS_ASSETS=http://assets:8080
     hostname: ui
     build:
       context: ../../src/ui
@@ -81,3 +82,9 @@ services:
       - MYSQL_DATABASE=orders
       - MYSQL_USER=orders_user
       - MYSQL_PASSWORD=default_password
+  assets:
+    hostname: assets
+    build:
+      context: ../../src/assets
+      dockerfile: Dockerfile
+    restart: always

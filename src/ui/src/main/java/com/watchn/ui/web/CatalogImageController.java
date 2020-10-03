@@ -19,10 +19,10 @@ import java.util.concurrent.TimeUnit;
 @RestController
 public class CatalogImageController {
 
-    @Value("${endpoints.catalog}")
-    private String catalogEndpoint;
+    @Value("${endpoints.assets}")
+    private String assetsEndpoint;
 
-    @GetMapping(value = "/catalogue/images/{image}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/assets/{image}", produces = MediaType.IMAGE_JPEG_VALUE)
     public Mono<ResponseEntity<byte[]>> catalogueImage(@PathVariable String image) {
         return WebClient.builder()
             .exchangeStrategies(ExchangeStrategies.builder()
@@ -30,7 +30,7 @@ public class CatalogImageController {
                     .defaultCodecs()
                     .maxInMemorySize(16 * 1024 * 1024))
             .build())
-                .baseUrl(this.catalogEndpoint+"/catalogue/images/"+image)
+                .baseUrl(this.assetsEndpoint+"/assets/"+image)
             .build().get()
                 .accept(MediaType.IMAGE_JPEG)
                 .retrieve()

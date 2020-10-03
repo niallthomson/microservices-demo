@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/niallthomson/microservices-demo/catalog/config"
@@ -57,8 +56,6 @@ func main() {
 		catalog.GET("/tags", c.ListTags)
 		catalog.GET("/product/:id", c.GetProduct)
 	}
-
-	r.Use(static.Serve("/catalogue/images", static.LocalFile("./images/", false)))
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/health", func(c *gin.Context) {
