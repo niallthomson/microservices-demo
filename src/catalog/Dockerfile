@@ -33,6 +33,9 @@ RUN addgroup --gid $APPGID "$APPUSER" \
     --uid "$APPUID" \
     "$APPUSER"
 
+RUN apk update && apk upgrade && \
+    apk add --no-cache curl
+
 WORKDIR /app
 USER appuser
 

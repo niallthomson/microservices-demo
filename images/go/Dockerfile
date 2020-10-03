@@ -4,7 +4,7 @@ FROM golang:1.13.0-alpine as build-env
 ARG MAIN_PATH
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh curl
+    apk add --no-cache bash git openssh
 
 RUN mkdir /src
 WORKDIR /src
@@ -33,6 +33,9 @@ RUN addgroup --gid $APPGID "$APPUSER" \
     --ingroup "$APPUSER" \
     --uid "$APPUID" \
     "$APPUSER"
+
+RUN apk update && apk upgrade && \
+    apk add --no-cache curl
 
 WORKDIR /app
 USER appuser
