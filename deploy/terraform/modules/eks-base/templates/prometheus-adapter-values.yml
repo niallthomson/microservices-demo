@@ -1,0 +1,17 @@
+prometheus:
+  url: http://prometheus-server.prometheus.svc
+  port: 80
+
+rules:
+  custom:
+  - seriesQuery: 'http_server_requests_seconds_count{kubernetes_namespace!="",kubernetes_pod_name!=""}'
+    resources:
+      overrides:
+        kubernetes_namespace:
+          resource: namespace
+        kubernetes_pod_name:
+          resource: pod
+    name:
+      matches: ^(.*)
+      as: "http_server_requests_seconds_rate"
+    metricsQuery: 'sum(rate(<<.Series>>{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>)'
