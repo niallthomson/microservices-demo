@@ -1,11 +1,11 @@
-# Default values for carts.
+# Default values for assets.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: watchn/watchn-carts
+  repository: watchn/watchn-assets
   pullPolicy: IfNotPresent
   tag: "build.1601746945"
 
@@ -24,18 +24,14 @@ serviceAccount:
 
 podAnnotations: {}
 
-podSecurityContext:
-  fsGroup: 1000
+podSecurityContext: {}
 
 securityContext:
-  capabilities:
-    drop:
-      - ALL
-    add:
-      - NET_BIND_SERVICE
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
-  runAsUser: 1000
+  # capabilities:
+  #   drop:
+  #     - ALL
+  #   add:
+  #     - NET_BIND_SERVICE
 
 service:
   type: ClusterIP
@@ -43,9 +39,9 @@ service:
 
 resources:
   limits:
-    memory: 256Mi
+    memory: 128Mi
   requests:
-    memory: 256Mi
+    memory: 128Mi
 
 autoscaling:
   enabled: false
@@ -61,36 +57,12 @@ tolerations: []
 affinity: {}
 
 metrics:
-  enabled: true
+  enabled: false
   podAnnotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "8080"
-    prometheus.io/path: "/actuator/prometheus"
+    prometheus.io/path: "/metrics"
 
 configMap:
   create: true
   name:
-
-persistence: dynamodb
-
-dynamodb:
-  tableName: Items
-  createTable: false
-  create: true
-
-  image:
-    repository: amazon/dynamodb-local
-    pullPolicy: IfNotPresent
-    tag: "1.13.1"
-
-  service:
-    type: ClusterIP
-    port: 8000
-
-  podAnnotations: {}
-
-  nodeSelector: {}
-
-  tolerations: []
-
-  affinity: {}

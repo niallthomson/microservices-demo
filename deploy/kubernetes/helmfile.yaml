@@ -19,6 +19,11 @@ releases:
   chart: ../../src/orders/chart
   wait: true
 
+- name: "assets"
+  namespace: "watchn"
+  chart: ../../src/assets/chart
+  wait: true
+
 - name: "ui"
   namespace: "watchn"
   chart: ../../src/ui/chart

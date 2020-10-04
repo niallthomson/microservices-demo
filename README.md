@@ -26,9 +26,10 @@ The application has been deliberately over-engineered to generate multiple de-co
 | Component | Language | Dependencies        | Description                                                                 |
 |-----------|----------|---------------------|-----------------------------------------------------------------------------|
 | UI        | Java     | None                | Aggregates API calls to the various other services and renders the HTML UI. |
-| Catalog   | Go       | MySQL               | Serves the product catalog API and related images                           |
-| Carts     | Java     | MongoDB or DynamoDB | Provides an API for user shopping carts                                     |
-| Orders    | Java     | MySQL               | Stores user orders after they have been completed through checkout          |
+| Catalog   | Go       | MySQL               | Product catalog API                                                         |
+| Carts     | Java     | MongoDB or DynamoDB | User shopping carts API                                                     |
+| Orders    | Java     | MySQL               | User orders API                                                             |
+| Assets    | Nginx    |                     | Serves static assets like images related to the product catalog             |
 
 
 ## Quickstart
