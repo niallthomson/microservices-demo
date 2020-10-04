@@ -7,4 +7,5 @@ data:
   ENDPOINTS_CATALOG: {{ .Values.endpoints.catalog }}
   ENDPOINTS_CARTS: {{ .Values.endpoints.carts }}
   ENDPOINTS_ORDERS: {{ .Values.endpoints.orders }}
+  ENDPOINTS_ASSETS: {{ .Values.endpoints.assets }}
 {{- end }}
