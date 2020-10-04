@@ -12,11 +12,20 @@ import org.springframework.context.annotation.Configuration;
 @EnableContextInstanceData
 public class AwsMetadataConfiguration {
 
-    @Value("${placement/availability-zone}")
+    @Value("${placement/availability-zone:N/A}")
     private String availabilityZone;
+
+    @Value("${instance-id:N/A}")
+    private String instanceId;
+
+    @Value("${instance-type:N/A}")
+    private String instanceType;
 
     @Bean
     public Metadata metadata() {
-        return new Metadata().add("az", this.availabilityZone);
+        return new Metadata()
+                .add("az", this.availabilityZone)
+                .add("instance-id", this.instanceId)
+                .add("instance-type", this.instanceType);
     }
 }
