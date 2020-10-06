@@ -13,3 +13,7 @@ output "private_network_acls" {
 output "nginx_ingress_eips" {
   value = aws_eip.nginx_ingress.*.public_ip
 }
+
+output "store_dns" {
+  value = local.store_dns
+}

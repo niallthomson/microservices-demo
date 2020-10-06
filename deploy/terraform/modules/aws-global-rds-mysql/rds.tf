@@ -79,7 +79,7 @@ resource "aws_rds_cluster_instance" "instance_primary" {
 resource "aws_rds_cluster_instance" "instance_others" {
   depends_on = [aws_rds_cluster_instance.instance_primary]
 
-  count = 1
+  count = var.read_replica_count
 
   identifier                   = "${var.environment_name}-${var.instance_name}-${count.index + 2}"
   cluster_identifier           = aws_rds_cluster.rds_cluster.id
@@ -118,6 +118,8 @@ resource "aws_security_group" "rds" {
 resource "aws_appautoscaling_target" "autoscaling_target" {
   depends_on = [aws_rds_cluster_instance.instance_others]
 
+  count = var.enable_autoscaling ? 1 : 0
+
   service_namespace  = "rds"
   scalable_dimension = "rds:cluster:ReadReplicaCount"
   resource_id        = "cluster:${aws_rds_cluster.rds_cluster.id}"
@@ -126,10 +128,12 @@ resource "aws_appautoscaling_target" "autoscaling_target" {
 }
 
 resource "aws_appautoscaling_policy" "cpu" {
+  count = var.enable_autoscaling ? 1 : 0
+
   name               = "cpu-auto-scaling"
-  service_namespace  = aws_appautoscaling_target.autoscaling_target.service_namespace
-  scalable_dimension = aws_appautoscaling_target.autoscaling_target.scalable_dimension
-  resource_id        = aws_appautoscaling_target.autoscaling_target.resource_id
+  service_namespace  = aws_appautoscaling_target.autoscaling_target[0].service_namespace
+  scalable_dimension = aws_appautoscaling_target.autoscaling_target[0].scalable_dimension
+  resource_id        = aws_appautoscaling_target.autoscaling_target[0].resource_id
   policy_type        = "TargetTrackingScaling"
 
   target_tracking_scaling_policy_configuration {

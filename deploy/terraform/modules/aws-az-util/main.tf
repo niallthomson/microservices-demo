@@ -1,10 +1,24 @@
 variable "region" {
-
+  type = string
 }
 
 variable "availability_zones" {
-
+  type = list(string)
 }
+
+variable "num_availability_zones" {
+  type    = number
+  default = 3
+}
+
+/*
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+output "availability_zones" {
+  value = length(var.availability_zones) > 0 ? var.availability_zones : slice(data.aws_availability_zones.available, 0, var.num_availability_zones - 1)
+}*/
 
 variable "availability_zone_map" {
   default = {

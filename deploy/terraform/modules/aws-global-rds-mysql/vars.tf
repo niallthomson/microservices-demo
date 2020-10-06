@@ -43,5 +43,13 @@ variable "db_password" {
 }
 
 variable "instance_type" {
-  default = "db.r5.large"
+  default = "db.r5.large" # db.t3.medium
+}
+
+variable "read_replica_count" {
+  default = 0
+}
+
+variable "enable_autoscaling" {
+  default = false
 }

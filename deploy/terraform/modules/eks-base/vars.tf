@@ -18,7 +18,7 @@ variable "vpc_cidr" {
 }
 
 variable "node_pool_instance_type" {
-  default = "m5.large"
+  default = "m5.large" #t3a.large
 }
 
 variable "tags" {

@@ -3,7 +3,7 @@ module "app_base" {
 
   cluster_blocker = null_resource.cluster_blocker.id
 
-  ui_domain = "store.${var.dns_suffix}"
+  ui_domain = local.store_dns
 
   catalog_mysql_create = false
 
