@@ -105,6 +105,6 @@ Terraform configuration is provided for various cloud providers:
 
 | Name | Description | Link |
 |------|-------------|------|
-| AWS EKS | Kubernetes-based deployment on AWS Elastic Kubernetes Service | ![Docs](/deploy/terraform/eks-single-region/README.md) |
-| AWS ECS | Deploys to AWS Elastic Container Service | ![Docs](/deploy/terraform/ecs-single-region/README.md) |
+| AWS EKS | Kubernetes-based deployment on AWS Elastic Kubernetes Service | [Docs](/deploy/terraform/eks-single-region/README.md) |
+| AWS ECS | Deploys to AWS Elastic Container Service | [Docs](/deploy/terraform/ecs-single-region/README.md) |
 | GKE | Kubernetes-based deployment on Google Kubernetes Engine | TODO |
