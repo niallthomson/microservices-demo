@@ -1,6 +1,6 @@
-# Watchn - EKS Single Region Deployment
+# Watchn - ECS Single Region Deployment
 
-This Terraform project will create a fully running deployment of Watchn running on AWS Elastic Kubernetes Service.
+This Terraform project will create a fully running deployment of Watchn running on AWS Elastic Container Service.
 
 **NOTE:** This project will create resources which will incur costs in your AWS account. You are responsible for these costs, and should understand the resources being created before proceeding.
 
@@ -15,7 +15,7 @@ The following is a basic example using the default configuration:
 
 ```
 module "example" {
-  source = "github.com/niallthomson/microservices-demo//deploy/terraform/eks-single-region"
+  source = "github.com/niallthomson/microservices-demo//deploy/terraform/ecs-single-region"
 
   hosted_zone_name = "demo.paasify.org"
 }
