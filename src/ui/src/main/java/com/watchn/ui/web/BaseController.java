@@ -3,9 +3,11 @@ package com.watchn.ui.web;
 import com.watchn.ui.clients.carts.api.CartsApi;
 import com.watchn.ui.services.Metadata;
 import com.watchn.ui.services.carts.CartsService;
+import com.watchn.ui.web.util.SessionIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.ui.Model;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.util.retry.Retry;
 import reactor.util.retry.RetryBackoffSpec;
 
@@ -45,6 +47,6 @@ public class BaseController {
     }
 
     protected String getSessionID(ServerHttpRequest request) {
-        return request.getHeaders().getFirst("X-Session-ID");
+        return SessionIDUtil.getSessionId(request);
     }
 }
