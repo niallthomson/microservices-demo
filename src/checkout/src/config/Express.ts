@@ -7,6 +7,7 @@ import { Container } from 'typedi';
 import * as swaggerUiExpress from 'swagger-ui-express';
 
 import { setupLogging } from './Logging';
+import { setupMetrics } from './Metrics';
 import { defaultMetadataStorage } from 'class-transformer/storage'
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 import { routingControllersToSpec } from 'routing-controllers-openapi';
@@ -24,6 +25,7 @@ export class ExpressConfig {
     this.app = express();
 
     setupLogging(this.app);
+    setupMetrics(this.app);
 
     this.app.use(cors());
     this.app.use(health.ping());
