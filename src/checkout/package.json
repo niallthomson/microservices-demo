@@ -16,7 +16,6 @@
     "debug": "node-debug",
     "build": "npm-run-all -s build:ts",
     "build:ts": "./node_modules/typescript/bin/tsc",
-    "build:swagger": "node ./dist/tasks/swagger.js",
     "watch:ts": "./node_modules/typescript/bin/tsc --watch",
     "watch:node": "nodemon --debug --delay 2.5",
     "lint": "./node_modules/tslint/bin/tslint ./src/{,**/}*.ts",
@@ -33,7 +32,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "async-redis": "^1.1.7",
     "body-parser": "^1.19.0",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
