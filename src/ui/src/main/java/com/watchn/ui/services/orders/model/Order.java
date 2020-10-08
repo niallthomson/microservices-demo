@@ -7,4 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class Order {
     private long id;
+
+    private String email;
 }
