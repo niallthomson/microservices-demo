@@ -1,0 +1,7 @@
+apiVersion: v2
+name: checkout
+description: A Helm chart for Watchn Checkout service
+
+type: application
+
+version: 0.0.1

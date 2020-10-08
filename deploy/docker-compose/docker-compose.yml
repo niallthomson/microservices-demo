@@ -82,6 +82,26 @@ services:
       - MYSQL_DATABASE=orders
       - MYSQL_USER=orders_user
       - MYSQL_PASSWORD=default_password
+  checkout:
+    build:
+      context: .
+      dockerfile: ../../images/nodejs/Dockerfile
+    image: microservices-demo/checkout
+    hostname: checkout
+    restart: always
+    cap_drop:
+      - all
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid
+    environment:
+      - REDIS_URL=redis://checkout-redis:6379
+  checkout-redis:
+    image: redis:6.0-alpine
+    hostname: checkout-redis
+    restart: always
   assets:
     hostname: assets
     build:
