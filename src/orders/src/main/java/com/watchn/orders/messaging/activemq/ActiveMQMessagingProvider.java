@@ -21,7 +21,7 @@ public class ActiveMQMessagingProvider implements MessagingProvider {
         this.jmsTemplate.convertAndSend(new ActiveMQTopic(ORDERS_TOPIC), event);
     }
 
-    /* TODO: Use this to receive messages */
+    // TODO: Consume our own messages for testing right now
     @JmsListener(destination = "Consumer.orders-orders.VirtualTopic.orders")
     public void receive(OrderCreatedEvent message) {
         System.out.println("Message: " + message);
