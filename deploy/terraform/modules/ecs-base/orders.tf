@@ -40,8 +40,20 @@ resource "aws_ecs_task_definition" "orders" {
         "value": "${module.orders_rds.password}"
       },
       {
+        "name": "SPRING_ACTIVEMQ_BROKERURL",
+        "value": "${module.mq.wire_endpoint}"
+      },
+      {
+        "name": "SPRING_ACTIVEMQ_USER",
+        "value": "${module.mq.user}"
+      },
+      {
+        "name": "SPRING_ACTIVEMQ_PASSWORD",
+        "value": "${module.mq.password}"
+      },
+      {
         "name": "SPRING_PROFILES_ACTIVE",
-        "value": "mysql"
+        "value": "mysql,activemq"
       },
       {
         "name": "JAVA_OPTS",
@@ -110,7 +122,7 @@ resource "aws_ecs_service" "orders" {
 }
 
 resource "aws_security_group" "orders" {
-  name_prefix = "${var.environment_name}-orders"
+  name_prefix = "${local.full_environment_prefix}-orders"
   vpc_id      = module.vpc.vpc_id
 
   description = "Marker SG for orders service"

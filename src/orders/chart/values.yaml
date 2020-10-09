@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: watchn/watchn-orders
   pullPolicy: IfNotPresent
-  tag: "build.1601746945"
+  tag: "build.1602185888"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -98,3 +98,11 @@ mysql:
   tolerations: []
 
   affinity: {}
+
+messaging:
+  provider: activemq
+
+  activemq:
+    brokerUrl: ""
+    user: ""
+    password: ""

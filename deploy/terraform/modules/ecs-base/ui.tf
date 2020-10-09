@@ -97,7 +97,7 @@ resource "aws_ecs_service" "ui" {
 }
 
 resource "aws_security_group" "ui" {
-  name_prefix = "${var.environment_name}-ui"
+  name_prefix = "${local.full_environment_prefix}-ui"
   vpc_id      = module.vpc.vpc_id
 
   description = "Marker SG for ui service"

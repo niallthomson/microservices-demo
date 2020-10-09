@@ -1,5 +1,5 @@
 variable "environment_name" {
-  default = "watchn"
+  default = "watchn-ecs"
 }
 
 variable "region" {

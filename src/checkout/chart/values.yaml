@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: watchn/watchn-checkout
   pullPolicy: IfNotPresent
-  tag: "build.1601746945"
+  tag: "build.1602185888"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -60,7 +60,7 @@ tolerations: []
 
 affinity: {}
 
-metrics: {}
+metrics:
   enabled: true
   podAnnotations:
     prometheus.io/scrape: "true"
@@ -73,6 +73,9 @@ configMap:
 
 redis:
   create: true
+
+  address: "redis"
+  port: 6379
 
   image:
     repository: redis

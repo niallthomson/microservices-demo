@@ -1,5 +1,5 @@
-resource "aws_ecs_task_definition" "catalog" {
-  family                   = "${local.full_environment_prefix}-catalog"
+resource "aws_ecs_task_definition" "checkout" {
+  family                   = "${local.full_environment_prefix}-checkout"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
@@ -10,30 +10,14 @@ resource "aws_ecs_task_definition" "catalog" {
   container_definitions    = <<DEFINITION
 [
   {
-    "name": "catalog",
-    "image": "watchn/watchn-catalog:${var.image_tag}",
+    "name": "checkout",
+    "image": "watchn/watchn-checkout:${var.image_tag}",
     "memory": 512,
     "essential": true,
     "environment": [
       {
-        "name": "DB_ENDPOINT",
-        "value": "${module.catalog_rds.writer_endpoint}"
-      },
-      {
-        "name": "DB_USER",
-        "value": "${module.catalog_rds.username}"
-      },
-      {
-        "name": "DB_PASSWORD",
-        "value": "${module.catalog_rds.password}"
-      },
-      {
-        "name": "DB_READ_ENDPOINT",
-        "value": "${module.catalog_rds.reader_endpoint}"
-      },
-      {
-        "name": "DB_NAME",
-        "value": "catalog"
+        "name": "REDIS_URL",
+        "value": "redis://${module.checkout_redis.address}:${module.checkout_redis.port}"
       }
     ],
     "portMappings": [
@@ -69,20 +53,20 @@ resource "aws_ecs_task_definition" "catalog" {
 DEFINITION
 }
 
-resource "aws_ecs_service" "catalog" {
-  name             = "${local.full_environment_prefix}-catalog"
+resource "aws_ecs_service" "checkout" {
+  name             = "${local.full_environment_prefix}-checkout"
   cluster          = aws_ecs_cluster.cluster.id
-  task_definition  = aws_ecs_task_definition.catalog.arn
+  task_definition  = aws_ecs_task_definition.checkout.arn
   desired_count    = 3
   platform_version = "1.4.0"
 
   network_configuration {
-    security_groups = [aws_security_group.nsg_task.id, aws_security_group.catalog.id]
+    security_groups = [aws_security_group.nsg_task.id, aws_security_group.checkout.id]
     subnets         = module.vpc.private_subnets
   }
 
   service_registries {
-    registry_arn = aws_service_discovery_service.catalog.arn
+    registry_arn = aws_service_discovery_service.checkout.arn
   }
 
   capacity_provider_strategy {
@@ -97,36 +81,35 @@ resource "aws_ecs_service" "catalog" {
   }
 }
 
-resource "aws_security_group" "catalog" {
-  name_prefix = "${local.full_environment_prefix}-catalog"
+resource "aws_security_group" "checkout" {
+  name_prefix = "${local.full_environment_prefix}-checkout"
   vpc_id      = module.vpc.vpc_id
 
-  description = "Marker SG for catalog service"
+  description = "Marker SG for checkout service"
 }
 
-resource "aws_security_group_rule" "catalog_rds_ingress" {
+module "checkout_redis" {
+  source = "../aws-elasticache-redis"
+
+  environment_name = local.full_environment_prefix
+  instance_name    = "checkout"
+  vpc_id           = module.vpc.vpc_id
+  subnet_ids       = module.vpc.database_subnets
+}
+
+resource "aws_security_group_rule" "checkout_redis_ingress" {
   description = "From allowed CIDRs"
 
   type                      = "ingress"
-  from_port                 = 3306
-  to_port                   = 3306
+  from_port                 = module.checkout_redis.port
+  to_port                   = module.checkout_redis.port
   protocol                  = "tcp"
-  source_security_group_id  = aws_security_group.catalog.id
-  security_group_id         = module.catalog_rds.security_group_id
+  source_security_group_id  = aws_security_group.checkout.id
+  security_group_id         = module.checkout_redis.security_group_id
 }
 
-module "catalog_rds" {
-  source = "../aws-global-rds-mysql"
-
-  environment_name = local.full_environment_prefix
-  instance_name    = "catalog"
-  vpc_id           = module.vpc.vpc_id
-  subnet_ids       = module.vpc.database_subnets
-  db_name          = "catalog"
-}
-
-resource "aws_service_discovery_service" "catalog" {
-  name  = "catalog"
+resource "aws_service_discovery_service" "checkout" {
+  name  = "checkout"
 
   dns_config {
     namespace_id = aws_service_discovery_private_dns_namespace.sd.id

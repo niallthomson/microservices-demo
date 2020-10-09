@@ -19,7 +19,7 @@ module "vpc" {
   enable_dns_hostnames         = true
   enable_dns_support           = true
   enable_nat_gateway           = true
-  enable_vpn_gateway           = true
+  enable_vpn_gateway           = false
   single_nat_gateway           = true
   one_nat_gateway_per_az       = false
   public_dedicated_network_acl = true

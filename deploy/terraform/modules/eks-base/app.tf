@@ -12,4 +12,10 @@ module "app_base" {
   carts_dynamodb_create = false
 
   orders_mysql_create = false
+  orders_activemq_url = module.mq.wire_endpoint
+  orders_activemq_user = module.mq.user
+  orders_activemq_password = module.mq.password
+
+  checkout_redis_create = false
+  checkout_redis_address = module.checkout_redis.address
 }

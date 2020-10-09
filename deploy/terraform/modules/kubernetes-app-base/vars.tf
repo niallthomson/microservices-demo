@@ -25,3 +25,23 @@ variable "catalog_mysql_create" {
 variable "orders_mysql_create" {
   default = true
 }
+
+variable "orders_activemq_url" {
+  default = ""
+}
+
+variable "orders_activemq_user" {
+  default = ""
+}
+
+variable "orders_activemq_password" {
+  default = ""
+}
+
+variable "checkout_redis_create" {
+  default = true
+}
+
+variable "checkout_redis_address" {
+  default = "redis"
+}

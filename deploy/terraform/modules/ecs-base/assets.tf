@@ -71,7 +71,7 @@ resource "aws_ecs_service" "assets" {
 }
 
 resource "aws_security_group" "assets" {
-  name_prefix = "${var.environment_name}-assets"
+  name_prefix = "${local.full_environment_prefix}-assets"
   vpc_id      = module.vpc.vpc_id
 
   description = "Marker SG for assets service"

@@ -6,5 +6,7 @@ metadata:
 data:
   {{- if .Values.redis.create }}
   REDIS_URL: redis://checkout-redis:6379
+  {{- else }}
+  REDIS_URL: redis://{{ .Values.redis.address }}:{{ .Values.redis.port }}
   {{- end }}
 {{- end }}

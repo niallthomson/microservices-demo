@@ -3,7 +3,7 @@ variable "environment_name" {
 }
 
 variable "image_tag" {
-  default = "build.1601746945"
+  default = "build.1602185888"
 }
 
 variable "region" {
