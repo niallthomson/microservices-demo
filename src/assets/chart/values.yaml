@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: watchn/watchn-assets
   pullPolicy: IfNotPresent
-  tag: "build.1602185888"
+  tag: "1602279757"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -27,11 +27,12 @@ podAnnotations: {}
 podSecurityContext: {}
 
 securityContext:
-  # capabilities:
-  #   drop:
-  #     - ALL
-  #   add:
-  #     - NET_BIND_SERVICE
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 101
 
 service:
   type: ClusterIP
