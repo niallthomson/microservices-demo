@@ -1,0 +1,43 @@
+name: Publish Build
+
+on:
+  push:
+    tags:
+    - 'build*'
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+   
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+    - name: Build Images
+      env:
+        REPO: watchn
+        TAG: "${{ steps.get_version.outputs.VERSION }}"
+      run: |
+        scripts/push_all.sh
+        
+    - name: Patch Tags
+      env:
+        TAG: "${{ steps.get_version.outputs.VERSION }}"
+      run: |
+        scripts/patch-image-versions.sh
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: Patch image tags
+        title: "[Automation] Patch Image Tags {{ steps.get_version.outputs.VERSION }}"
+        branch: "patch-tags-{{ steps.get_version.outputs.VERSION }}"
+        delete-branch: true
+    
