@@ -24,7 +24,7 @@ jobs:
         REPO: watchn
         TAG: "${{ steps.get_version.outputs.VERSION }}"
       run: |
-        scripts/push_all.sh
+        scripts/push-all.sh
         
     - name: Patch Tags
       env:
