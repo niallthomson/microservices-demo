@@ -1,5 +1,5 @@
-import { Checkout } from '../models/Checkout'
-import { CheckoutRequest } from '../models/CheckoutRequest'
+import { Checkout } from '../models/Checkout';
+import { CheckoutRequest } from '../models/CheckoutRequest';
 import { CheckoutService } from '../services/CheckoutService';
 import {
   Body,
@@ -8,8 +8,8 @@ import {
   NotFoundError,
   Param,
   Post
-} from 'routing-controllers'
-import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi'
+} from 'routing-controllers';
+import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 @OpenAPI({})
 @JsonController('/checkout')
@@ -22,11 +22,11 @@ export class CheckoutController {
   @OpenAPI({ summary: 'Return customers checkout' })
   @ResponseSchema(Checkout)
   async getCheckout(@Param('customerId') customerId: string) : Promise<Checkout> {
-    let checkout = this.checkoutService.get(customerId);
+    const checkout = this.checkoutService.get(customerId);
 
     return checkout.then(function(data) {
       if(!data) {
-        throw new NotFoundError("Checkout not found");
+        throw new NotFoundError('Checkout not found');
       }
 
       return data;

@@ -1,7 +1,7 @@
-import { BadRequestError, ExpressErrorMiddlewareInterface, HttpError, Middleware } from "routing-controllers";
-import { ValidationError } from "class-validator";
-import * as express from "express";
-import { timeStamp } from "console";
+import { BadRequestError, ExpressErrorMiddlewareInterface, HttpError, Middleware } from 'routing-controllers';
+import { ValidationError } from 'class-validator';
+import * as express from 'express';
+import { timeStamp } from 'console';
 
 /**
  * Express middleware to catch all errors throwed in controlers.
@@ -11,7 +11,7 @@ import { timeStamp } from "console";
  * @class CustomErrorHandler
  * @implements {ErrorMiddlewareInterface}
  */
-@Middleware({ global: true, type: "after" })
+@Middleware({ global: true, type: 'after' })
 export class CustomErrorHandler implements ExpressErrorMiddlewareInterface {
 
     /**
@@ -24,15 +24,15 @@ export class CustomErrorHandler implements ExpressErrorMiddlewareInterface {
      * @param {express.NextFunction} next The next Express middleware function
      */
     public error(error: any, _req: express.Request, res: express.Response, _next: express.NextFunction) {
-        let responseObject = {} as any;
+        const responseObject = {} as any;
 
         // if its an array of ValidationError
         if (Array.isArray(error.errors) && error.errors.every((element) => element instanceof ValidationError)) {
           res.status(400);
-          responseObject.message = "You have an error in your request's body. Check 'errors' field for more details!";
-          responseObject.errors = []
+          responseObject.message = 'You have an error in your request\'s body. Check \'errors\' field for more details!';
+          responseObject.errors = [];
 
-          this.traverseValidationErrors(responseObject.errors, error.errors, "");
+          this.traverseValidationErrors(responseObject.errors, error.errors, '');
         } else {
             // set http status
             if (error instanceof HttpError && error.httpCode) {
@@ -42,7 +42,7 @@ export class CustomErrorHandler implements ExpressErrorMiddlewareInterface {
             }
 
             if (error instanceof Error) {
-                const developmentMode: boolean = process.env.NODE_ENV === "development";
+                const developmentMode: boolean = process.env.NODE_ENV === 'development';
 
                 // set response error fields
                 if (error.name && (developmentMode || error.message)) { // show name only if in development mode and if error message exist too
@@ -54,7 +54,7 @@ export class CustomErrorHandler implements ExpressErrorMiddlewareInterface {
                 if (error.stack && developmentMode) {
                     responseObject.stack = error.stack;
                 }
-            } else if (typeof error === "string") {
+            } else if (typeof error === 'string') {
                 responseObject.message = error;
             }
         }
@@ -64,7 +64,7 @@ export class CustomErrorHandler implements ExpressErrorMiddlewareInterface {
     }
 
     private traverseValidationErrors(responseErrors: any[], validationErrors : ValidationError[], propertyPrefix : string) {
-      let prefix = propertyPrefix.length > 0 ? propertyPrefix+"." : ""
+      const prefix = propertyPrefix.length > 0 ? propertyPrefix + '.' : '';
       validationErrors.forEach((element: ValidationError) => {
         if(element.constraints) {
           responseErrors.push({
@@ -74,7 +74,7 @@ export class CustomErrorHandler implements ExpressErrorMiddlewareInterface {
         }
 
         if(element.children) {
-          this.traverseValidationErrors(responseErrors, element.children, prefix+element.property);
+          this.traverseValidationErrors(responseErrors, element.children, prefix + element.property);
         }
       });
     }

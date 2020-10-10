@@ -1,4 +1,4 @@
-import * as promMid from "express-prometheus-middleware"
+import * as promMid from 'express-prometheus-middleware';
 
 export function setupMetrics(app) {
   setupExpress(app);

@@ -1,9 +1,9 @@
-import { Checkout } from "../models/Checkout";
-import { Service } from "typedi";
-import { IRepository } from "../repositories/IRepository";
-import { CheckoutRequest } from "../models/CheckoutRequest";
+import { Checkout } from '../models/Checkout';
+import { Service } from 'typedi';
+import { IRepository } from '../repositories/IRepository';
+import { CheckoutRequest } from '../models/CheckoutRequest';
 import { serialize , deserialize} from 'class-transformer';
-import { Repository } from "../repositories/Repository";
+import { Repository } from '../repositories/Repository';
 
 @Service()
 export class CheckoutService {
@@ -12,7 +12,7 @@ export class CheckoutService {
   }
 
   async get(customerId: string) : Promise<Checkout> {
-    let json = await this.redis.get(customerId)
+    const json = await this.redis.get(customerId);
 
     if(!json) {
       return null;
@@ -22,16 +22,16 @@ export class CheckoutService {
   }
 
   async update(customerId: string, request : CheckoutRequest) : Promise<Checkout> {
-    let tax = Math.floor(request.subtotal * 0.05); // Hardcoded 5% tax for now
+    const tax = Math.floor(request.subtotal * 0.05); // Hardcoded 5% tax for now
 
-    let checkout : Checkout = {
+    const checkout : Checkout = {
       shippingOptions: [],
-      request: request,
+      request,
       paymentId: this.makeid(16),
       paymentToken: this.makeid(32),
-      tax: tax,
+      tax,
       total: request.subtotal + tax,
-    }
+    };
 
     await this.redis.set(customerId, serialize(checkout));
 
@@ -40,9 +40,9 @@ export class CheckoutService {
 
   private makeid(length) {
     let result           = '';
-    let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
+    const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for ( let i = 0; i < length; i++ ) {
        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;

@@ -3,7 +3,7 @@ import { IRepository } from './IRepository';
 
 export class RedisRepository implements IRepository {
 
-  private _client : IHandyRedis
+  private _client : IHandyRedis;
 
   constructor(private url: string) { }
 
