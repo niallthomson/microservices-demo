@@ -43,7 +43,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: Patch image tags
-        title: "[Automation] Patch Image Tags {{ steps.get_version.outputs.VERSION }}"
+        title: "[Automation] Patch Image Tags ${{ steps.get_version.outputs.VERSION }}"
         base: master
         branch: "patch-tags"
         branch-suffix: random
