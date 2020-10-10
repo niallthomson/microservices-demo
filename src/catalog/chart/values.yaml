@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: watchn/watchn-catalog
   pullPolicy: IfNotPresent
-  tag: "build.1602185888"
+  tag: "build.1602360700"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -83,7 +83,7 @@ mysql:
   image:
     repository: mysql
     pullPolicy: IfNotPresent
-    tag: "5.7"
+    tag: "build.1602360700"
 
   service:
     type: ClusterIP
