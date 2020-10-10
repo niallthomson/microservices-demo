@@ -42,10 +42,10 @@ jobs:
       uses: peter-evans/create-pull-request@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: Patch image tags
-        title: "[Automation] Patch Image Tags ${{ steps.get_version.outputs.VERSION }}"
+        commit-message: "Patch image tags for build ${{ steps.get_version.outputs.VERSION }}"
+        title: "[Automation] Patch Image Tags"
         base: master
         branch: "patch-tags"
-        branch-suffix: random
-        delete-branch: true
+        labels: |
+          automated pr
     
