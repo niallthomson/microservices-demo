@@ -320,7 +320,7 @@ type swaggerInfo struct {
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
 	Host:        "localhost:8080",
-	BasePath:    "",
+	BasePath:    "/",
 	Schemes:     []string{},
 	Title:       "Catalog API",
 	Description: "This API serves the product catalog",
