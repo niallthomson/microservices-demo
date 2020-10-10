@@ -39,7 +39,7 @@ jobs:
         scripts/patch-image-versions.sh
 
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v2
+      uses: peter-evans/create-pull-request@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: Patch image tags
