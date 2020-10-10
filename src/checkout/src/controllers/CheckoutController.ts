@@ -5,24 +5,32 @@ import {
   Body,
   Get,
   JsonController,
+  NotFoundError,
   Param,
   Post
 } from 'routing-controllers'
 import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi'
-import { Inject } from 'typedi';
 
 @OpenAPI({})
 @JsonController('/checkout')
 export class CheckoutController {
 
-  @Inject()
-  checkoutService: CheckoutService;
+  constructor(private checkoutService: CheckoutService) {
+  }
 
   @Get('/:customerId')
   @OpenAPI({ summary: 'Return customers checkout' })
   @ResponseSchema(Checkout)
   async getCheckout(@Param('customerId') customerId: string) : Promise<Checkout> {
-    return this.checkoutService.get(customerId);
+    let checkout = this.checkoutService.get(customerId);
+
+    return checkout.then(function(data) {
+      if(!data) {
+        throw new NotFoundError("Checkout not found");
+      }
+
+      return data;
+    });
   }
 
   @Post('/:customerId')

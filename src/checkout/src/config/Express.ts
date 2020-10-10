@@ -14,7 +14,10 @@ import { routingControllersToSpec } from 'routing-controllers-openapi';
 import { CheckoutController } from '../controllers/CheckoutController';
 
 const routingControllerOptions = {
-  controllers: [CheckoutController],
+  controllers: [__dirname + "/../controllers/**/*.js"],
+  //controllers: [CheckoutController],
+  middlewares: [__dirname + "/../middlewares/**/*.js"],
+  defaultErrorHandler: false,
 };
 
 export class ExpressConfig {
@@ -38,7 +41,9 @@ export class ExpressConfig {
 
     // Parse routing-controllers classes into OpenAPI spec:
     const storage = getMetadataArgsStorage()
-    const spec = routingControllersToSpec(storage, routingControllerOptions, {
+    const spec = routingControllersToSpec(storage, {
+      controllers: [CheckoutController],
+    }, {
       components: {
         schemas
       },
@@ -46,7 +51,10 @@ export class ExpressConfig {
         description: 'Checkout API',
         title: 'Checkout API',
         version: '1.0.0'
-      }
+      },
+      servers: [{
+        url: 'http://localhost:8080'
+      }]
     })
 
     this.app.use('/v2/api-ui', swaggerUiExpress.serve, swaggerUiExpress.setup(spec));
