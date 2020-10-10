@@ -1,4 +1,4 @@
-import { ExpressConfig } from '../config/Express';
+import { ExpressConfig } from '../../config/Express';
 import * as request from "supertest";
 
 let app = new ExpressConfig();

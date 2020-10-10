@@ -12,11 +12,11 @@ import { defaultMetadataStorage } from 'class-transformer/storage'
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 import { routingControllersToSpec } from 'routing-controllers-openapi';
 import { CheckoutController } from '../controllers/CheckoutController';
+import { CustomErrorHandler } from '../middlewares/CustomErrorHandler';
 
 const routingControllerOptions = {
-  controllers: [__dirname + "/../controllers/**/*.js"],
-  //controllers: [CheckoutController],
-  middlewares: [__dirname + "/../middlewares/**/*.js"],
+  controllers: [CheckoutController],
+  middlewares: [CustomErrorHandler],
   defaultErrorHandler: false,
 };
 
