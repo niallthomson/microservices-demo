@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: watchn/watchn-checkout
   pullPolicy: IfNotPresent
-  tag: "build.1602185888"
+  tag: build.testing6
 
 imagePullSecrets: []
 nameOverride: ""
@@ -78,7 +78,7 @@ redis:
   image:
     repository: redis
     pullPolicy: IfNotPresent
-    tag: "6.0-alpine"
+    tag: build.testing6
 
   service:
     type: ClusterIP
