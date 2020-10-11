@@ -2,3 +2,6 @@ port: "PORT"
 
 redis:
   url: "REDIS_URL"
+
+endpoints:
+  orders: "ENDPOINTS_ORDERS"

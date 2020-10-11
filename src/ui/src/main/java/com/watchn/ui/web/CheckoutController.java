@@ -3,7 +3,9 @@ package com.watchn.ui.web;
 import com.watchn.ui.clients.orders.model.Order;
 import com.watchn.ui.services.Metadata;
 import com.watchn.ui.services.carts.CartsService;
+import com.watchn.ui.services.checkout.CheckoutService;
 import com.watchn.ui.services.orders.OrdersService;
+import com.watchn.ui.web.payload.Cart;
 import com.watchn.ui.web.payload.OrderRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +23,13 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class CheckoutController extends BaseController {
 
-    private CartsService cartsService;
+    private CheckoutService checkoutService;
 
-    private OrdersService ordersService;
-
-    public CheckoutController(@Autowired CartsService cartsService, @Autowired OrdersService ordersService, @Autowired Metadata metadata) {
+    public CheckoutController(@Autowired CartsService cartsService, @Autowired CheckoutService checkoutService, @Autowired Metadata metadata) {
         super(cartsService, metadata);
 
         this.cartsService = cartsService;
-        this.ordersService = ordersService;
+        this.checkoutService = checkoutService;
     }
 
     @GetMapping
@@ -44,7 +44,22 @@ public class CheckoutController extends BaseController {
     }
 
     @PostMapping
-    public Mono<String> order(@ModelAttribute OrderRequest orderRequest, ServerHttpRequest request, Model model) {
+    public Mono<String> update(@ModelAttribute OrderRequest orderRequest, ServerHttpRequest request, Model model) {
+        String sessionId = getSessionID(request);
+
+        model.addAttribute("fullCart", this.cartsService.getCart(sessionId));
+
+        this.populateCommon(request, model);
+
+        return this.checkoutService.create(sessionId, orderRequest.getEmail())
+                .doOnNext(o -> {
+                    model.addAttribute("checkout", o);
+                })
+                .thenReturn("checkout-confirm");
+    }
+
+    @PostMapping("/confirm")
+    public Mono<String> confirm(@ModelAttribute OrderRequest orderRequest, ServerHttpRequest request, Model model) {
         String sessionId = getSessionID(request);
 
         Order createOrderRequest = new Order();
@@ -54,13 +69,10 @@ public class CheckoutController extends BaseController {
 
         populateMetadata(model);
 
-        return this.ordersService.order(sessionId, orderRequest.getFirstName(), orderRequest.getLastName(), orderRequest.getEmail())
+        return this.checkoutService.submit(sessionId)
                 .doOnNext(o -> {
-                    model.addAttribute("order", o);
-                })
-                .map(o -> this.cartsService.deleteCart(sessionId))
-                .doOnNext(c -> {
-                    model.addAttribute("cart", c);
+                    model.addAttribute("order", o.getSubmitted());
+                    model.addAttribute("cart", o.getCart());
                 })
                 .thenReturn("order");
     }

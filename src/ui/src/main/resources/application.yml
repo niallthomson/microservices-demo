@@ -8,6 +8,7 @@ endpoints:
   carts: http://localhost:8082
   orders: http://localhost:8083
   assets: http://localhost:8084
+  checkout: http://localhost:8085
 
 watchn:
   ui:

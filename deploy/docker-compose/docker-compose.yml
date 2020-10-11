@@ -10,6 +10,7 @@ services:
       - ENDPOINTS_CATALOG=http://catalog:8080
       - ENDPOINTS_CARTS=http://carts:8080
       - ENDPOINTS_ORDERS=http://orders:8080
+      - ENDPOINTS_CHECKOUT=http://checkout:8080
       - ENDPOINTS_ASSETS=http://assets:8080
     hostname: ui
     build:
@@ -110,6 +111,7 @@ services:
       - /tmp:rw,noexec,nosuid
     environment:
       - REDIS_URL=redis://checkout-redis:6379
+      - ENDPOINTS_ORDERS=http://orders:8080
     mem_limit: 256m
     cap_drop:
       - ALL

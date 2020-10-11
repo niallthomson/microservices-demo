@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 if [ -z "$TAG" ]; then
   echo "Error: TAG must be set"

@@ -11,4 +11,7 @@ export class ShippingOption {
   @IsString()
   token : string;
 
+  @IsNumber()
+  estimatedDays : number;
+
 }
