@@ -76,13 +76,13 @@
           </div>
           <div id="navigation" class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
-              <li class="nav-item"><a th:href="@{/home}" class="nav-link" th:classappend="${menu == 'home'} ? 'active' : ''">Home</a></li>
-              <li class="nav-item"><a th:href="@{/catalog}" class="nav-link" th:classappend="${menu == 'catalog'} ? 'active' : ''">Catalog</a></li>
+              <li class="nav-item"><a id="menu-home" th:href="@{/home}" class="nav-link" th:classappend="${menu == 'home'} ? 'active' : ''">Home</a></li>
+              <li class="nav-item"><a id="menu-catalog" th:href="@{/catalog}" class="nav-link" th:classappend="${menu == 'catalog'} ? 'active' : ''">Catalog</a></li>
             </ul>
             <div class="navbar-buttons d-flex justify-content-end">
               <!-- /.nav-collapse-->
               <div id="basket-overview" class="navbar-collapse collapse d-none d-lg-block">
-                <a href="/cart" class="btn btn-primary navbar-btn"><i class="fa fa-shopping-cart"></i><span><span th:text="${cart.numItems}"></span> items in cart</span></a>
+                <a id="go-cart" href="/cart" class="btn btn-primary navbar-btn"><i class="fa fa-shopping-cart"></i><span><span th:text="${cart.numItems}"></span> items in cart</span></a>
                 <a class="btn btn-light navbar-btn" data-toggle="popover" data-placement="bottom" data-trigger="hover"><i class="fa fa-info-circle" style="color: black"></i></a>
               </div>
 

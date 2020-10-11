@@ -27,7 +27,7 @@
                             <ul class="list-unstyled">
                                 <li><a href="category.html" class="nav-link" th:each="tag : ${tags}"
                                        th:text="${tag.displayName}"
-                                       th:href="@{/catalog(page=${catalog.page},size=3,tag=${tag.name})}"
+                                       th:href="@{/catalog(page=1,size=${catalog.size},tag=${tag.name})}"
                                        th:classappend="${selectedTag == tag.name} ? 'active' : ''">T-shirts</a>
                                 </li>
                             </ul>
