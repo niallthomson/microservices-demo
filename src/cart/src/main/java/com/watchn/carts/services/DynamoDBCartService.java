@@ -114,7 +114,12 @@ public class DynamoDBCartService implements CartService {
 
     @Override
     public void deleteItem(String customerId, String itemId) {
-        this.mapper.delete(item(customerId, itemId));
+        item(customerId, itemId).ifPresentOrElse((value)
+            -> { this.mapper.delete(value); },
+        ()
+            -> {
+                log.warn("Item missing for delete {} -- {}", customerId, itemId);
+        });
     }
 
     @Override
