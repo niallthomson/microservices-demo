@@ -1,7 +1,7 @@
-import { Type } from "class-transformer";
-import { IsInt, IsString, Min, ValidateNested } from "class-validator";
-import { CheckoutRequest } from "./CheckoutRequest";
-import { ShippingOption } from "./ShippingOption";
+import { Type } from 'class-transformer';
+import { IsInt, IsString, Min, ValidateNested } from 'class-validator';
+import { CheckoutRequest } from './CheckoutRequest';
+import { ShippingOption } from './ShippingOption';
 
 export class Checkout {
 

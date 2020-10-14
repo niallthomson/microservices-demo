@@ -8,13 +8,16 @@ import * as swaggerUiExpress from 'swagger-ui-express';
 
 import { setupLogging } from './Logging';
 import { setupMetrics } from './Metrics';
-import { defaultMetadataStorage } from 'class-transformer/storage'
+import { defaultMetadataStorage } from 'class-transformer/storage';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 import { routingControllersToSpec } from 'routing-controllers-openapi';
 import { CheckoutController } from '../controllers/CheckoutController';
+import { CustomErrorHandler } from '../middlewares/CustomErrorHandler';
 
 const routingControllerOptions = {
   controllers: [CheckoutController],
+  middlewares: [CustomErrorHandler],
+  defaultErrorHandler: false,
 };
 
 export class ExpressConfig {
@@ -34,11 +37,13 @@ export class ExpressConfig {
     const schemas = validationMetadatasToSchemas({
       refPointerPrefix: '#/components/schemas/',
       classTransformerMetadataStorage: defaultMetadataStorage
-    })
+    });
 
     // Parse routing-controllers classes into OpenAPI spec:
-    const storage = getMetadataArgsStorage()
-    const spec = routingControllersToSpec(storage, routingControllerOptions, {
+    const storage = getMetadataArgsStorage();
+    const spec = routingControllersToSpec(storage, {
+      controllers: [CheckoutController],
+    }, {
       components: {
         schemas
       },
@@ -46,16 +51,19 @@ export class ExpressConfig {
         description: 'Checkout API',
         title: 'Checkout API',
         version: '1.0.0'
-      }
-    })
+      },
+      servers: [{
+        url: 'http://localhost:8080'
+      }]
+    });
 
     this.app.use('/v2/api-ui', swaggerUiExpress.serve, swaggerUiExpress.setup(spec));
 
     this.app.get('/v2/api-docs', (_req, res) => {
-      res.json(spec)
-    })
+      res.json(spec);
+    });
 
-    this.app.get('/health', function (_req, res) {
+    this.app.get('/health', function(_req, res) {
       res.send('OK');
     });
 

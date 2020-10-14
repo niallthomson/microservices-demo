@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: watchn/watchn-checkout
   pullPolicy: IfNotPresent
-  tag: "build.1602185888"
+  tag: "build.1602361486"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -31,8 +31,6 @@ securityContext:
   capabilities:
     drop:
       - ALL
-    add:
-      - NET_BIND_SERVICE
   readOnlyRootFilesystem: true
   runAsNonRoot: true
   runAsUser: 1000

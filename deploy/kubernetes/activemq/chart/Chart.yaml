@@ -1,0 +1,7 @@
+apiVersion: v2
+name: activemq
+description: A Helm chart for deploying Apache ActiveMQ
+
+type: application
+
+version: 0.0.1

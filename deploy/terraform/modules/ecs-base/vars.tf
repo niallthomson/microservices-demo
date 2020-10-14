@@ -2,10 +2,6 @@ variable "environment_name" {
   default = "watchn"
 }
 
-variable "image_tag" {
-  default = "build.1602185888"
-}
-
 variable "region" {
 }
 

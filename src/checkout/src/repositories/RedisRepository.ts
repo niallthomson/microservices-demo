@@ -1,13 +1,11 @@
 import { createHandyClient, IHandyRedis } from 'handy-redis';
-import { Service } from "typedi";
-import * as config from 'config';
-import * as redis from "redis";
+import { IRepository } from './IRepository';
 
-@Service()
-export class Redis {
+export class RedisRepository implements IRepository {
 
-  private _client : IHandyRedis
-  private url: string = config.get('redis.url').toString();
+  private _client : IHandyRedis;
+
+  constructor(private url: string) { }
 
   client() {
     if(!this._client) {

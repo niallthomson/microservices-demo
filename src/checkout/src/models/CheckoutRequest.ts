@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
-import { ValidateNested, IsEmail, IsInt, Min } from 'class-validator'
+import { ValidateNested, IsEmail, IsInt, Min } from 'class-validator';
 
-import { Item } from "./Item";
-import { ShippingAddress } from "./ShippingAddress";
+import { Item } from './Item';
+import { ShippingAddress } from './ShippingAddress';
 
 export class CheckoutRequest {
 

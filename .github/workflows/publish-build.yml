@@ -1,0 +1,51 @@
+name: Publish Build
+
+on:
+  push:
+    tags:
+    - 'build*'
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+   
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+    - name: Login to container registry
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build Images
+      env:
+        REPO: watchn
+        TAG: "${{ steps.get_version.outputs.VERSION }}"
+      run: |
+        scripts/push-all.sh
+        
+    - name: Patch Tags
+      env:
+        TAG: "${{ steps.get_version.outputs.VERSION }}"
+      run: |
+        scripts/patch-image-versions.sh
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "Patch image tags for build ${{ steps.get_version.outputs.VERSION }}"
+        title: "[Automation] Patch Image Tags"
+        base: master
+        branch: "patch-tags"
+        labels: |
+          automated pr
+    

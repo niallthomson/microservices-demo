@@ -19,6 +19,8 @@ services:
         JAR_PATH: target/ui-0.0.1-SNAPSHOT.jar
     restart: always
     mem_limit: 256m
+    cap_drop:
+      - ALL
   catalog:
     hostname: catalog
     build:
@@ -26,6 +28,8 @@ services:
       dockerfile: Dockerfile
     restart: always
     mem_limit: 128m
+    cap_drop:
+      - ALL
   catalog-db:
     image: mysql:5.7
     hostname: catalog-db
@@ -54,6 +58,8 @@ services:
       - AWS_ACCESS_KEY_ID=key
       - AWS_SECRET_ACCESS_KEY=secret
     mem_limit: 256m
+    cap_drop:
+      - ALL
   carts-db:
     image: amazon/dynamodb-local:1.13.1
     hostname: carts-db
@@ -79,6 +85,8 @@ services:
       - SPRING_DATASOURCE_READER_PASSWORD=default_password
       - SPRING_ACTIVEMQ_BROKERURL=tcp://activemq:61616
     mem_limit: 256m
+    cap_drop:
+      - ALL
   orders-db:
     image: mysql:5.7
     hostname: orders-db
@@ -103,6 +111,8 @@ services:
     environment:
       - REDIS_URL=redis://checkout-redis:6379
     mem_limit: 256m
+    cap_drop:
+      - ALL
   checkout-redis:
     image: redis:6.0-alpine
     hostname: checkout-redis
@@ -115,6 +125,8 @@ services:
       dockerfile: Dockerfile
     restart: always
     mem_limit: 64m
+    cap_drop:
+      - ALL
   activemq:
     build:
       context: .
