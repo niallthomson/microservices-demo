@@ -18,7 +18,7 @@ variable "vpc_cidr" {
 }
 
 variable "node_pool_instance_type" {
-  default = "m5.large" #t3a.large
+  default = "t3a.large"
 }
 
 variable "tags" {
@@ -39,6 +39,10 @@ variable "dns_suffix" {
 
 variable "kubernetes_namespace" {
   default = "watchn"
+}
+
+variable "service_mesh" {
+  default = "istio"
 }
 
 variable "aurora_engine_version" {

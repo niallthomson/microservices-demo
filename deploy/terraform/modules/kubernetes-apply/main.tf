@@ -1,3 +1,8 @@
+locals {
+  service_account_name = "apply-${var.name}"
+  configmap_name       = "apply-${var.name}"
+}
+
 resource "null_resource" "blocker" {
   provisioner "local-exec" {
     command = "echo 'unblocked on ${var.blocker}'"
@@ -5,13 +10,19 @@ resource "null_resource" "blocker" {
 }
 
 resource "kubernetes_service_account" "sa" {
+  count = var.run ? 1 : 0
+
   metadata {
-    name = "apply-${var.name}"
+    name      = local.service_account_name
     namespace = "kube-system"
   }
 }
 
 resource "kubernetes_cluster_role_binding" "admin" {
+  count = var.run ? 1 : 0
+
+  depends_on = [kubernetes_service_account.sa]
+
   metadata {
     name = "apply-admin-${var.name}"
   }
@@ -22,14 +33,16 @@ resource "kubernetes_cluster_role_binding" "admin" {
   }
   subject {
     kind      = "ServiceAccount"
-    name      = kubernetes_service_account.sa.metadata.0.name
+    name      = local.service_account_name
     namespace = "kube-system"
   }
 }
 
 resource "kubernetes_config_map" "apply_config_map" {
+  count = var.run ? 1 : 0
+
   metadata {
-    name = "apply-${var.name}"
+    name      = local.configmap_name
     namespace = "kube-system"
   }
 
@@ -39,13 +52,16 @@ resource "kubernetes_config_map" "apply_config_map" {
 }
 
 resource "kubernetes_job" "apply_job" {
+  count = var.run ? 1 : 0
+
   depends_on = [
     null_resource.blocker,
-    kubernetes_cluster_role_binding.admin
+    kubernetes_cluster_role_binding.admin,
+    kubernetes_config_map.apply_config_map
   ]
 
   metadata {
-    name = "apply-${var.name}"
+    name      = "apply-${var.name}"
     namespace = "kube-system"
   }
 
@@ -60,7 +76,7 @@ resource "kubernetes_job" "apply_job" {
           command = ["kubectl", "apply", "-f", "/tmp/config/yml"]
 
           volume_mount {
-            name = "yml"
+            name       = "yml"
             mount_path = "/tmp/config"
           }
         }
@@ -68,12 +84,12 @@ resource "kubernetes_job" "apply_job" {
         volume {
           name = "yml"
           config_map {
-            name = kubernetes_config_map.apply_config_map.metadata.0.name
+            name = local.configmap_name
           }
         }
         
-        restart_policy = "Never"
-        service_account_name = kubernetes_service_account.sa.metadata.0.name
+        restart_policy                  = "Never"
+        service_account_name            = local.service_account_name
         automount_service_account_token = true
       }
     }
