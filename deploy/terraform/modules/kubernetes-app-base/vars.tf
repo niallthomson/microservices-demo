@@ -6,6 +6,10 @@ variable "ui_domain" {
   
 }
 
+variable "ui_istio_enabled" {
+  default = false
+}
+
 variable "carts_eks_service_account_arn" {
   default = ""
 }

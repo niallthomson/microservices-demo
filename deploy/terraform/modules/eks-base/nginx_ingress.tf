@@ -1,6 +1,5 @@
-resource "aws_eip" "nginx_ingress" {
-  vpc   = true
-  count = length(var.availability_zones)
+locals {
+  nginx_ingress_enabled   = var.service_mesh == "istio" ? false : true
 }
 
 data "template_file" "nginx_config" {
@@ -15,6 +14,7 @@ data "template_file" "nginx_config" {
 
 resource "kubernetes_namespace" "nginx_ingress" {
   depends_on = [null_resource.cluster_blocker]
+  count = local.nginx_ingress_enabled ? 1 : 0
 
   metadata {
     name = "nginx-ingress"
@@ -22,8 +22,11 @@ resource "kubernetes_namespace" "nginx_ingress" {
 }
 
 resource "helm_release" "nginx_ingress" {
+  depends_on = [kubernetes_namespace.nginx_ingress]
+  count = local.nginx_ingress_enabled ? 1 : 0
+
   name      = "nginx-ingress"
-  namespace = kubernetes_namespace.nginx_ingress.metadata[0].name
+  namespace = "nginx-ingress"
   chart     = "stable/nginx-ingress"
   version   = "1.40.2"
 

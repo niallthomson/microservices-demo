@@ -20,6 +20,7 @@ module "eks_base" {
   dns_hosted_zone_id = data.aws_route53_zone.zone.id
   dns_base           = var.hosted_zone_name
   dns_suffix         = "watchn.${var.hosted_zone_name}"
+  service_mesh       = var.service_mesh
 }
 
 data "aws_route53_zone" "zone" {

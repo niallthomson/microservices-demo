@@ -1,9 +1,19 @@
+resource "null_resource" "app_blocker" {
+  depends_on = [module.istio_apply]
+
+  provisioner "local-exec" {
+    command = "echo 'go'"
+  }
+}
+
+
 module "app_base" {
   source = "../kubernetes-app-base"
 
-  cluster_blocker = null_resource.cluster_blocker.id
+  cluster_blocker = null_resource.app_blocker.id
 
   ui_domain = local.store_dns
+  ui_istio_enabled = var.service_mesh == "istio"
 
   catalog_mysql_create = false
 

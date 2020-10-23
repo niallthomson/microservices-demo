@@ -18,3 +18,7 @@ variable "vpc_cidr" {
 variable "hosted_zone_name" {
   
 }
+
+variable "service_mesh" {
+  default = "none"
+}

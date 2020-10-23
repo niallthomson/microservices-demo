@@ -95,3 +95,17 @@ ingress:
 #    - secretName: ingress-secret
 #      hosts: 
 #        - example.domain1.com
+
+istio:
+  enabled: false
+
+#  hosts:
+#    - example.domain1.com
+#    
+#  tls:
+#    issuer:
+#      name: issuer
+#      kind: Issuer
+#    secretName: ingress-cert
+#    hosts: 
+#      - example.domain1.com

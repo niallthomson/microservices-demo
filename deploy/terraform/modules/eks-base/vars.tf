@@ -42,7 +42,7 @@ variable "kubernetes_namespace" {
 }
 
 variable "service_mesh" {
-  default = "istio"
+  default = "none"
 }
 
 variable "aurora_engine_version" {
