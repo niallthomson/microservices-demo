@@ -17,7 +17,7 @@ data "template_file" "istio_yaml" {
   template = file("${path.module}/templates/istio.yml")
 
   vars = {
-    eip_allocs   = join(",", aws_eip.nginx_ingress.*.id)
+    eip_allocs   = join(",", aws_eip.ingress.*.id)
     minReplicas = length(var.availability_zones)
   }
 }

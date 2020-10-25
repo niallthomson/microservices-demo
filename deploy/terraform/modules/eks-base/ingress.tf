@@ -1,4 +1,4 @@
-resource "aws_eip" "nginx_ingress" {
+resource "aws_eip" "ingress" {
   vpc   = true
   count = length(var.availability_zones)
 }

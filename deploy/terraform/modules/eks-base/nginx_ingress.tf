@@ -6,7 +6,7 @@ data "template_file" "nginx_config" {
   template = file("${path.module}/templates/nginx-ingress-values.yml")
 
   vars = {
-    eip_allocs   = join(",", aws_eip.nginx_ingress.*.id)
+    eip_allocs   = join(",", aws_eip.ingress.*.id)
     replicas     = length(var.availability_zones)
     minAvailable = length(var.availability_zones) > 1 ? length(var.availability_zones) - 1 : 1
   }
