@@ -1,4 +1,4 @@
-{{- if .Values.ingress.tls }}
+{{- if and (.Values.istio.enabled) (.Values.ingress.tls) }}
 apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:

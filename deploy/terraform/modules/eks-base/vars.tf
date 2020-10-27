@@ -3,7 +3,7 @@ variable "environment_name" {
 }
 
 variable "eks_version" {
-  default = "1.17"
+  default = "1.18"
 }
 
 variable "region" {
@@ -33,7 +33,7 @@ variable "dns_base" {
 
 }
 
-variable "dns_suffix" {
+variable "dns_prefix" {
 
 }
 

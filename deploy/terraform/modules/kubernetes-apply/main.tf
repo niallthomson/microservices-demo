@@ -96,4 +96,8 @@ resource "kubernetes_job" "apply_job" {
 
     backoff_limit = 4
   }
+
+  provisioner "local-exec" {
+    command = "sleep ${var.sleep}"
+  }
 }

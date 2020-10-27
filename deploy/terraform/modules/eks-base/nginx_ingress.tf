@@ -1,12 +1,17 @@
 locals {
-  nginx_ingress_enabled   = var.service_mesh == "istio" ? false : true
+  nginx_ingress_enabled   = true
+}
+
+resource "aws_eip" "nginx_ingress" {
+  vpc   = true
+  count = local.nginx_ingress_enabled ? length(var.availability_zones) : 0
 }
 
 data "template_file" "nginx_config" {
   template = file("${path.module}/templates/nginx-ingress-values.yml")
 
   vars = {
-    eip_allocs   = join(",", aws_eip.ingress.*.id)
+    eip_allocs   = join(",", aws_eip.nginx_ingress.*.id)
     replicas     = length(var.availability_zones)
     minAvailable = length(var.availability_zones) > 1 ? length(var.availability_zones) - 1 : 1
   }

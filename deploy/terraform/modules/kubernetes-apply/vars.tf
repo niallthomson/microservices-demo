@@ -9,3 +9,7 @@ variable "blocker" {
 variable "run" {
   default = true
 }
+
+variable "sleep" {
+  default = 0
+}

@@ -2,10 +2,9 @@ resource "null_resource" "app_blocker" {
   depends_on = [module.istio_apply]
 
   provisioner "local-exec" {
-    command = "echo 'go'"
+    command = "sleep 60"
   }
 }
-
 
 module "app_base" {
   source = "../kubernetes-app-base"

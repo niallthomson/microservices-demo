@@ -10,7 +10,7 @@ data "template_file" "prometheus_values" {
   template = file("${path.module}/templates/prometheus-values.yml")
 
   vars = {
-    domain = "prometheus.${var.dns_suffix}"
+    domain = local.prometheus_dns
   }
 }
 
