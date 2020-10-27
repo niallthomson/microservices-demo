@@ -19,6 +19,10 @@ variable "hosted_zone_name" {
   
 }
 
+variable "dns_prefix" {
+  default = ""
+}
+
 variable "service_mesh" {
   default = "none"
 }
