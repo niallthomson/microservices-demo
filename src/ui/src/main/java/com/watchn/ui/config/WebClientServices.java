@@ -18,9 +18,10 @@ import com.watchn.ui.services.orders.WebClientOrdersService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
-@ConditionalOnProperty(name = "watchn.ui.stubs", havingValue = "false")
+@Profile("!stubs")
 public class WebClientServices {
 
     @Bean

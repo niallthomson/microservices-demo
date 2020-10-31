@@ -27,8 +27,8 @@ public class BaseController {
 
     protected static RetryBackoffSpec retrySpec(String path) {
         return Retry
-                .backoff(3, Duration.ofSeconds(1))
-                .doBeforeRetry(context -> log.warn("Retrying {}", path));
+            .backoff(3, Duration.ofSeconds(1))
+            .doBeforeRetry(context -> log.warn("Retrying {}", path));
     }
 
     protected void populateCommon(ServerHttpRequest request, Model model) {

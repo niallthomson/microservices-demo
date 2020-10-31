@@ -16,8 +16,6 @@ public class ShippingAddress {
 
     private String city;
 
-    private String country;
-
     private String zip;
 
     private String state;

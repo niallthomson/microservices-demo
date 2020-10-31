@@ -1,23 +1,24 @@
 package com.watchn.ui.web;
 
-import com.watchn.ui.clients.orders.model.Order;
 import com.watchn.ui.services.Metadata;
 import com.watchn.ui.services.carts.CartsService;
 import com.watchn.ui.services.checkout.CheckoutService;
 import com.watchn.ui.services.checkout.model.ShippingAddress;
 import com.watchn.ui.web.payload.CheckoutDeliveryMethodRequest;
-import com.watchn.ui.web.payload.OrderRequest;
 import com.watchn.ui.web.payload.ShippingAddressRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import reactor.core.publisher.Mono;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/checkout")
@@ -37,47 +38,58 @@ public class CheckoutController extends BaseController {
 
     @GetMapping
     public Mono<String> checkout(ServerHttpRequest request, Model model) {
+        return showShipping(new ShippingAddressRequest(), request, model);
+    }
+
+    private Mono<String> showShipping(ShippingAddressRequest shippingAddressRequest, ServerHttpRequest request, Model model) {
         String sessionId = getSessionID(request);
 
         this.populateCommon(request, model);
 
-        model.addAttribute("shipping", new ShippingAddressRequest());
+        model.addAttribute("shippingAddressRequest", shippingAddressRequest);
 
         return this.checkoutService.create(sessionId)
-            .doOnNext(o -> {
-                model.addAttribute("checkout", o);
-            })
-            .thenReturn("checkout-shipping");
+                .doOnNext(o -> {
+                    model.addAttribute("checkout", o);
+                })
+                .thenReturn("checkout-shipping");
     }
 
     @PostMapping
-    public Mono<String> handleShipping(@ModelAttribute("shipping") ShippingAddressRequest shipping, ServerHttpRequest request, Model model) {
+    public Mono<String> handleShipping(@Valid @ModelAttribute("shippingAddressRequest") ShippingAddressRequest shippingAddressRequest,
+                                       BindingResult result,
+                                       ServerHttpRequest request,
+                                       Model model) {
         String sessionId = getSessionID(request);
-
-        ShippingAddress address = new ShippingAddress();
-        address.setFirstName(shipping.getFirstName());
-        address.setLastName(shipping.getLastName());
-        address.setAddress1(shipping.getAddress1());
-        address.setAddress2(shipping.getAddress2());
-        address.setCity(shipping.getCity());
-        address.setState(shipping.getState());
-        address.setZip(shipping.getZip());
-        address.setCountry(shipping.getCountry());
-
-        model.addAttribute("delivery", new CheckoutDeliveryMethodRequest());
 
         this.populateCommon(request, model);
 
+        if (result.hasErrors()) {
+            return showShipping(shippingAddressRequest, request, model);
+        }
+
+        ShippingAddress address = new ShippingAddress();
+        address.setFirstName(shippingAddressRequest.getFirstName());
+        address.setLastName(shippingAddressRequest.getLastName());
+        address.setAddress1(shippingAddressRequest.getAddress1());
+        address.setAddress2(shippingAddressRequest.getAddress2());
+        address.setCity(shippingAddressRequest.getCity());
+        address.setState(shippingAddressRequest.getState());
+        address.setZip(shippingAddressRequest.getZip());
+
+        model.addAttribute("delivery", new CheckoutDeliveryMethodRequest());
+
         return this.checkoutService.shipping(sessionId, address)
             .doOnNext(o -> {
-                log.error("{}", o);
                 model.addAttribute("checkout", o);
             })
             .thenReturn("checkout-delivery");
     }
 
     @PostMapping("/delivery")
-    public Mono<String> handleDelivery(@ModelAttribute("delivery") CheckoutDeliveryMethodRequest delivery, ServerHttpRequest request, Model model) {
+    public Mono<String> handleDelivery(@ModelAttribute("delivery") CheckoutDeliveryMethodRequest delivery,
+                                       ServerHttpRequest request,
+                                       Model model) {
         String sessionId = getSessionID(request);
 
         this.populateCommon(request, model);

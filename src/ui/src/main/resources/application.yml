@@ -12,7 +12,6 @@ endpoints:
 
 watchn:
   ui:
-    stubs: false
     metadata:
       region: "none"
 
