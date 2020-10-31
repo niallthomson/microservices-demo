@@ -2,17 +2,19 @@ package com.watchn.ui.services.checkout;
 
 import com.watchn.ui.clients.checkout.api.CheckoutApi;
 import com.watchn.ui.clients.checkout.model.CheckoutRequest;
-import com.watchn.ui.clients.checkout.model.ShippingAddress;
 import com.watchn.ui.services.carts.CartsService;
 import com.watchn.ui.services.carts.model.Cart;
 import com.watchn.ui.services.checkout.model.Checkout;
 import com.watchn.ui.services.checkout.model.CheckoutMapper;
 import com.watchn.ui.services.checkout.model.CheckoutSubmittedResponse;
+import com.watchn.ui.services.checkout.model.ShippingAddress;
 import com.watchn.ui.util.RetryUtils;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 
+@Slf4j
 public class WebClientCheckoutService implements CheckoutService {
 
     private final CheckoutApi api;
@@ -34,24 +36,38 @@ public class WebClientCheckoutService implements CheckoutService {
     }
 
     @Override
-    public Mono<Checkout> create(String sessionId, String customerEmail) {
+    public Mono<Checkout> create(String sessionId) {
         Mono<Cart> cart = cartsService.getCart(sessionId);
 
         return cart.flatMap(c -> {
-            ShippingAddress address = new ShippingAddress();
-            address.address1("123123");
-            address.city("bla");
-            address.state("AS");
-            address.zip("12345");
-
             CheckoutRequest request = new CheckoutRequest();
-            request.customerEmail(customerEmail);
             request.subtotal(c.getSubtotal());
-            request.setShippingAddress(address);
             request.setItems(new ArrayList<>());
 
             return api.checkoutControllerUpdateCheckout(sessionId, request)
-                .map(mapper::checkout);
+                    .map(mapper::checkout);
+        });
+    }
+
+    @Override
+    public Mono<Checkout> shipping(String sessionId, ShippingAddress shippingAddress) {
+        return api.checkoutControllerGetCheckout(sessionId).flatMap(c -> {
+            CheckoutRequest request = c.getRequest();
+            request.setShippingAddress(this.mapper.clientShippingAddress(shippingAddress));
+
+            return api.checkoutControllerUpdateCheckout(sessionId, request)
+                    .map(mapper::checkout);
+        });
+    }
+
+    @Override
+    public Mono<Checkout> delivery(String sessionId, String token) {
+        return api.checkoutControllerGetCheckout(sessionId).flatMap(c -> {
+            CheckoutRequest request = c.getRequest();
+            request.setDeliveryOptionToken(token);
+
+            return api.checkoutControllerUpdateCheckout(sessionId, request)
+                    .map(mapper::checkout);
         });
     }
 

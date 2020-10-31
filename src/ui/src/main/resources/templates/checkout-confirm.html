@@ -15,8 +15,13 @@
         <div id="checkout" class="col-md-12 col-lg-8">
             <div class="box">
                 <h1>Checkout</h1>
+                <div class="nav flex-column flex-sm-row nav-pills">
+                    <a href="#" class="nav-link flex-sm-fill text-sm-center"> <i class="fa fa-map-marker"></i>Address</a>
+                    <a href="#" class="nav-link flex-sm-fill text-sm-center"> <i class="fa fa-truck"></i>Delivery Method</a>
+                    <a href="#" class="nav-link flex-sm-fill text-sm-center"> <i class="fa fa-money"></i>Payment Method</a>
+                    <a href="#" class="nav-link flex-sm-fill text-sm-center active"> <i class="fa fa-eye"></i>Order Review</a>
+                </div>
                 <form method="POST" id="checkoutForm" action="/checkout/confirm">
-
                     <div class="box-footer d-flex justify-content-between"><a href="/cart" class="btn btn-outline-secondary"><i class="fa fa-chevron-left"></i>Back to Basket</a>
                         <button type="submit" class="btn btn-primary">Order<i class="fa fa-chevron-right"></i></button>
                     </div>

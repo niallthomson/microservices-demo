@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   ShippingAddress.JSON_PROPERTY_STATE,
   ShippingAddress.JSON_PROPERTY_ZIP
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-10T22:27:39.185657-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-30T22:57:57.494324-07:00[America/Los_Angeles]")
 public class ShippingAddress {
   public static final String JSON_PROPERTY_ADDRESS1 = "address1";
   private String address1;
@@ -85,9 +85,10 @@ public class ShippingAddress {
    * Get address2
    * @return address2
   **/
-  @ApiModelProperty(required = true, value = "")
+  @javax.annotation.Nullable
+  @ApiModelProperty(value = "")
   @JsonProperty(JSON_PROPERTY_ADDRESS2)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public String getAddress2() {
     return address2;

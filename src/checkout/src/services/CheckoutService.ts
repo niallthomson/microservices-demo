@@ -25,14 +25,27 @@ export class CheckoutService {
   }
 
   async update(customerId: string, request : CheckoutRequest) : Promise<Checkout> {
-    const tax = Math.floor(request.subtotal * 0.05); // Hardcoded 5% tax for now
+    const tax = request.shippingAddress ? Math.floor(request.subtotal * 0.05) : -1; // Hardcoded 5% tax for now
 
     return this.shippingService.getShippingRates(request).then(async (shippingRates) => {
+      let shipping = -1;
+
+      if(shippingRates) {
+        console.log("Query shipping rates")
+        for ( let i = 0; i < shippingRates.rates.length; i++ ) {
+          if(shippingRates.rates[i].token == request.deliveryOptionToken) {
+            console.log("Found shipping rate")
+            shipping = shippingRates.rates[i].amount;
+          }
+        }
+      }
+
       const checkout : Checkout =  {
-        shippingRates: shippingRates,
+        shippingRates,
         request,
         paymentId: this.makeid(16),
         paymentToken: this.makeid(32),
+        shipping,
         tax,
         total: request.subtotal + tax,
       };

@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
@@ -33,19 +32,19 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   ShippingOption.JSON_PROPERTY_TOKEN,
   ShippingOption.JSON_PROPERTY_ESTIMATED_DAYS
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-10T22:27:39.185657-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-30T22:57:57.494324-07:00[America/Los_Angeles]")
 public class ShippingOption {
   public static final String JSON_PROPERTY_NAME = "name";
   private String name;
 
   public static final String JSON_PROPERTY_AMOUNT = "amount";
-  private BigDecimal amount;
+  private Integer amount;
 
   public static final String JSON_PROPERTY_TOKEN = "token";
   private String token;
 
   public static final String JSON_PROPERTY_ESTIMATED_DAYS = "estimatedDays";
-  private BigDecimal estimatedDays;
+  private Integer estimatedDays;
 
 
   public ShippingOption name(String name) {
@@ -72,7 +71,7 @@ public class ShippingOption {
   }
 
 
-  public ShippingOption amount(BigDecimal amount) {
+  public ShippingOption amount(Integer amount) {
     
     this.amount = amount;
     return this;
@@ -86,12 +85,12 @@ public class ShippingOption {
   @JsonProperty(JSON_PROPERTY_AMOUNT)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public BigDecimal getAmount() {
+  public Integer getAmount() {
     return amount;
   }
 
 
-  public void setAmount(BigDecimal amount) {
+  public void setAmount(Integer amount) {
     this.amount = amount;
   }
 
@@ -120,7 +119,7 @@ public class ShippingOption {
   }
 
 
-  public ShippingOption estimatedDays(BigDecimal estimatedDays) {
+  public ShippingOption estimatedDays(Integer estimatedDays) {
     
     this.estimatedDays = estimatedDays;
     return this;
@@ -134,12 +133,12 @@ public class ShippingOption {
   @JsonProperty(JSON_PROPERTY_ESTIMATED_DAYS)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public BigDecimal getEstimatedDays() {
+  public Integer getEstimatedDays() {
     return estimatedDays;
   }
 
 
-  public void setEstimatedDays(BigDecimal estimatedDays) {
+  public void setEstimatedDays(Integer estimatedDays) {
     this.estimatedDays = estimatedDays;
   }
 

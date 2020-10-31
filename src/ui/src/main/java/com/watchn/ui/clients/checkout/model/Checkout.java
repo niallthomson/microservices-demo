@@ -33,10 +33,11 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   Checkout.JSON_PROPERTY_SHIPPING_RATES,
   Checkout.JSON_PROPERTY_PAYMENT_ID,
   Checkout.JSON_PROPERTY_PAYMENT_TOKEN,
+  Checkout.JSON_PROPERTY_SHIPPING,
   Checkout.JSON_PROPERTY_TAX,
   Checkout.JSON_PROPERTY_TOTAL
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-10T22:27:39.185657-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-30T22:57:57.494324-07:00[America/Los_Angeles]")
 public class Checkout {
   public static final String JSON_PROPERTY_REQUEST = "request";
   private CheckoutRequest request;
@@ -49,6 +50,9 @@ public class Checkout {
 
   public static final String JSON_PROPERTY_PAYMENT_TOKEN = "paymentToken";
   private String paymentToken;
+
+  public static final String JSON_PROPERTY_SHIPPING = "shipping";
+  private Integer shipping;
 
   public static final String JSON_PROPERTY_TAX = "tax";
   private Integer tax;
@@ -153,6 +157,31 @@ public class Checkout {
   }
 
 
+  public Checkout shipping(Integer shipping) {
+    
+    this.shipping = shipping;
+    return this;
+  }
+
+   /**
+   * Get shipping
+   * minimum: -1
+   * @return shipping
+  **/
+  @ApiModelProperty(required = true, value = "")
+  @JsonProperty(JSON_PROPERTY_SHIPPING)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+
+  public Integer getShipping() {
+    return shipping;
+  }
+
+
+  public void setShipping(Integer shipping) {
+    this.shipping = shipping;
+  }
+
+
   public Checkout tax(Integer tax) {
     
     this.tax = tax;
@@ -161,7 +190,7 @@ public class Checkout {
 
    /**
    * Get tax
-   * minimum: 0
+   * minimum: -1
    * @return tax
   **/
   @ApiModelProperty(required = true, value = "")
@@ -186,7 +215,7 @@ public class Checkout {
 
    /**
    * Get total
-   * minimum: 0
+   * minimum: -1
    * @return total
   **/
   @ApiModelProperty(required = true, value = "")
@@ -216,13 +245,14 @@ public class Checkout {
         Objects.equals(this.shippingRates, checkout.shippingRates) &&
         Objects.equals(this.paymentId, checkout.paymentId) &&
         Objects.equals(this.paymentToken, checkout.paymentToken) &&
+        Objects.equals(this.shipping, checkout.shipping) &&
         Objects.equals(this.tax, checkout.tax) &&
         Objects.equals(this.total, checkout.total);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(request, shippingRates, paymentId, paymentToken, tax, total);
+    return Objects.hash(request, shippingRates, paymentId, paymentToken, shipping, tax, total);
   }
 
 
@@ -234,6 +264,7 @@ public class Checkout {
     sb.append("    shippingRates: ").append(toIndentedString(shippingRates)).append("\n");
     sb.append("    paymentId: ").append(toIndentedString(paymentId)).append("\n");
     sb.append("    paymentToken: ").append(toIndentedString(paymentToken)).append("\n");
+    sb.append("    shipping: ").append(toIndentedString(shipping)).append("\n");
     sb.append("    tax: ").append(toIndentedString(tax)).append("\n");
     sb.append("    total: ").append(toIndentedString(total)).append("\n");
     sb.append("}");

@@ -34,7 +34,6 @@ components:
       type: object
       required:
         - address1
-        - address2
         - city
         - state
         - zip
@@ -52,22 +51,22 @@ components:
         subtotal:
           minimum: 0
           type: integer
+        deliveryOptionToken:
+          type: string
       type: object
       required:
-        - customerEmail
         - items
-        - shippingAddress
         - subtotal
     ShippingOption:
       properties:
         name:
           type: string
         amount:
-          type: number
+          type: integer
         token:
           type: string
         estimatedDays:
-          type: number
+          type: integer
       type: object
       required:
         - name
@@ -96,11 +95,14 @@ components:
           type: string
         paymentToken:
           type: string
+        shipping:
+          minimum: -1
+          type: integer
         tax:
-          minimum: 0
+          minimum: -1
           type: integer
         total:
-          minimum: 0
+          minimum: -1
           type: integer
       type: object
       required:
@@ -108,6 +110,7 @@ components:
         - shippingRates
         - paymentId
         - paymentToken
+        - shipping
         - tax
         - total
     CheckoutSubmitted:

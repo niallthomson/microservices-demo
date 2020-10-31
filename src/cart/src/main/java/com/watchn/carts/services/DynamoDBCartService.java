@@ -85,7 +85,16 @@ public class DynamoDBCartService implements CartService {
 
     @Override
     public ItemEntity add(String customerId, String itemId, int quantity, int unitPrice) {
-        DynamoItemEntity item = new DynamoItemEntity(hashKey(customerId, itemId), customerId, itemId, 1, unitPrice);
+        String hashKey = hashKey(customerId, itemId);
+
+        DynamoItemEntity item = this.mapper.load(DynamoItemEntity.class, hashKey);
+
+        if(item != null) {
+            item.setQuantity(item.getQuantity() + quantity);
+        }
+        else {
+            item = new DynamoItemEntity(hashKey, customerId, itemId, 1, unitPrice);
+        }
 
         this.mapper.save(item);
 

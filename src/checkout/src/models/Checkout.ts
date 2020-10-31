@@ -20,11 +20,15 @@ export class Checkout {
   paymentToken : string;
 
   @IsInt()
-  @Min(0)
+  @Min(-1)
+  shipping : number;
+
+  @IsInt()
+  @Min(-1)
   tax : number;
 
   @IsInt()
-  @Min(0)
+  @Min(-1)
   total : number;
 
 }

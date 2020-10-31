@@ -34,9 +34,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   CheckoutRequest.JSON_PROPERTY_CUSTOMER_EMAIL,
   CheckoutRequest.JSON_PROPERTY_ITEMS,
   CheckoutRequest.JSON_PROPERTY_SHIPPING_ADDRESS,
-  CheckoutRequest.JSON_PROPERTY_SUBTOTAL
+  CheckoutRequest.JSON_PROPERTY_SUBTOTAL,
+  CheckoutRequest.JSON_PROPERTY_DELIVERY_OPTION_TOKEN
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-10T22:27:39.185657-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-30T22:57:57.494324-07:00[America/Los_Angeles]")
 public class CheckoutRequest {
   public static final String JSON_PROPERTY_CUSTOMER_EMAIL = "customerEmail";
   private String customerEmail;
@@ -50,6 +51,9 @@ public class CheckoutRequest {
   public static final String JSON_PROPERTY_SUBTOTAL = "subtotal";
   private Integer subtotal;
 
+  public static final String JSON_PROPERTY_DELIVERY_OPTION_TOKEN = "deliveryOptionToken";
+  private String deliveryOptionToken;
+
 
   public CheckoutRequest customerEmail(String customerEmail) {
     
@@ -61,9 +65,10 @@ public class CheckoutRequest {
    * Get customerEmail
    * @return customerEmail
   **/
-  @ApiModelProperty(required = true, value = "")
+  @javax.annotation.Nullable
+  @ApiModelProperty(value = "")
   @JsonProperty(JSON_PROPERTY_CUSTOMER_EMAIL)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public String getCustomerEmail() {
     return customerEmail;
@@ -114,9 +119,10 @@ public class CheckoutRequest {
    * Get shippingAddress
    * @return shippingAddress
   **/
-  @ApiModelProperty(required = true, value = "")
+  @javax.annotation.Nullable
+  @ApiModelProperty(value = "")
   @JsonProperty(JSON_PROPERTY_SHIPPING_ADDRESS)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public ShippingAddress getShippingAddress() {
     return shippingAddress;
@@ -153,6 +159,31 @@ public class CheckoutRequest {
   }
 
 
+  public CheckoutRequest deliveryOptionToken(String deliveryOptionToken) {
+    
+    this.deliveryOptionToken = deliveryOptionToken;
+    return this;
+  }
+
+   /**
+   * Get deliveryOptionToken
+   * @return deliveryOptionToken
+  **/
+  @javax.annotation.Nullable
+  @ApiModelProperty(value = "")
+  @JsonProperty(JSON_PROPERTY_DELIVERY_OPTION_TOKEN)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public String getDeliveryOptionToken() {
+    return deliveryOptionToken;
+  }
+
+
+  public void setDeliveryOptionToken(String deliveryOptionToken) {
+    this.deliveryOptionToken = deliveryOptionToken;
+  }
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -165,12 +196,13 @@ public class CheckoutRequest {
     return Objects.equals(this.customerEmail, checkoutRequest.customerEmail) &&
         Objects.equals(this.items, checkoutRequest.items) &&
         Objects.equals(this.shippingAddress, checkoutRequest.shippingAddress) &&
-        Objects.equals(this.subtotal, checkoutRequest.subtotal);
+        Objects.equals(this.subtotal, checkoutRequest.subtotal) &&
+        Objects.equals(this.deliveryOptionToken, checkoutRequest.deliveryOptionToken);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(customerEmail, items, shippingAddress, subtotal);
+    return Objects.hash(customerEmail, items, shippingAddress, subtotal, deliveryOptionToken);
   }
 
 
@@ -182,6 +214,7 @@ public class CheckoutRequest {
     sb.append("    items: ").append(toIndentedString(items)).append("\n");
     sb.append("    shippingAddress: ").append(toIndentedString(shippingAddress)).append("\n");
     sb.append("    subtotal: ").append(toIndentedString(subtotal)).append("\n");
+    sb.append("    deliveryOptionToken: ").append(toIndentedString(deliveryOptionToken)).append("\n");
     sb.append("}");
     return sb.toString();
   }

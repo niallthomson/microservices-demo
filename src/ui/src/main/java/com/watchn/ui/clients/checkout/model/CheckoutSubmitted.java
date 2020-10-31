@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   CheckoutSubmitted.JSON_PROPERTY_ORDER_ID,
   CheckoutSubmitted.JSON_PROPERTY_CUSTOMER_EMAIL
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-10T22:27:39.185657-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-30T22:57:57.494324-07:00[America/Los_Angeles]")
 public class CheckoutSubmitted {
   public static final String JSON_PROPERTY_ORDER_ID = "orderId";
   private String orderId;

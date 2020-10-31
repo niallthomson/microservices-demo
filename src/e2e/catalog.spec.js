@@ -2,8 +2,10 @@ browser.waitForAngularEnabled(false);
 var baseUrl = browser.params.baseUrl
 
 let Catalog = require('./pages/Catalog');
+let Product = require('./pages/Product');
 
 var catalog = new Catalog(baseUrl);
+var product = new Product(baseUrl, "510a0d7e-8e83-4193-b483-e27e09ddc34d");
 
 describe('when on catalog', function() {
   beforeAll(function() { 
@@ -25,7 +27,7 @@ describe('when on catalog', function() {
   });
 
   describe('and select page', function() {
-    beforeAll(function() { 
+    beforeEach(function() { 
       catalog.go();
       catalog.page("2");
     });
@@ -37,7 +39,7 @@ describe('when on catalog', function() {
   });
 
   describe('and select page size', function() {
-    beforeAll(function() { 
+    beforeEach(function() { 
       catalog.go();
       catalog.size("9");
     });
@@ -48,7 +50,7 @@ describe('when on catalog', function() {
     });
 
     describe('and select tag', function() {
-      beforeAll(function() { 
+      beforeEach(function() { 
         catalog.tag("Dress");
       });
   
@@ -60,7 +62,7 @@ describe('when on catalog', function() {
   });
 
   describe('and select tag', function() {
-    beforeAll(function() { 
+    beforeEach(function() { 
       catalog.go();
       catalog.tag("Luxury");
     });
@@ -68,6 +70,18 @@ describe('when on catalog', function() {
     it('should filter products', function() {
       expect(catalog.getProducts().count())
         .toEqual(1);
+    });
+  });
+
+  describe('and select item', function() {
+    beforeEach(async function() { 
+      catalog.go();
+      catalog.product(0);
+    });
+
+    it('should show product page', function() {
+      expect(browser.getCurrentUrl())
+        .toBe(product.getUrl());
     });
   });
 });

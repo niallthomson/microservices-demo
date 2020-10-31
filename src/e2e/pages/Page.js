@@ -5,24 +5,24 @@ class Page {
     this.baseUrl = baseUrl;
   }
 
-  home() {
-    element(by.id('menu-home')).click();
+  async home() {
+    await element(by.id('menu-home')).click();
   };
 
-  catalog() {
-    element(by.id('menu-catalog')).click();
+  async catalog() {
+    await element(by.id('menu-catalog')).click();
   };
 
-  cart() {
-    element(by.id('go-cart')).click();
+  async cart() {
+    await element(by.id('go-cart')).click();
   };
 
   async get(path) {
-    return await browser.get(this.baseUrl+path);
+    return await browser.get(path);
   };
 
   async go() {
-    return await browser.get(this.getUrl());
+    return await this.get(this.getUrl());
   };
 
   getTitle() {

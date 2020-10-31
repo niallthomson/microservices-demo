@@ -1,4 +1,3 @@
-const { element } = require('protractor');
 let Page = require('./Page');
 
 class Catalog extends Page {
@@ -25,6 +24,10 @@ class Catalog extends Page {
 
   getProducts() {
     return element(by.css('.products')).all(by.css('.product'));
+  }
+
+  async product(index) {
+    return await this.getProducts().get(index).element(by.css('.detail-image')).click()
   }
 }
 module.exports = Catalog;
