@@ -1,0 +1,17 @@
+{{- if .Values.mysql.create }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "payments.mysql.fullname" . }}
+  labels:
+    {{- include "payments.mysql.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.mysql.service.type }}
+  ports:
+    - port: {{ .Values.mysql.service.port }}
+      targetPort: mysql
+      protocol: TCP
+      name: mysql
+  selector:
+    {{- include "payments.mysql.selectorLabels" . | nindent 4 }}
+{{- end }}

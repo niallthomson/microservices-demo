@@ -23,7 +23,8 @@
     "baseUrl": "src/",
     "listFiles": false,
     "noEmitHelpers": true,
-    "types" : [ "node", "jest" ]
+    "types" : [ "node", "jest" ],
+    "typeRoots": [ "./types", "./node_modules/@types"]
   },
   "include": [
     "src/**/*"

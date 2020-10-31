@@ -1,0 +1,119 @@
+swagger: "2.0"
+info:
+  description: Orders service to support Watchn application
+  version: "1"
+  title: Orders Service
+  termsOfService: localhost
+  contact:
+    name: John Doe
+    url: localhost
+    email: me@localhost
+  license:
+    name: MIT
+    url: http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT
+host: localhost:8080
+basePath: /
+tags:
+  - name: orders
+    description: Order Controller
+paths:
+  /orders:
+    get:
+      tags:
+        - orders
+      summary: List orders
+      operationId: listOrders
+      produces:
+        - '*/*'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: array
+            items:
+              originalRef: ExistingOrder
+              $ref: '#/definitions/ExistingOrder'
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - orders
+      summary: Create an order
+      operationId: createOrder
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: orderRequest
+          description: orderRequest
+          required: true
+          schema:
+            originalRef: Order
+            $ref: '#/definitions/Order'
+      responses:
+        "200":
+          description: OK
+          schema:
+            originalRef: ExistingOrder
+            $ref: '#/definitions/ExistingOrder'
+        "201":
+          description: Created
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+      deprecated: false
+definitions:
+  ExistingOrder:
+    type: object
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: string
+      items:
+        type: array
+        items:
+          originalRef: OrderItem
+          $ref: '#/definitions/OrderItem'
+      lastName:
+        type: string
+    title: ExistingOrder
+  Order:
+    type: object
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      items:
+        type: array
+        items:
+          originalRef: OrderItem
+          $ref: '#/definitions/OrderItem'
+      lastName:
+        type: string
+    title: Order
+  OrderItem:
+    type: object
+    properties:
+      price:
+        type: integer
+        format: int32
+      productId:
+        type: string
+      quantity:
+        type: integer
+        format: int32
+    title: OrderItem

@@ -3,8 +3,11 @@ package com.watchn.ui.web;
 import com.watchn.ui.clients.orders.model.Order;
 import com.watchn.ui.services.Metadata;
 import com.watchn.ui.services.carts.CartsService;
-import com.watchn.ui.services.orders.OrdersService;
+import com.watchn.ui.services.checkout.CheckoutService;
+import com.watchn.ui.services.checkout.model.ShippingAddress;
+import com.watchn.ui.web.payload.CheckoutDeliveryMethodRequest;
 import com.watchn.ui.web.payload.OrderRequest;
+import com.watchn.ui.web.payload.ShippingAddressRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -21,47 +24,93 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class CheckoutController extends BaseController {
 
-    private CartsService cartsService;
+    private CheckoutService checkoutService;
 
-    private OrdersService ordersService;
-
-    public CheckoutController(@Autowired CartsService cartsService, @Autowired OrdersService ordersService, @Autowired Metadata metadata) {
+    public CheckoutController(@Autowired CartsService cartsService,
+                              @Autowired CheckoutService checkoutService,
+                              @Autowired Metadata metadata) {
         super(cartsService, metadata);
 
         this.cartsService = cartsService;
-        this.ordersService = ordersService;
+        this.checkoutService = checkoutService;
     }
 
     @GetMapping
-    public String checkout(ServerHttpRequest request, Model model) {
+    public Mono<String> checkout(ServerHttpRequest request, Model model) {
         String sessionId = getSessionID(request);
-
-        model.addAttribute("fullCart", this.cartsService.getCart(sessionId));
 
         this.populateCommon(request, model);
 
-        return "checkout";
+        model.addAttribute("shipping", new ShippingAddressRequest());
+
+        return this.checkoutService.create(sessionId)
+            .doOnNext(o -> {
+                model.addAttribute("checkout", o);
+            })
+            .thenReturn("checkout-shipping");
     }
 
     @PostMapping
-    public Mono<String> order(@ModelAttribute OrderRequest orderRequest, ServerHttpRequest request, Model model) {
+    public Mono<String> handleShipping(@ModelAttribute("shipping") ShippingAddressRequest shipping, ServerHttpRequest request, Model model) {
         String sessionId = getSessionID(request);
 
-        Order createOrderRequest = new Order();
-        createOrderRequest.setFirstName(orderRequest.getFirstName());
-        createOrderRequest.setLastName(orderRequest.getLastName());
-        createOrderRequest.setEmail(orderRequest.getEmail());
+        ShippingAddress address = new ShippingAddress();
+        address.setFirstName(shipping.getFirstName());
+        address.setLastName(shipping.getLastName());
+        address.setAddress1(shipping.getAddress1());
+        address.setAddress2(shipping.getAddress2());
+        address.setCity(shipping.getCity());
+        address.setState(shipping.getState());
+        address.setZip(shipping.getZip());
+        address.setCountry(shipping.getCountry());
+
+        model.addAttribute("delivery", new CheckoutDeliveryMethodRequest());
+
+        this.populateCommon(request, model);
+
+        return this.checkoutService.shipping(sessionId, address)
+            .doOnNext(o -> {
+                log.error("{}", o);
+                model.addAttribute("checkout", o);
+            })
+            .thenReturn("checkout-delivery");
+    }
+
+    @PostMapping("/delivery")
+    public Mono<String> handleDelivery(@ModelAttribute("delivery") CheckoutDeliveryMethodRequest delivery, ServerHttpRequest request, Model model) {
+        String sessionId = getSessionID(request);
+
+        this.populateCommon(request, model);
+
+        return this.checkoutService.delivery(sessionId, delivery.getToken())
+            .doOnNext(o -> {
+                model.addAttribute("checkout", o);
+            })
+            .thenReturn("checkout-payment");
+    }
+
+    @PostMapping("/payment")
+    public String handlePayment(ServerHttpRequest request, Model model) {
+        String sessionId = getSessionID(request);
+
+        this.populateCommon(request, model);
+
+        model.addAttribute("checkout", this.checkoutService.get(sessionId));
+
+        return "checkout-confirm";
+    }
+
+    @PostMapping("/confirm")
+    public Mono<String> confirm(ServerHttpRequest request, Model model) {
+        String sessionId = getSessionID(request);
 
         populateMetadata(model);
 
-        return this.ordersService.order(sessionId, orderRequest.getFirstName(), orderRequest.getLastName(), orderRequest.getEmail())
-                .doOnNext(o -> {
-                    model.addAttribute("order", o);
-                })
-                .map(o -> this.cartsService.deleteCart(sessionId))
-                .doOnNext(c -> {
-                    model.addAttribute("cart", c);
-                })
-                .thenReturn("order");
+        return this.checkoutService.submit(sessionId)
+            .doOnNext(o -> {
+                model.addAttribute("order", o.getSubmitted());
+                model.addAttribute("cart", o.getCart());
+            })
+            .thenReturn("order");
     }
 }

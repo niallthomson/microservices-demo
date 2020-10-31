@@ -5,6 +5,9 @@ export class Item {
   @IsString()
   id : string;
 
+  @IsString()
+  name : string;
+
   @IsInt()
   @Min(0)
   quantity : number;
@@ -16,5 +19,8 @@ export class Item {
   @IsInt()
   @Min(0)
   totalCost : number;
+
+  @IsString()
+  imageUrl : string;
 
 }

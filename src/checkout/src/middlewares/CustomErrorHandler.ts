@@ -2,6 +2,7 @@ import { BadRequestError, ExpressErrorMiddlewareInterface, HttpError, Middleware
 import { ValidationError } from 'class-validator';
 import * as express from 'express';
 import { timeStamp } from 'console';
+import { ConsoleTransportOptions } from 'winston/lib/winston/transports';
 
 /**
  * Express middleware to catch all errors throwed in controlers.
@@ -25,6 +26,8 @@ export class CustomErrorHandler implements ExpressErrorMiddlewareInterface {
      */
     public error(error: any, _req: express.Request, res: express.Response, _next: express.NextFunction) {
         const responseObject = {} as any;
+
+        console.log(error);
 
         // if its an array of ValidationError
         if (Array.isArray(error.errors) && error.errors.every((element) => element instanceof ValidationError)) {

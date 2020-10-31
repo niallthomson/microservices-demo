@@ -1,0 +1,18 @@
+{
+  "name": "e2e",
+  "version": "1.0.0",
+  "description": "TODO",
+  "main": "conf.js",
+  "scripts": {
+    "test": "./node_modules/.bin/protractor conf.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "protractor": "^7.0.0"
+  },
+  "dependencies": {
+    "jasmine-spec-reporter": "^6.0.0"
+  }
+}

@@ -63,7 +63,7 @@ import com.watchn.ui.clients.orders.auth.HttpBasicAuth;
 import com.watchn.ui.clients.orders.auth.HttpBearerAuth;
 import com.watchn.ui.clients.orders.auth.ApiKeyAuth;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-07-02T17:56:52.349214-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-31T09:39:25.136168-07:00[America/Los_Angeles]")
 public class ApiClient {
     public enum CollectionFormat {
         CSV(","), TSV("\t"), SSV(" "), PIPES("|"), MULTI(null);
@@ -81,7 +81,7 @@ public class ApiClient {
     private HttpHeaders defaultHeaders = new HttpHeaders();
     private MultiValueMap<String, String> defaultCookies = new LinkedMultiValueMap<String, String>();
 
-    private String basePath = "http://localhost:8083";
+    private String basePath = "http://localhost:8080";
 
     private final WebClient webClient;
     private final DateFormat dateFormat;
