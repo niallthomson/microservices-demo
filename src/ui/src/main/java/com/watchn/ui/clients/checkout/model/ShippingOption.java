@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   ShippingOption.JSON_PROPERTY_TOKEN,
   ShippingOption.JSON_PROPERTY_ESTIMATED_DAYS
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-30T22:57:57.494324-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-31T09:39:25.987708-07:00[America/Los_Angeles]")
 public class ShippingOption {
   public static final String JSON_PROPERTY_NAME = "name";
   private String name;

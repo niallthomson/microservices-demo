@@ -64,7 +64,6 @@ public class CheckoutController extends BaseController {
         address.setZip(shipping.getZip());
         address.setCountry(shipping.getCountry());
 
-        model.addAttribute("fullCart", this.cartsService.getCart(sessionId));
         model.addAttribute("delivery", new CheckoutDeliveryMethodRequest());
 
         this.populateCommon(request, model);
@@ -81,8 +80,6 @@ public class CheckoutController extends BaseController {
     public Mono<String> handleDelivery(@ModelAttribute("delivery") CheckoutDeliveryMethodRequest delivery, ServerHttpRequest request, Model model) {
         String sessionId = getSessionID(request);
 
-        model.addAttribute("fullCart", this.cartsService.getCart(sessionId));
-
         this.populateCommon(request, model);
 
         return this.checkoutService.delivery(sessionId, delivery.getToken())
@@ -95,8 +92,6 @@ public class CheckoutController extends BaseController {
     @PostMapping("/payment")
     public String handlePayment(ServerHttpRequest request, Model model) {
         String sessionId = getSessionID(request);
-
-        model.addAttribute("fullCart", this.cartsService.getCart(sessionId));
 
         this.populateCommon(request, model);
 

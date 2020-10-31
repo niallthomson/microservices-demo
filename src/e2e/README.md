@@ -5,5 +5,5 @@ TODO
 Uses protractor
 
 ```
-protractor config.js
+npm test
 ```

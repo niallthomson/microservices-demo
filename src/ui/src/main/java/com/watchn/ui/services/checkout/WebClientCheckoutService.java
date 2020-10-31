@@ -12,7 +12,7 @@ import com.watchn.ui.util.RetryUtils;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class WebClientCheckoutService implements CheckoutService {
@@ -42,10 +42,10 @@ public class WebClientCheckoutService implements CheckoutService {
         return cart.flatMap(c -> {
             CheckoutRequest request = new CheckoutRequest();
             request.subtotal(c.getSubtotal());
-            request.setItems(new ArrayList<>());
+            request.setItems(c.getItems().stream().map(mapper::fromCartItem).collect(Collectors.toList()));
 
             return api.checkoutControllerUpdateCheckout(sessionId, request)
-                    .map(mapper::checkout);
+                .map(mapper::checkout);
         });
     }
 
@@ -56,7 +56,7 @@ public class WebClientCheckoutService implements CheckoutService {
             request.setShippingAddress(this.mapper.clientShippingAddress(shippingAddress));
 
             return api.checkoutControllerUpdateCheckout(sessionId, request)
-                    .map(mapper::checkout);
+                .map(mapper::checkout);
         });
     }
 
@@ -67,7 +67,7 @@ public class WebClientCheckoutService implements CheckoutService {
             request.setDeliveryOptionToken(token);
 
             return api.checkoutControllerUpdateCheckout(sessionId, request)
-                    .map(mapper::checkout);
+                .map(mapper::checkout);
         });
     }
 

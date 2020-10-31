@@ -35,7 +35,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   Order.JSON_PROPERTY_ITEMS,
   Order.JSON_PROPERTY_LAST_NAME
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-12T12:31:45.351737-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-31T09:39:25.136168-07:00[America/Los_Angeles]")
 public class Order {
   public static final String JSON_PROPERTY_EMAIL = "email";
   private String email;

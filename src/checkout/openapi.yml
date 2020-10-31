@@ -4,6 +4,8 @@ components:
       properties:
         id:
           type: string
+        name:
+          type: string
         quantity:
           minimum: 0
           type: integer
@@ -13,12 +15,16 @@ components:
         totalCost:
           minimum: 0
           type: integer
+        imageUrl:
+          type: string
       type: object
       required:
         - id
+        - name
         - quantity
         - unitCost
         - totalCost
+        - imageUrl
     ShippingAddress:
       properties:
         address1:

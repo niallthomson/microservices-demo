@@ -8,6 +8,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class Checkout {
+    private List<CheckoutItem> items;
+
     private String paymentToken;
 
     private int subtotal;

@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   ShippingAddress.JSON_PROPERTY_STATE,
   ShippingAddress.JSON_PROPERTY_ZIP
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-30T22:57:57.494324-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-31T09:39:25.987708-07:00[America/Los_Angeles]")
 public class ShippingAddress {
   public static final String JSON_PROPERTY_ADDRESS1 = "address1";
   private String address1;

@@ -37,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   Checkout.JSON_PROPERTY_TAX,
   Checkout.JSON_PROPERTY_TOTAL
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-30T22:57:57.494324-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-31T09:39:25.987708-07:00[America/Los_Angeles]")
 public class Checkout {
   public static final String JSON_PROPERTY_REQUEST = "request";
   private CheckoutRequest request;

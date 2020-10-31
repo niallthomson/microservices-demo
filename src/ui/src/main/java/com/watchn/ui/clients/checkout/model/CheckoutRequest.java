@@ -37,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   CheckoutRequest.JSON_PROPERTY_SUBTOTAL,
   CheckoutRequest.JSON_PROPERTY_DELIVERY_OPTION_TOKEN
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-30T22:57:57.494324-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-31T09:39:25.987708-07:00[America/Los_Angeles]")
 public class CheckoutRequest {
   public static final String JSON_PROPERTY_CUSTOMER_EMAIL = "customerEmail";
   private String customerEmail;

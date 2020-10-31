@@ -28,14 +28,19 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonPropertyOrder({
   Item.JSON_PROPERTY_ID,
+  Item.JSON_PROPERTY_NAME,
   Item.JSON_PROPERTY_QUANTITY,
   Item.JSON_PROPERTY_UNIT_COST,
-  Item.JSON_PROPERTY_TOTAL_COST
+  Item.JSON_PROPERTY_TOTAL_COST,
+  Item.JSON_PROPERTY_IMAGE_URL
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-30T22:57:57.494324-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-31T09:39:25.987708-07:00[America/Los_Angeles]")
 public class Item {
   public static final String JSON_PROPERTY_ID = "id";
   private String id;
+
+  public static final String JSON_PROPERTY_NAME = "name";
+  private String name;
 
   public static final String JSON_PROPERTY_QUANTITY = "quantity";
   private Integer quantity;
@@ -45,6 +50,9 @@ public class Item {
 
   public static final String JSON_PROPERTY_TOTAL_COST = "totalCost";
   private Integer totalCost;
+
+  public static final String JSON_PROPERTY_IMAGE_URL = "imageUrl";
+  private String imageUrl;
 
 
   public Item id(String id) {
@@ -68,6 +76,30 @@ public class Item {
 
   public void setId(String id) {
     this.id = id;
+  }
+
+
+  public Item name(String name) {
+    
+    this.name = name;
+    return this;
+  }
+
+   /**
+   * Get name
+   * @return name
+  **/
+  @ApiModelProperty(required = true, value = "")
+  @JsonProperty(JSON_PROPERTY_NAME)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+
+  public String getName() {
+    return name;
+  }
+
+
+  public void setName(String name) {
+    this.name = name;
   }
 
 
@@ -146,6 +178,30 @@ public class Item {
   }
 
 
+  public Item imageUrl(String imageUrl) {
+    
+    this.imageUrl = imageUrl;
+    return this;
+  }
+
+   /**
+   * Get imageUrl
+   * @return imageUrl
+  **/
+  @ApiModelProperty(required = true, value = "")
+  @JsonProperty(JSON_PROPERTY_IMAGE_URL)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+
+  public String getImageUrl() {
+    return imageUrl;
+  }
+
+
+  public void setImageUrl(String imageUrl) {
+    this.imageUrl = imageUrl;
+  }
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -156,14 +212,16 @@ public class Item {
     }
     Item item = (Item) o;
     return Objects.equals(this.id, item.id) &&
+        Objects.equals(this.name, item.name) &&
         Objects.equals(this.quantity, item.quantity) &&
         Objects.equals(this.unitCost, item.unitCost) &&
-        Objects.equals(this.totalCost, item.totalCost);
+        Objects.equals(this.totalCost, item.totalCost) &&
+        Objects.equals(this.imageUrl, item.imageUrl);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, quantity, unitCost, totalCost);
+    return Objects.hash(id, name, quantity, unitCost, totalCost, imageUrl);
   }
 
 
@@ -172,9 +230,11 @@ public class Item {
     StringBuilder sb = new StringBuilder();
     sb.append("class Item {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
     sb.append("    unitCost: ").append(toIndentedString(unitCost)).append("\n");
     sb.append("    totalCost: ").append(toIndentedString(totalCost)).append("\n");
+    sb.append("    imageUrl: ").append(toIndentedString(imageUrl)).append("\n");
     sb.append("}");
     return sb.toString();
   }
