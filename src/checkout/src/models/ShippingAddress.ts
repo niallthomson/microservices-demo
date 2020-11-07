@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class ShippingAddress {
 
@@ -6,6 +6,7 @@ export class ShippingAddress {
   address1 : string;
 
   @IsString()
+  @IsOptional()
   address2 : string;
 
   @IsString()

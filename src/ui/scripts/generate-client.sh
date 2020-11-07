@@ -18,8 +18,8 @@ openapi-generator generate \
   --skip-validate-spec \
   -o $outdir
 
-if [ -d $DIR/src/main/java/com/watchn/ui/clients/$client ]; then
-  rm -rf $DIR/src/main/java/com/watchn/ui/clients/$client
+if [ -d $DIR/../src/main/java/com/watchn/ui/clients/$client ]; then
+  rm -rf $DIR/../src/main/java/com/watchn/ui/clients/$client
 fi
 
-(cd $outdir/src/main/java && find . -name '*.java' | cpio -pdm $DIR/src/main/java)
+(cd $outdir/src/main/java && find . -name '*.java' | cpio -pdm $DIR/../src/main/java)

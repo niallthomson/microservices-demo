@@ -27,7 +27,7 @@ public class Order {
      * 
      */
     @JsonProperty("id")
-    private Long id;
+    private String id;
     /**
      * 
      * (Required)
@@ -51,7 +51,7 @@ public class Order {
      * 
      */
     @JsonProperty("id")
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -61,7 +61,7 @@ public class Order {
      * 
      */
     @JsonProperty("id")
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

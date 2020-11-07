@@ -42,12 +42,12 @@ public class CartController extends BaseController {
     @PostMapping
     public Mono<String> add(@ModelAttribute CartChangeRequest addRequest, ServerHttpRequest request) {
         return this.cartsService.addItem(getSessionID(request), addRequest.getProductId())
-                .thenReturn("redirect:/cart");
+            .thenReturn("redirect:/cart");
     }
 
     @PostMapping("/remove")
     public Mono<String> remove(@ModelAttribute CartChangeRequest addRequest, ServerHttpRequest request) {
         return this.cartsService.removeItem(getSessionID(request), addRequest.getProductId())
-                .thenReturn("redirect:/cart");
+            .thenReturn("redirect:/cart");
     }
 }

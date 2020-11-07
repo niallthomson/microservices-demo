@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsInt, IsString, Min, ValidateNested } from 'class-validator';
 import { CheckoutRequest } from './CheckoutRequest';
-import { ShippingOption } from './ShippingOption';
+import { ShippingRates } from './ShippingRates';
 
 export class Checkout {
 
@@ -9,9 +9,9 @@ export class Checkout {
   @Type(() => CheckoutRequest)
   request : CheckoutRequest;
 
-  @ValidateNested({ each: true })
-  @Type(() => ShippingOption)
-  shippingOptions : ShippingOption[];
+  @ValidateNested()
+  @Type(() => ShippingRates)
+  shippingRates : ShippingRates;
 
   @IsString()
   paymentId : string;
@@ -20,11 +20,15 @@ export class Checkout {
   paymentToken : string;
 
   @IsInt()
-  @Min(0)
+  @Min(-1)
+  shipping : number;
+
+  @IsInt()
+  @Min(-1)
   tax : number;
 
   @IsInt()
-  @Min(0)
+  @Min(-1)
   total : number;
 
 }

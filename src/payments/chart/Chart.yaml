@@ -1,0 +1,7 @@
+apiVersion: v2
+name: payments
+description: A Helm chart for Watchn payments service
+
+type: application
+
+version: 0.0.1

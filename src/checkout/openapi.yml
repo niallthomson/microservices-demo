@@ -1,0 +1,203 @@
+components:
+  schemas:
+    Item:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        quantity:
+          minimum: 0
+          type: integer
+        unitCost:
+          minimum: 0
+          type: integer
+        totalCost:
+          minimum: 0
+          type: integer
+        imageUrl:
+          type: string
+      type: object
+      required:
+        - id
+        - name
+        - quantity
+        - unitCost
+        - totalCost
+        - imageUrl
+    ShippingAddress:
+      properties:
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+      type: object
+      required:
+        - address1
+        - city
+        - state
+        - zip
+    CheckoutRequest:
+      properties:
+        customerEmail:
+          format: email
+          type: string
+        items:
+          items:
+            $ref: '#/components/schemas/Item'
+          type: array
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingAddress'
+        subtotal:
+          minimum: 0
+          type: integer
+        deliveryOptionToken:
+          type: string
+      type: object
+      required:
+        - items
+        - subtotal
+    ShippingOption:
+      properties:
+        name:
+          type: string
+        amount:
+          type: integer
+        token:
+          type: string
+        estimatedDays:
+          type: integer
+      type: object
+      required:
+        - name
+        - amount
+        - token
+        - estimatedDays
+    ShippingRates:
+      properties:
+        shipmentId:
+          type: string
+        rates:
+          items:
+            $ref: '#/components/schemas/ShippingOption'
+          type: array
+      type: object
+      required:
+        - shipmentId
+        - rates
+    Checkout:
+      properties:
+        request:
+          $ref: '#/components/schemas/CheckoutRequest'
+        shippingRates:
+          $ref: '#/components/schemas/ShippingRates'
+        paymentId:
+          type: string
+        paymentToken:
+          type: string
+        shipping:
+          minimum: -1
+          type: integer
+        tax:
+          minimum: -1
+          type: integer
+        total:
+          minimum: -1
+          type: integer
+      type: object
+      required:
+        - request
+        - shippingRates
+        - paymentId
+        - paymentToken
+        - shipping
+        - tax
+        - total
+    CheckoutSubmitted:
+      properties:
+        orderId:
+          type: string
+        customerEmail:
+          type: string
+      type: object
+      required:
+        - orderId
+        - customerEmail
+info:
+  title: Checkout API
+  version: 1.0.0
+  description: Checkout API
+openapi: 3.0.0
+paths:
+  /checkout/{customerId}:
+    get:
+      operationId: CheckoutController.getCheckout
+      parameters:
+        - in: path
+          name: customerId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkout'
+          description: ""
+      summary: Return customers checkout
+      tags:
+        - Checkout
+  /checkout/{customerId}/update:
+    post:
+      operationId: CheckoutController.updateCheckout
+      parameters:
+        - in: path
+          name: customerId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+        description: CheckoutRequest
+        required: false
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkout'
+          description: ""
+      summary: Create or update a customers checkout
+      tags:
+        - Checkout
+  /checkout/{customerId}/submit:
+    post:
+      operationId: CheckoutController.submitCheckout
+      parameters:
+        - in: path
+          name: customerId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutSubmitted'
+          description: ""
+      summary: Submits a customers checkout to create an order
+      tags:
+        - Checkout
+servers:
+  - url: http://localhost:8080

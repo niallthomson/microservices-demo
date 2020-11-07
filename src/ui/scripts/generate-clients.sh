@@ -4,6 +4,7 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-$DIR/generate-client.sh catalog http://localhost:8081/swagger/doc.json
-$DIR/generate-client.sh carts http://localhost:8082/v2/api-docs
-$DIR/generate-client.sh orders http://localhost:8083/v2/api-docs
+#$DIR/generate-client.sh catalog $DIR/../../catalog/openapi.yml
+#$DIR/generate-client.sh carts $DIR/../../carts/openapi.yml
+$DIR/generate-client.sh orders $DIR/../../orders/openapi.yml
+$DIR/generate-client.sh checkout $DIR/../../checkout/openapi.yml

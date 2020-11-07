@@ -3,11 +3,10 @@ package com.watchn.ui.services.carts;
 import com.watchn.ui.services.carts.model.Cart;
 import com.watchn.ui.services.carts.model.CartItem;
 import com.watchn.ui.services.catalog.CatalogService;
-import reactor.core.publisher.Mono;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import reactor.core.publisher.Mono;
 
 public class MockCartsService implements CartsService {
 
@@ -16,7 +15,7 @@ public class MockCartsService implements CartsService {
     private Map<String, Cart> carts;
 
     public MockCartsService(CatalogService catalogService) {
-        this.catalogService = catalogService;
+            this.catalogService = catalogService;
 
         this.carts = new HashMap<>();
     }
@@ -29,12 +28,11 @@ public class MockCartsService implements CartsService {
     private Cart getOrCreate(String sessionId) {
         Cart cart;
 
-        if(!carts.containsKey(sessionId)) {
+        if (!carts.containsKey(sessionId)) {
             cart = new Cart(new ArrayList<>());
 
             this.carts.put(sessionId, cart);
-        }
-        else {
+        } else {
             cart = carts.get(sessionId);
         }
 
@@ -51,7 +49,10 @@ public class MockCartsService implements CartsService {
         Cart cart = getOrCreate(sessionId);
 
         return this.catalogService.getProduct(productId)
-                .map(p -> new CartItem(productId, 1, p.getPrice(), p.getName(), p.getImageUrl()))
+                .map(p -> new CartItem(productId, 1,
+                    p.getPrice(),
+                    p.getName(),
+                    p.getImageUrl()))
                 .doOnNext(i -> cart.addItem(i)).then();
     }
 

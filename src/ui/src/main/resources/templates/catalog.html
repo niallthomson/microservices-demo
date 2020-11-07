@@ -27,7 +27,7 @@
                             <ul class="list-unstyled">
                                 <li><a href="category.html" class="nav-link" th:each="tag : ${tags}"
                                        th:text="${tag.displayName}"
-                                       th:href="@{/catalog(page=${catalog.page},size=3,tag=${tag.name})}"
+                                       th:href="@{/catalog(page=1,size=${catalog.size},tag=${tag.name})}"
                                        th:classappend="${selectedTag == tag.name} ? 'active' : ''">T-shirts</a>
                                 </li>
                             </ul>
@@ -55,16 +55,16 @@
             <div class="row products">
                 <div class="col-lg-4 col-md-6" th:each="item : ${catalog.products}">
                     <div class="product">
-                        <a th:href="@{/catalog/{itemId}(itemId=${item.id})}"><img src="img/product1.jpg" th:src="${item.imageUrl}" alt="" class="img-fluid"></a>
+                        <a class="detail-image" th:href="@{/catalog/{itemId}(itemId=${item.id})}"><img src="img/product1.jpg" th:src="${item.imageUrl}" alt="" class="img-fluid"></a>
                         <div class="text">
                             <h3><a href="detail.html" th:text="${item.name}">Fur coat with very but very very long name</a></h3>
                             <p class="price">
-                                <del></del>$<span th:text="${item.price}">143.00</span>
+                                <del></del>$<th:block th:text="${item.price}">143.00</th:block>
                             </p>
                             <p class="buttons">
                             <form action="/cart" method="POST">
                                 <input type="hidden" name="productId" th:value="${item.id}"/>
-                                <a href="#" th:href="@{/catalog/{itemId}(itemId=${item.id})}" class="btn btn-outline-secondary">View detail</a>
+                                <a href="#" th:href="@{/catalog/{itemId}(itemId=${item.id})}" class="btn btn-outline-secondary detail-link">View detail</a>
                                 <a href="#" onclick="this.closest('form').submit();return false;" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                             </form>
                             </p>

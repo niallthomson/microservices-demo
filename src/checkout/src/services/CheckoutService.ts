@@ -1,14 +1,17 @@
 import { Checkout } from '../models/Checkout';
-import { Service } from 'typedi';
+import { Inject, Service } from 'typedi';
 import { IRepository } from '../repositories/IRepository';
 import { CheckoutRequest } from '../models/CheckoutRequest';
 import { serialize , deserialize} from 'class-transformer';
 import { Repository } from '../repositories/Repository';
+import { ShippingService } from './ShippingService';
+import { OrdersService } from './OrdersService';
+import { CheckoutSubmitted } from '../models/CheckoutSubmitted';
 
 @Service()
 export class CheckoutService {
 
-  constructor(@Repository() private redis : IRepository) {
+  constructor(@Repository() private redis : IRepository, private shippingService : ShippingService, private ordersService : OrdersService) {
   }
 
   async get(customerId: string) : Promise<Checkout> {
@@ -22,20 +25,50 @@ export class CheckoutService {
   }
 
   async update(customerId: string, request : CheckoutRequest) : Promise<Checkout> {
-    const tax = Math.floor(request.subtotal * 0.05); // Hardcoded 5% tax for now
+    const tax = request.shippingAddress ? Math.floor(request.subtotal * 0.05) : -1; // Hardcoded 5% tax for now
 
-    const checkout : Checkout = {
-      shippingOptions: [],
-      request,
-      paymentId: this.makeid(16),
-      paymentToken: this.makeid(32),
-      tax,
-      total: request.subtotal + tax,
-    };
+    return this.shippingService.getShippingRates(request).then(async (shippingRates) => {
+      let shipping = -1;
 
-    await this.redis.set(customerId, serialize(checkout));
+      if(shippingRates) {
+        console.log("Query shipping rates")
+        for ( let i = 0; i < shippingRates.rates.length; i++ ) {
+          if(shippingRates.rates[i].token == request.deliveryOptionToken) {
+            console.log("Found shipping rate")
+            shipping = shippingRates.rates[i].amount;
+          }
+        }
+      }
 
-    return checkout;
+      const checkout : Checkout =  {
+        shippingRates,
+        request,
+        paymentId: this.makeid(16),
+        paymentToken: this.makeid(32),
+        shipping,
+        tax,
+        total: request.subtotal + tax,
+      };
+
+      await this.redis.set(customerId, serialize(checkout));
+
+      return checkout;
+    });
+  }
+
+  async submit(customerId: string) : Promise<CheckoutSubmitted> {
+    let checkout = await this.get(customerId);
+
+    if(!checkout) {
+      throw new Error("Checkout not found");
+    }
+
+    let order = await this.ordersService.create(checkout);
+
+    return Promise.resolve({
+      orderId: order.id,
+      customerEmail: checkout.request.customerEmail
+    });
   }
 
   private makeid(length) {
