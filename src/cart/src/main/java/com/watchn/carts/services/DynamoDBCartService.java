@@ -4,23 +4,26 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
-import com.amazonaws.services.dynamodbv2.model.*;
+import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
+import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
+import com.amazonaws.services.dynamodbv2.model.Projection;
+import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.watchn.carts.repositories.CartEntity;
 import com.watchn.carts.repositories.ItemEntity;
-import lombok.extern.slf4j.Slf4j;
 import com.watchn.carts.repositories.dynamo.entities.DynamoItemEntity;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class DynamoDBCartService implements CartService {
 
-    private DynamoDBMapper mapper;
-    private AmazonDynamoDB dynamoDB;
-    private boolean createTable;
+    private final DynamoDBMapper mapper;
+    private final AmazonDynamoDB dynamoDB;
+    private final boolean createTable;
 
     public DynamoDBCartService(DynamoDBMapper mapper, AmazonDynamoDB dynamoDB, boolean createTable) {
         this.mapper = mapper;
@@ -34,7 +37,7 @@ public class DynamoDBCartService implements CartService {
             DeleteTableRequest deleteTableRequest = mapper.generateDeleteTableRequest(DynamoItemEntity.class);
 
             try {
-                DescribeTableResult result = dynamoDB.describeTable(deleteTableRequest.getTableName());
+                dynamoDB.describeTable(deleteTableRequest.getTableName());
 
                 log.warn("Dynamo table found, deleting to recreate....");
                 dynamoDB.deleteTable(deleteTableRequest);
@@ -113,7 +116,7 @@ public class DynamoDBCartService implements CartService {
         final PaginatedQueryList<DynamoItemEntity> results =
                 mapper.query(DynamoItemEntity.class, queryExpression);
 
-        return results.stream().collect(Collectors.toList());
+        return new ArrayList<>(results);
     }
 
     @Override
@@ -123,12 +126,9 @@ public class DynamoDBCartService implements CartService {
 
     @Override
     public void deleteItem(String customerId, String itemId) {
-        item(customerId, itemId).ifPresentOrElse((value)
-            -> { this.mapper.delete(value); },
+        item(customerId, itemId).ifPresentOrElse(this.mapper::delete,
         ()
-            -> {
-                log.warn("Item missing for delete {} -- {}", customerId, itemId);
-        });
+            -> log.warn("Item missing for delete {} -- {}", customerId, itemId));
     }
 
     @Override

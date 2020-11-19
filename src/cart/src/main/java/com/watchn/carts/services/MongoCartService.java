@@ -13,9 +13,9 @@ import java.util.Optional;
 @Slf4j
 public class MongoCartService implements CartService {
 
-    private MongoCartRepository cartRepository;
+    private final MongoCartRepository cartRepository;
 
-    private MongoItemRepository itemRepository;
+    private final MongoItemRepository itemRepository;
 
     public MongoCartService(MongoCartRepository cartRepository, MongoItemRepository itemRepository) {
         this.cartRepository = cartRepository;

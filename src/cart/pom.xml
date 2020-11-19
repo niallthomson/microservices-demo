@@ -87,6 +87,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>chaos-monkey-spring-boot</artifactId>
+            <version>2.2.0</version>
+        </dependency>
     </dependencies>
 
     <build>
