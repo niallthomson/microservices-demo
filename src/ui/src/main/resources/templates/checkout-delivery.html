@@ -21,7 +21,10 @@
                     <a href="#" class="nav-link flex-sm-fill text-sm-center disabled"> <i class="fa fa-money"></i>Payment Method</a>
                     <a href="#" class="nav-link flex-sm-fill text-sm-center disabled"> <i class="fa fa-eye"></i>Order Review</a>
                 </div>
-                <form th:object="${delivery}" method="POST" id="checkoutForm" action="/checkout/delivery">
+                <form th:object="${checkoutDeliveryMethodRequest}" method="POST" id="checkoutForm" action="/checkout/delivery">
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('token')}">
+                        Please select a delivery method.
+                    </div>
                     <div class="content py-3">
                         <div class="row">
                             <div class="col-md-6" th:each="option : ${checkout.shippingOptions}">

@@ -3,6 +3,7 @@ package com.watchn.ui.web;
 import com.watchn.ui.services.Metadata;
 import com.watchn.ui.services.carts.CartsService;
 import com.watchn.ui.services.checkout.CheckoutService;
+import com.watchn.ui.services.checkout.model.Checkout;
 import com.watchn.ui.services.checkout.model.ShippingAddress;
 import com.watchn.ui.web.payload.CheckoutDeliveryMethodRequest;
 import com.watchn.ui.web.payload.ShippingAddressRequest;
@@ -60,10 +61,6 @@ public class CheckoutController extends BaseController {
                                        BindingResult result,
                                        ServerHttpRequest request,
                                        Model model) {
-        String sessionId = getSessionID(request);
-
-        this.populateCommon(request, model);
-
         if (result.hasErrors()) {
             return showShipping(shippingAddressRequest, request, model);
         }
@@ -77,24 +74,39 @@ public class CheckoutController extends BaseController {
         address.setState(shippingAddressRequest.getState());
         address.setZip(shippingAddressRequest.getZip());
 
-        model.addAttribute("delivery", new CheckoutDeliveryMethodRequest());
+        String sessionId = getSessionID(request);
 
         return this.checkoutService.shipping(sessionId, address)
-            .doOnNext(o -> {
-                model.addAttribute("checkout", o);
-            })
-            .thenReturn("checkout-delivery");
+            .map(c -> this.showDelivery(c, new CheckoutDeliveryMethodRequest(), request, model));
+    }
+
+    public String showDelivery(Checkout checkout, CheckoutDeliveryMethodRequest checkoutDeliveryMethodRequest,
+                                     ServerHttpRequest request,
+                                     Model model) {
+        this.populateCommon(request, model);
+
+        model.addAttribute("checkoutDeliveryMethodRequest", checkoutDeliveryMethodRequest);
+        model.addAttribute("checkout", checkout);
+
+        return "checkout-delivery";
     }
 
     @PostMapping("/delivery")
-    public Mono<String> handleDelivery(@ModelAttribute("delivery") CheckoutDeliveryMethodRequest delivery,
+    public Mono<String> handleDelivery(@Valid @ModelAttribute("checkoutDeliveryMethodRequest") CheckoutDeliveryMethodRequest checkoutDeliveryMethodRequest,
+                                       BindingResult result,
                                        ServerHttpRequest request,
                                        Model model) {
         String sessionId = getSessionID(request);
 
+        log.error("{}", checkoutDeliveryMethodRequest);
+
+        if (result.hasErrors()) {
+            return this.checkoutService.get(sessionId).map(c -> showDelivery(c, checkoutDeliveryMethodRequest, request, model));
+        }
+
         this.populateCommon(request, model);
 
-        return this.checkoutService.delivery(sessionId, delivery.getToken())
+        return this.checkoutService.delivery(sessionId, checkoutDeliveryMethodRequest.getToken())
             .doOnNext(o -> {
                 model.addAttribute("checkout", o);
             })
