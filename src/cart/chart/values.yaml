@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: watchn/watchn-carts
+  repository: watchn/watchn-cart
   pullPolicy: IfNotPresent
   tag: "build.1602361486"
 
