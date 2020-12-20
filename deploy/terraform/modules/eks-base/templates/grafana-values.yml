@@ -1,0 +1,71 @@
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - ${domain}
+
+datasources: 
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: Prometheus
+      type: prometheus
+      url: http://prometheus-server.prometheus
+      access: proxy
+      isDefault: true
+
+dashboards:
+  default:
+    prometheus:
+      gnetId: 2
+      revision: 2
+      datasource: Prometheus
+    kube-dash:
+      gnetId: 7249
+      revision: 1
+      datasource: Prometheus
+    node-exporter:
+      gnetId: 1860
+      revision: 21
+      datasource: Prometheus
+    nginx-ingress:
+      gnetId: 9614
+      revision: 1
+      datasource: Prometheus
+    coredns:
+      gnetId: 7279
+      revision: 1
+      datasource: Prometheus
+    istio-control:
+      gnetId: 7645
+      revision: 37
+      datasource: Prometheus
+    istio-service:
+      gnetId: 7636
+      revision: 37
+      datasource: Prometheus
+    istio-workload:
+      gnetId: 7630
+      revision: 37
+      datasource: Prometheus
+    istio-mesh:
+      gnetId: 7639
+      revision: 37
+      datasource: Prometheus
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+    - name: 'default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/default
+
+adminUser: admin
+adminPassword: admin

@@ -1,0 +1,6 @@
+chaos:
+  monkey:
+    assaults:
+      exceptionsActive: true
+      exception:
+        type: com.watchn.carts.chaos.Http500StatusException

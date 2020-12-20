@@ -1,5 +1,5 @@
 ingress:
-  enabled: true
+  enabled: ${ingress_enabled}
   annotations:
     kubernetes.io/ingress.class: nginx
     kubernetes.io/tls-acme: "true"
@@ -10,3 +10,15 @@ ingress:
     - secretName: watchn-ingress-tls
       hosts:
         - ${domain}
+
+istio:
+  enabled: ${istio_enabled}
+  hosts:
+    - ${domain}
+  tls:
+    secretName: watchn-ingress-tls
+    hosts:
+    - ${domain}
+    issuer:
+      name: letsencrypt-prod
+      kind: ClusterIssuer

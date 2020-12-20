@@ -3,7 +3,7 @@ variable "environment_name" {
 }
 
 variable "eks_version" {
-  default = "1.17"
+  default = "1.18"
 }
 
 variable "region" {
@@ -18,7 +18,7 @@ variable "vpc_cidr" {
 }
 
 variable "node_pool_instance_type" {
-  default = "m5.large" #t3a.large
+  default = "t3a.large"
 }
 
 variable "tags" {
@@ -33,12 +33,16 @@ variable "dns_base" {
 
 }
 
-variable "dns_suffix" {
+variable "dns_prefix" {
 
 }
 
 variable "kubernetes_namespace" {
   default = "watchn"
+}
+
+variable "service_mesh" {
+  default = "none"
 }
 
 variable "aurora_engine_version" {

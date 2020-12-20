@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: watchn/watchn-ui
   pullPolicy: IfNotPresent
-  tag: "build.1601746945"
+  tag: "build.1602361486"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -95,3 +95,17 @@ ingress:
 #    - secretName: ingress-secret
 #      hosts: 
 #        - example.domain1.com
+
+istio:
+  enabled: false
+
+#  hosts:
+#    - example.domain1.com
+#    
+#  tls:
+#    issuer:
+#      name: issuer
+#      kind: Issuer
+#    secretName: ingress-cert
+#    hosts: 
+#      - example.domain1.com

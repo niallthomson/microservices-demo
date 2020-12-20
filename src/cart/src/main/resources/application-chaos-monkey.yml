@@ -1,0 +1,17 @@
+chaos:
+  monkey:
+    enabled: true
+    assaults:
+      latencyActive: false
+      level: 1
+      watchedCustomServices:
+        - com.watchn.carts.controllers.CartsController.get
+        - com.watchn.carts.controllers.CartsController.delete
+        - com.watchn.carts.controllers.ItemsController.get
+        - com.watchn.carts.controllers.ItemsController.getItems
+        - com.watchn.carts.controllers.ItemsController.addToCart
+        - com.watchn.carts.controllers.ItemsController.removeItem
+        - com.watchn.carts.controllers.ItemsController.updateItem
+    watcher:
+      restController: true
+      service: false

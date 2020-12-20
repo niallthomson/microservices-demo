@@ -3,6 +3,7 @@ package com.watchn.orders.services;
 import com.google.common.collect.Lists;
 import com.watchn.orders.entities.OrderEntity;
 import com.watchn.orders.entities.OrderItemEntity;
+import com.watchn.orders.messaging.OrdersEventHandler;
 import com.watchn.orders.repositories.OrderReadRepository;
 import com.watchn.orders.repositories.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -21,6 +23,9 @@ public class OrderService {
 
     @Autowired
     private OrderReadRepository readRepository;
+
+    @Autowired
+    private OrdersEventHandler eventHandler;
 
     @Transactional
     public OrderEntity create(OrderEntity order) {
@@ -33,7 +38,11 @@ public class OrderService {
             item.setId(key);
         }
 
+        log.info("Creating order {}", order.getId());
+
         OrderEntity entity = repository.save(order);
+
+        eventHandler.postCreatedEvent(entity);
 
         return entity;
     }

@@ -10,6 +10,7 @@ services:
       - ENDPOINTS_CATALOG=http://catalog:8080
       - ENDPOINTS_CARTS=http://carts:8080
       - ENDPOINTS_ORDERS=http://orders:8080
+      - ENDPOINTS_CHECKOUT=http://checkout:8080
       - ENDPOINTS_ASSETS=http://assets:8080
     hostname: ui
     build:
@@ -18,12 +19,18 @@ services:
       args:
         JAR_PATH: target/ui-0.0.1-SNAPSHOT.jar
     restart: always
+    mem_limit: 256m
+    cap_drop:
+      - ALL
   catalog:
     hostname: catalog
     build:
       context: ../../src/catalog
       dockerfile: Dockerfile
     restart: always
+    mem_limit: 128m
+    cap_drop:
+      - ALL
   catalog-db:
     image: mysql:5.7
     hostname: catalog-db
@@ -34,6 +41,7 @@ services:
       - MYSQL_DATABASE=watchndb
       - MYSQL_USER=catalog_user
       - MYSQL_PASSWORD=default_password
+    mem_limit: 128m
   carts:
     hostname: carts
     build:
@@ -50,10 +58,14 @@ services:
       - CARTS_DYNAMODB_CREATETABLE=true
       - AWS_ACCESS_KEY_ID=key
       - AWS_SECRET_ACCESS_KEY=secret
+    mem_limit: 256m
+    cap_drop:
+      - ALL
   carts-db:
     image: amazon/dynamodb-local:1.13.1
     hostname: carts-db
     restart: always
+    mem_limit: 128m
   orders:
     hostname: orders
     build:
@@ -65,13 +77,17 @@ services:
     environment:
       - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
       - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
-      - SPRING_PROFILES_ACTIVE=mysql
+      - SPRING_PROFILES_ACTIVE=mysql,activemq
       - SPRING_DATASOURCE_WRITER_URL=jdbc:mysql://orders-db:3306/orders
       - SPRING_DATASOURCE_WRITER_USERNAME=orders_user
       - SPRING_DATASOURCE_WRITER_PASSWORD=default_password
       - SPRING_DATASOURCE_READER_URL=jdbc:mysql://orders-db:3306/orders
       - SPRING_DATASOURCE_READER_USERNAME=orders_user
       - SPRING_DATASOURCE_READER_PASSWORD=default_password
+      - SPRING_ACTIVEMQ_BROKERURL=tcp://activemq:61616
+    mem_limit: 256m
+    cap_drop:
+      - ALL
   orders-db:
     image: mysql:5.7
     hostname: orders-db
@@ -82,29 +98,45 @@ services:
       - MYSQL_DATABASE=orders
       - MYSQL_USER=orders_user
       - MYSQL_PASSWORD=default_password
+    mem_limit: 128m
   checkout:
     build:
-      context: .
+      context: ../../src/checkout
       dockerfile: ../../images/nodejs/Dockerfile
     image: microservices-demo/checkout
     hostname: checkout
     restart: always
-    cap_drop:
-      - all
-    cap_add:
-      - NET_BIND_SERVICE
     read_only: true
     tmpfs:
       - /tmp:rw,noexec,nosuid
     environment:
       - REDIS_URL=redis://checkout-redis:6379
+      - ENDPOINTS_ORDERS=http://orders:8080
+    mem_limit: 256m
+    cap_drop:
+      - ALL
   checkout-redis:
     image: redis:6.0-alpine
     hostname: checkout-redis
     restart: always
+    mem_limit: 128m
   assets:
     hostname: assets
     build:
       context: ../../src/assets
       dockerfile: Dockerfile
     restart: always
+    mem_limit: 64m
+    cap_drop:
+      - ALL
+  activemq:
+    build:
+      context: .
+      dockerfile: ../../images/activemq/Dockerfile
+    image: watchn/activemq
+    hostname: activemq
+    restart: always
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+    mem_limit: 256m

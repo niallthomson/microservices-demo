@@ -1,0 +1,4 @@
+serviceAccount:
+  name: appmesh-controller
+  annotations:
+    eks.amazonaws.com/role-arn: ${role_arn}

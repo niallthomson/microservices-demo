@@ -98,7 +98,7 @@ resource "aws_ecs_service" "catalog" {
 }
 
 resource "aws_security_group" "catalog" {
-  name_prefix = "${var.environment_name}-catalog"
+  name_prefix = "${local.full_environment_prefix}-catalog"
   vpc_id      = module.vpc.vpc_id
 
   description = "Marker SG for catalog service"

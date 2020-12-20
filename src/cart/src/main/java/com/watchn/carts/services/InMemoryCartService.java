@@ -2,48 +2,108 @@ package com.watchn.carts.services;
 
 import com.watchn.carts.repositories.CartEntity;
 import com.watchn.carts.repositories.ItemEntity;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class InMemoryCartService implements CartService {
+
+    private final Map<String, Cart> carts;
+
+    public InMemoryCartService() {
+        this.carts = new HashMap<>();
+    }
+
     @Override
-    public CartEntity get(String customerId) {
-        return null;
+    public Cart get(String customerId) {
+        if(!this.carts.containsKey(customerId)) {
+            Cart cart = new Cart(customerId);
+
+            this.carts.put(customerId, cart);
+        }
+
+        return this.carts.get(customerId);
     }
 
     @Override
     public void delete(String customerId) {
-
+        this.carts.remove(customerId);
     }
 
     @Override
-    public CartEntity merge(String sessionId, String customerId) {
+    public Cart merge(String sessionId, String customerId) {
         return null;
     }
 
     @Override
-    public ItemEntity add(String customerId, String itemId, int quantity, int unitPrice) {
-        return null;
+    public CartItem add(String customerId, String itemId, int quantity, int unitPrice) {
+        CartItem item = new CartItem(itemId, quantity, unitPrice);
+
+        this.get(customerId).getItems().add(item);
+
+        return item;
     }
 
     @Override
-    public List<? extends ItemEntity> items(String customerId) {
-        return null;
+    public List<CartItem> items(String customerId) {
+        return this.get(customerId).getItems();
     }
 
     @Override
-    public Optional<? extends ItemEntity> item(String customerId, String itemId) {
+    public Optional<CartItem> item(String customerId, String itemId) {
+        Cart cart = this.get(customerId);
+
+        for(CartItem item : cart.getItems()) {
+            if(item.getItemId().equals(itemId)) {
+                return Optional.of(item);
+            }
+        }
+
         return Optional.empty();
     }
 
     @Override
     public void deleteItem(String customerId, String itemId) {
+        Cart cart = this.get(customerId);
 
+        cart.getItems().removeIf(i -> i.getItemId().equals(itemId));
     }
 
     @Override
-    public Optional<? extends ItemEntity> update(String customerId, String itemId, int quantity, int unitPrice) {
+    public Optional<CartItem> update(String customerId, String itemId, int quantity, int unitPrice) {
+        Cart cart = this.get(customerId);
+
+        for(CartItem item : cart.getItems()) {
+            if(item.getItemId().equals(itemId)) {
+                item.setQuantity(quantity);
+                item.setUnitPrice(unitPrice);
+            }
+        }
+
         return Optional.empty();
     }
+}
+
+@Data
+class Cart implements CartEntity {
+
+    private String customerId;
+
+    private List<CartItem> items = new ArrayList<>();
+
+    public Cart(String customerId) {
+        this.customerId = customerId;
+    }
+}
+
+@Data
+@AllArgsConstructor
+class CartItem implements ItemEntity {
+
+    private String itemId;
+
+    private int quantity;
+
+    private int unitPrice;
 }

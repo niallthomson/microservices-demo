@@ -2,7 +2,9 @@ data "template_file" "ui_values" {
   template = file("${path.module}/templates/ui-values.yaml")
 
   vars = {
-    domain = var.ui_domain
+    domain          = var.ui_domain
+    ingress_enabled = !var.ui_istio_enabled
+    istio_enabled   = var.ui_istio_enabled
   }
 }
 

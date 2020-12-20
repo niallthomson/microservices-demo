@@ -38,6 +38,6 @@ public class WebClientOrdersService implements OrdersService {
 
                     return this.ordersApi.createOrder(createOrderRequest);
                 })
-                .map(o -> new Order(o.getId()));
+                .map(o -> new Order(o.getId(), o.getEmail()));
     }
 }

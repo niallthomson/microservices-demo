@@ -1,7 +1,10 @@
 port: 8080
 
 redis:
-  url: 'redis://localhost:6379'
+  url: ''
+
+endpoints:
+  orders: http://localhost:8083
 
 # none/debug/info
 loglevel: info

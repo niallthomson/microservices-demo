@@ -20,7 +20,7 @@ services:
     environment:
       - reschedule=on-node-failure
       - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
-      - SPRING_PROFILES_ACTIVE=mysql
+      - SPRING_PROFILES_ACTIVE=mysql,activemq
       - SPRING_DATASOURCE_WRITER_URL=jdbc:mysql://orders-db:3306/orders
       - SPRING_DATASOURCE_WRITER_USERNAME=orders_user
       - SPRING_DATASOURCE_WRITER_PASSWORD=default_password
@@ -28,6 +28,7 @@ services:
       - SPRING_DATASOURCE_READER_USERNAME=orders_user
       - SPRING_DATASOURCE_READER_PASSWORD=default_password
       - SPRING_DATASOURCE_WRITER_MAXIMUMPOOLSIZE=20
+      - SPRING_ACTIVEMQ_BROKERURL=tcp://activemq:61616
     ports:
       - "8083:8080"
   orders-db:
@@ -41,3 +42,16 @@ services:
       - MYSQL_DATABASE=orders
       - MYSQL_USER=orders_user
       - MYSQL_PASSWORD=default_password
+    ports:
+      - "3306:3306"
+  activemq:
+    build:
+      context: .
+      dockerfile: ../../images/activemq/Dockerfile
+    image: watchn/activemq
+    hostname: activemq
+    restart: always
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+  

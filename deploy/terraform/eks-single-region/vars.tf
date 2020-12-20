@@ -1,5 +1,5 @@
 variable "environment_name" {
-  default = "watchn"
+  default = "watchn-eks"
 }
 
 variable "region" {
@@ -17,4 +17,12 @@ variable "vpc_cidr" {
 
 variable "hosted_zone_name" {
   
+}
+
+variable "dns_prefix" {
+  default = ""
+}
+
+variable "service_mesh" {
+  default = "none"
 }

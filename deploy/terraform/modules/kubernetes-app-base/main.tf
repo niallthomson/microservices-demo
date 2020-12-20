@@ -11,6 +11,7 @@ resource "kubernetes_namespace" "watchn" {
     name = "watchn"
 
     labels = {
+      "istio-injection" = "enabled"
       //"appmesh.k8s.aws/sidecarInjectorWebhook" = "enabled"
       //"mesh" = aws_appmesh_mesh.default.name
     }

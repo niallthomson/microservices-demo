@@ -1,34 +1,83 @@
-import { Checkout } from "../models/Checkout";
-import { Inject, Service } from "typedi";
-import { Redis } from "../config/Redis";
-import { CheckoutRequest } from "../models/CheckoutRequest";
+import { Checkout } from '../models/Checkout';
+import { Inject, Service } from 'typedi';
+import { IRepository } from '../repositories/IRepository';
+import { CheckoutRequest } from '../models/CheckoutRequest';
 import { serialize , deserialize} from 'class-transformer';
+import { Repository } from '../repositories/Repository';
+import { ShippingService } from './ShippingService';
+import { OrdersService } from './OrdersService';
+import { CheckoutSubmitted } from '../models/CheckoutSubmitted';
 
 @Service()
 export class CheckoutService {
 
-  @Inject()
-  redis : Redis;
+  constructor(@Repository() private redis : IRepository, private shippingService : ShippingService, private ordersService : OrdersService) {
+  }
 
   async get(customerId: string) : Promise<Checkout> {
-    let json = await this.redis.get(customerId)
+    const json = await this.redis.get(customerId);
+
+    if(!json) {
+      return null;
+    }
 
     return deserialize(Checkout, json);
   }
 
   async update(customerId: string, request : CheckoutRequest) : Promise<Checkout> {
-    let checkout : Checkout = {
-      shippingOptions: [],
-      request: request,
-      paymentId: "dummy",
-      paymentToken: "dummy",
-      tax: 20,
-      total: 1234
-    }
+    const tax = request.shippingAddress ? Math.floor(request.subtotal * 0.05) : -1; // Hardcoded 5% tax for now
 
-    await this.redis.set(customerId, serialize(checkout));
+    return this.shippingService.getShippingRates(request).then(async (shippingRates) => {
+      let shipping = -1;
 
-    return checkout;
+      if(shippingRates) {
+        console.log("Query shipping rates")
+        for ( let i = 0; i < shippingRates.rates.length; i++ ) {
+          if(shippingRates.rates[i].token == request.deliveryOptionToken) {
+            console.log("Found shipping rate")
+            shipping = shippingRates.rates[i].amount;
+          }
+        }
+      }
+
+      const checkout : Checkout =  {
+        shippingRates,
+        request,
+        paymentId: this.makeid(16),
+        paymentToken: this.makeid(32),
+        shipping,
+        tax,
+        total: request.subtotal + tax,
+      };
+
+      await this.redis.set(customerId, serialize(checkout));
+
+      return checkout;
+    });
   }
 
+  async submit(customerId: string) : Promise<CheckoutSubmitted> {
+    let checkout = await this.get(customerId);
+
+    if(!checkout) {
+      throw new Error("Checkout not found");
+    }
+
+    let order = await this.ordersService.create(checkout);
+
+    return Promise.resolve({
+      orderId: order.id,
+      customerEmail: checkout.request.customerEmail
+    });
+  }
+
+  private makeid(length) {
+    let result           = '';
+    const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for ( let i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
 }

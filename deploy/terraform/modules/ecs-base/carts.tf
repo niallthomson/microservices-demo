@@ -96,7 +96,7 @@ resource "aws_ecs_service" "carts" {
 }
 
 resource "aws_security_group" "carts" {
-  name_prefix = "${var.environment_name}-carts"
+  name_prefix = "${local.full_environment_prefix}-carts"
   vpc_id      = module.vpc.vpc_id
 
   description = "Marker SG for carts service"

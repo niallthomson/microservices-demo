@@ -29,7 +29,7 @@
                     <div class="box">
                         <h1 class="text-center" th:text="${item.name}">White Blouse Armani</h1>
                         <p class="goToDescription"><a href="#details" class="scroll-to">Scroll to product details, material &amp; care and sizing</a></p>
-                        <p class="price">$<span th:text="${item.price}">124.00</span></p>
+                        <p class="price">$<th:block th:text="${item.price}">124.00</th:block></p>
                         <p class="text-center buttons">
                         <form action="/cart" id="addToCart" method="POST">
                             <input type="hidden" name="productId" th:value="${item.id}"/>
@@ -51,7 +51,7 @@
                     <p><a href="#" class="external facebook"><i class="fa fa-facebook"></i></a><a href="#" class="external gplus"><i class="fa fa-google-plus"></i></a><a href="#" class="external twitter"><i class="fa fa-twitter"></i></a><a href="#" class="email"><i class="fa fa-envelope"></i></a></p>
                 </div>
             </div>
-            <div class="row same-height-row">
+            <div class="row same-height-row recommendations">
                 <div class="col-md-3 col-sm-6">
                     <div class="box same-height">
                         <h3>You may also like these products</h3>
@@ -62,7 +62,7 @@
                        <a href="detail.html"><img src="img/product2.jpg" th:src="${recommended.imageUrl}" alt="" class="img-fluid"></a>
                         <div class="text">
                             <h3 th:text="${recommended.name}">Fur coat</h3>
-                            <p class="price">$<span th:text="${recommended.price}">124.00</span></p>
+                            <p class="price">$<th:block th:text="${recommended.price}">124.00</th:block></p>
                         </div>
                     </div>
                     <!-- /.product-->

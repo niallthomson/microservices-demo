@@ -1,9 +1,18 @@
+resource "null_resource" "app_blocker" {
+  depends_on = [module.istio_apply]
+
+  provisioner "local-exec" {
+    command = "sleep 60"
+  }
+}
+
 module "app_base" {
   source = "../kubernetes-app-base"
 
-  cluster_blocker = null_resource.cluster_blocker.id
+  cluster_blocker = null_resource.app_blocker.id
 
   ui_domain = local.store_dns
+  ui_istio_enabled = var.service_mesh == "istio"
 
   catalog_mysql_create = false
 
@@ -12,4 +21,10 @@ module "app_base" {
   carts_dynamodb_create = false
 
   orders_mysql_create = false
+  orders_activemq_url = module.mq.wire_endpoint
+  orders_activemq_user = module.mq.user
+  orders_activemq_password = module.mq.password
+
+  checkout_redis_create = false
+  checkout_redis_address = module.checkout_redis.address
 }

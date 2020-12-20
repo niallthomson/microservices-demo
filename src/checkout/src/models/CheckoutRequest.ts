@@ -1,12 +1,13 @@
 import { Type } from 'class-transformer';
-import { ValidateNested, IsEmail, IsInt, Min } from 'class-validator'
+import { ValidateNested, IsEmail, IsInt, Min, IsOptional, IsString } from 'class-validator';
 
-import { Item } from "./Item";
-import { ShippingAddress } from "./ShippingAddress";
+import { Item } from './Item';
+import { ShippingAddress } from './ShippingAddress';
 
 export class CheckoutRequest {
 
   @IsEmail()
+  @IsOptional()
   customerEmail : string;
 
   @ValidateNested({ each: true })
@@ -15,10 +16,15 @@ export class CheckoutRequest {
 
   @ValidateNested()
   @Type(() => ShippingAddress)
+  @IsOptional()
   shippingAddress : ShippingAddress;
 
   @IsInt()
   @Min(0)
   subtotal : number;
+
+  @IsString()
+  @IsOptional()
+  deliveryOptionToken : string;
 
 }

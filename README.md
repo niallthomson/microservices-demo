@@ -17,6 +17,12 @@ It looks to explore:
 
 These facets will be gradually worked through over time, and none of them are guaranteed to be in place at any given time.
 
+There are several high level implementation themes that are used throughout this repository:
+- Nothing is coupled to a single deployment mechanism or orchestrator
+- REST APIs are generally used and documented through the OpenAPI specification
+- Events that each service publishes are documented with JSONSchema
+- Services should avoid making synchronous calls to each other where possible
+
 ## Application Architecture
 
 The application has been deliberately over-engineered to generate multiple de-coupled components. These components generally have different infrastructure dependencies, and may support multiple "backends" (example: Carts service supports MongoDB or DynamoDB).
@@ -29,6 +35,7 @@ The application has been deliberately over-engineered to generate multiple de-co
 | Catalog   | Go       | MySQL               | Product catalog API                                                         |
 | Carts     | Java     | MongoDB or DynamoDB | User shopping carts API                                                     |
 | Orders    | Java     | MySQL               | User orders API                                                             |
+| Checkout  | Node     | Redis               | API to orchestrate the checkout process                                     |
 | Assets    | Nginx    |                     | Serves static assets like images related to the product catalog             |
 
 

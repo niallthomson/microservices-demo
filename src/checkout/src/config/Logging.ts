@@ -1,15 +1,16 @@
 import * as winston from 'winston';
 import * as config from 'config';
 import * as expressWinston from 'express-winston';
-import { logger } from '../common/logging';
 
 const level = config.get('loglevel');
 
 export function setupLogging(app) {
   // Development Logger
-  // const env = config.util.getEnv('NODE_ENV');
+  const env = config.util.getEnv('NODE_ENV');
 
-  setupExpress(app);
+  if(env !== 'test') {
+    setupExpress(app);
+  }
 };
 
 function setupExpress(app) {

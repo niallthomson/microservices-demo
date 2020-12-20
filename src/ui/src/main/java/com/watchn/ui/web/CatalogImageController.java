@@ -27,8 +27,8 @@ public class CatalogImageController {
         return WebClient.builder()
             .exchangeStrategies(ExchangeStrategies.builder()
             .codecs(configurer -> configurer
-                    .defaultCodecs()
-                    .maxInMemorySize(16 * 1024 * 1024))
+                .defaultCodecs()
+                .maxInMemorySize(16 * 1024 * 1024))
             .build())
                 .baseUrl(this.assetsEndpoint+"/assets/"+image)
             .build().get()
@@ -36,7 +36,7 @@ public class CatalogImageController {
                 .retrieve()
                 .bodyToMono(byte[].class)
                 .map(payload -> ResponseEntity.ok()
-                        .cacheControl(CacheControl.maxAge(30, TimeUnit.DAYS))
-                        .body(payload));
+                    .cacheControl(CacheControl.maxAge(30, TimeUnit.DAYS))
+                    .body(payload));
     }
 }

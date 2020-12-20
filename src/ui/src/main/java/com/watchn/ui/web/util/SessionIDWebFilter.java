@@ -19,21 +19,16 @@ public class SessionIDWebFilter implements WebFilter {
                              WebFilterChain webFilterChain) {
         String sessionId;
 
-        HttpCookie cookie = serverWebExchange.getRequest().getCookies().getFirst("SESSIONID");
+        HttpCookie cookie = serverWebExchange.getRequest().getCookies().getFirst(SessionIDUtil.COOKIE_NAME);
 
         if(cookie == null) {
-            sessionId = UUID.randomUUID().toString();
-
-            ResponseCookie newCookie = ResponseCookie.from("SESSIONID", sessionId).build();
-
-            serverWebExchange.getResponse()
-                    .getCookies().add("SESSIONID", newCookie);
+            sessionId = SessionIDUtil.addSessionCookie(serverWebExchange);
         }
         else {
             sessionId = cookie.getValue();
         }
 
-        serverWebExchange = serverWebExchange.mutate().request(serverWebExchange.getRequest().mutate().header("X-Session-ID", sessionId).build()).build();
+        serverWebExchange = serverWebExchange.mutate().request(serverWebExchange.getRequest().mutate().header(SessionIDUtil.HEADER_NAME, sessionId).build()).build();
 
         return webFilterChain.filter(serverWebExchange);
     }

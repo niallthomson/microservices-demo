@@ -22,7 +22,9 @@
     "outDir": "dist/",
     "baseUrl": "src/",
     "listFiles": false,
-    "noEmitHelpers": true
+    "noEmitHelpers": true,
+    "types" : [ "node", "jest" ],
+    "typeRoots": [ "./types", "./node_modules/@types"]
   },
   "include": [
     "src/**/*"

@@ -4,7 +4,6 @@ locals {
 
 # EKS Control Plane security group
 resource "aws_security_group_rule" "vpc_endpoint_eks_cluster_sg" {
-
   from_port                = 443
   protocol                 = "tcp"
   security_group_id        = aws_security_group.vpc_endpoint.id
@@ -38,7 +37,9 @@ resource "aws_eks_cluster" "cluster" {
   depends_on = [
     aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.cluster_AmazonEKSServicePolicy,
-    aws_cloudwatch_log_group.cluster
+    aws_cloudwatch_log_group.cluster,
+    aws_eip.nginx_ingress, 
+    aws_eip.istio_ingress
   ]
 }
 

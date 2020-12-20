@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: watchn/watchn-checkout
   pullPolicy: IfNotPresent
-  tag: "build.1601746945"
+  tag: "build.1602361486"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -31,8 +31,6 @@ securityContext:
   capabilities:
     drop:
       - ALL
-    add:
-      - NET_BIND_SERVICE
   readOnlyRootFilesystem: true
   runAsNonRoot: true
   runAsUser: 1000
@@ -60,12 +58,12 @@ tolerations: []
 
 affinity: {}
 
-metrics: {}
-  #enabled: true
-  #podAnnotations:
-  #  prometheus.io/scrape: "true"
-  #  prometheus.io/port: "8080"
-  #  prometheus.io/path: "/actuator/prometheus"
+metrics:
+  enabled: true
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/metrics"
 
 configMap:
   create: true
@@ -73,6 +71,9 @@ configMap:
 
 redis:
   create: true
+
+  address: "redis"
+  port: 6379
 
   image:
     repository: redis

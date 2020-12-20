@@ -7,4 +7,19 @@ resource "helm_release" "orders" {
     name  = "mysql.create"
     value = var.orders_mysql_create
   }
+
+  set {
+    name  = "messaging.activemq.brokerUrl"
+    value = var.orders_activemq_url
+  }
+
+  set {
+    name  = "messaging.activemq.user"
+    value = var.orders_activemq_user
+  }
+
+  set {
+    name  = "messaging.activemq.password"
+    value = var.orders_activemq_password
+  }
 }

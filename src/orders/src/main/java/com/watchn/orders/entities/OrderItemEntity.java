@@ -17,6 +17,10 @@ public class OrderItemEntity {
     }
 
     @EmbeddedId
+    @AttributeOverrides({
+        @AttributeOverride(name="productId",
+          column=@Column(length=64))
+    })
     private Key id;
 
     @Transient
