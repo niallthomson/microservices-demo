@@ -1,9 +1,13 @@
 package com.watchn.carts.controllers.api;
 
 import com.watchn.carts.repositories.ItemEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Item {
     private String itemId;
 

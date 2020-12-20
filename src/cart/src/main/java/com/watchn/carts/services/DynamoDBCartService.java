@@ -34,8 +34,6 @@ public class DynamoDBCartService implements CartService {
             DeleteTableRequest deleteTableRequest = mapper.generateDeleteTableRequest(DynamoItemEntity.class);
 
             try {
-                DescribeTableResult result = dynamoDB.describeTable(deleteTableRequest.getTableName());
-
                 log.warn("Dynamo table found, deleting to recreate....");
                 dynamoDB.deleteTable(deleteTableRequest);
             }
@@ -51,6 +49,12 @@ public class DynamoDBCartService implements CartService {
             tableRequest.getGlobalSecondaryIndexes().get(0).setProvisionedThroughput(pt);
             tableRequest.getGlobalSecondaryIndexes().get(0).setProjection(new Projection().withProjectionType("ALL"));
             dynamoDB.createTable(tableRequest);
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
