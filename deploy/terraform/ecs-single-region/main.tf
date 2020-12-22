@@ -14,7 +14,7 @@ module "availability_zones" {
 module "ecs_base" {
   source = "../modules/ecs-base"
 
-  #environment_name   = var.environment_name
+  environment_name   = var.environment_name
   region             = var.region
   availability_zones = module.availability_zones.availability_zones
   dns_hosted_zone_id = data.aws_route53_zone.zone.id
