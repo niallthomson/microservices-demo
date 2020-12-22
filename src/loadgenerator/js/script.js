@@ -34,7 +34,19 @@ else {
   target = parseInt(target)
 }
 
-let errorCounter = new Counter('errors');
+let duration = __ENV.WATCHN_DURATION
+
+if(!duration) {
+  duration = 20
+}
+else {
+  duration = parseInt(duration)
+}
+
+export let http_req_status_2xx = new Counter("http_req_status_2xx");
+export let http_req_status_3xx = new Counter("http_req_status_3xx");
+export let http_req_status_4xx = new Counter("http_req_status_4xx");
+export let http_req_status_5xx = new Counter("http_req_status_5xx");
 
 export let options = {
   tags: {
@@ -42,7 +54,7 @@ export let options = {
   },
   stages: [
     { duration: "2s", target: target },  // Ramp
-    { duration: "120m", target: target }, // Work
+    { duration: `${duration}m`, target: target }, // Work
     { duration: "2s", target: 0 },   // Down
   ]
 }
@@ -53,52 +65,42 @@ export default function () {
   let products = Array.from({length: numProducts}, () => productData[Math.floor(Math.random() * productData.length)]);
 
   let home = http.get(`${__ENV.WATCHN_BASE_URL}/home`);
-  if(home.status >= 400) {
-    errorCounter.add(1)
-  }
+  recordStatusMetric(home);
 
   sleep(1);
 
   let product;
-  let addToCard;
+  let addToCart;
 
   // For now only buy 1 item on each iteration
   var itemId = products[Math.floor(Math.random() * products.length)];
 
   products.forEach((productId) => {
     product = http.get(`${__ENV.WATCHN_BASE_URL}/catalog/`+productId);
-    if(product.status >= 400) {
-      errorCounter.add(1)
-    }
+    recordStatusMetric(product);
 
     if (productId == itemId) {
-      addToCard = product.submitForm({
+      addToCart = product.submitForm({
         formSelector: 'form#addToCart',
         fields: { 
           productId: productId
         },
       });
-      if(addToCard.status >= 400) {
-        errorCounter.add(1)
-      }
+      recordStatusMetric(addToCart);
     }
 
     sleep(1);
   });
 
   let cart = http.get(`${__ENV.WATCHN_BASE_URL}/cart`);
-  if(cart.status >= 400) {
-    errorCounter.add(1)
-  }
+  recordStatusMetric(cart);
 
   sleep(1);
 
   let checkout = http.get(`${__ENV.WATCHN_BASE_URL}/checkout`);
-  if(checkout.status >= 400) {
-    errorCounter.add(1)
-  }
+  recordStatusMetric(checkout);
 
-  let order = checkout.submitForm({
+  let delivery = checkout.submitForm({
     formSelector: 'form#checkoutForm',
     fields: { 
       firstName: 'John', 
@@ -108,14 +110,47 @@ export default function () {
       address2: '#123',
       country: 'United States',
       state: 'CA',
-      zip: '12345',
+      zip: '12345'
+    },
+  });
+  recordStatusMetric(delivery);
+
+  let payment = delivery.submitForm({
+    formSelector: 'form#checkoutForm',
+    fields: { 
+      token: 'priority-mail'
+    },
+  });
+  recordStatusMetric(payment);
+
+  let review = payment.submitForm({
+    formSelector: 'form#checkoutForm',
+    fields: { 
       ccName: 'John Doe',
       ccNumber: '1234567890',
       ccExpiration: '12/25',
       ccCvv: '123'
     },
   });
-  if(order.status >= 400) {
-    errorCounter.add(1)
-  }
+  recordStatusMetric(review);
+
+  let order = review.submitForm({
+    formSelector: 'form#checkoutForm'
+  });
+  recordStatusMetric(order);
 };
+
+function recordStatusMetric(response) {
+  if(response.status >= 500) {
+    http_req_status_5xx.add(1);
+  }
+  else if(response.status >= 400) {
+    http_req_status_4xx.add(1);
+  }
+  else if(response.status >= 300) {
+    http_req_status_3xx.add(1);
+  }
+  else {
+    http_req_status_2xx.add(1);
+  }
+}
