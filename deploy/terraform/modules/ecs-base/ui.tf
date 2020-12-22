@@ -7,29 +7,33 @@ resource "aws_ecs_task_definition" "ui" {
   cpu = 256
   memory = 512
 
-  container_definitions    = <<DEFINITION
+  container_definitions = <<DEFINITION
 [
   {
-    "name": "ui",
+    "name": "application",
     "image": "watchn/watchn-ui:${var.image_tag}",
     "memory": 512,
     "essential": true,
     "environment": [
       {
         "name": "ENDPOINTS_CATALOG",
-        "value": "http://${aws_service_discovery_service.catalog.name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
+        "value": "http://${module.catalog_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
       },
       {
         "name": "ENDPOINTS_CARTS",
-        "value": "http://${aws_service_discovery_service.carts.name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
+        "value": "http://${module.carts_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
       },
       {
         "name": "ENDPOINTS_ORDERS",
-        "value": "http://${aws_service_discovery_service.orders.name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
+        "value": "http://${module.orders_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
+      },
+      {
+        "name": "ENDPOINTS_CHECKOUT",
+        "value": "http://${module.checkout_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
       },
       {
         "name": "ENDPOINTS_ASSETS",
-        "value": "http://${aws_service_discovery_service.assets.name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
+        "value": "http://${module.assets_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
       },
       {
         "name": "JAVA_OPTS",
@@ -75,7 +79,7 @@ resource "aws_ecs_service" "ui" {
 
   load_balancer {
     target_group_arn = aws_alb_target_group.main.id
-    container_name   = "ui"
+    container_name   = "application"
     container_port   = 8080
   }
 

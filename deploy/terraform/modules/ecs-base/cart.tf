@@ -1,8 +1,17 @@
+locals {
+  carts_chaos_profile_map = {
+    "" = []
+    "errors" = ["chaos-monkey", "chaos-errors"]
+    "latency" = ["chaos-monkey", "chaos-latency"]
+  }
+  carts_spring_profiles = ["dynamodb"]
+}
+
 module "carts_service" {
   source = "../ecs-app-service"
 
   environment_name          = local.full_environment_prefix
-  service_name              = "carts"
+  service_name              = "cart"
   cluster_id                = aws_ecs_cluster.cluster.id
   ecs_deployment_controller = var.ecs_deployment_controller
   execution_role_arn        = aws_iam_role.ecs_task_execution_role.arn
@@ -18,7 +27,7 @@ module "carts_service" {
   container_definitions = <<DEFINITION
 [
   {
-    "name": "carts",
+    "name": "application",
     "image": "watchn/watchn-cart:${var.image_tag}",
     "memory": 512,
     "essential": true,
@@ -33,7 +42,7 @@ module "carts_service" {
       },
       {
         "name": "SPRING_PROFILES_ACTIVE",
-        "value": "dynamodb"
+        "value": "${join(",", concat(local.carts_spring_profiles, local.carts_chaos_profile_map[var.carts_chaos]))}"
       },
       {
         "name": "JAVA_OPTS",

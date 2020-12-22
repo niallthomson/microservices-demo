@@ -1,16 +1,22 @@
-resource "aws_ecs_task_definition" "checkout" {
-  family                   = "${local.full_environment_prefix}-checkout"
-  network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+module "checkout_service" {
+  source = "../ecs-app-service"
 
-  cpu = 256
-  memory = 512
+  environment_name          = local.full_environment_prefix
+  service_name              = "checkout"
+  cluster_id                = aws_ecs_cluster.cluster.id
+  ecs_deployment_controller = var.ecs_deployment_controller
+  execution_role_arn        = aws_iam_role.ecs_task_execution_role.arn
+  vpc_id                    = module.vpc.vpc_id
+  subnet_ids                = module.vpc.private_subnets
+  security_group_id         = aws_security_group.nsg_task.id
+  sd_namespace_id           = aws_service_discovery_private_dns_namespace.sd.id
+  cpu                       = 256
+  memory                    = 512
 
-  container_definitions    = <<DEFINITION
+  container_definitions = <<DEFINITION
 [
   {
-    "name": "checkout",
+    "name": "application",
     "image": "watchn/watchn-checkout:${var.image_tag}",
     "memory": 512,
     "essential": true,
@@ -53,41 +59,6 @@ resource "aws_ecs_task_definition" "checkout" {
 DEFINITION
 }
 
-resource "aws_ecs_service" "checkout" {
-  name             = "${local.full_environment_prefix}-checkout"
-  cluster          = aws_ecs_cluster.cluster.id
-  task_definition  = aws_ecs_task_definition.checkout.arn
-  desired_count    = 3
-  platform_version = "1.4.0"
-
-  network_configuration {
-    security_groups = [aws_security_group.nsg_task.id, aws_security_group.checkout.id]
-    subnets         = module.vpc.private_subnets
-  }
-
-  service_registries {
-    registry_arn = aws_service_discovery_service.checkout.arn
-  }
-
-  capacity_provider_strategy {
-    capacity_provider  = "FARGATE"
-    weight = 1
-    base = 3
-  }
-
-  capacity_provider_strategy {
-    capacity_provider  = "FARGATE_SPOT"
-    weight = 4
-  }
-}
-
-resource "aws_security_group" "checkout" {
-  name_prefix = "${local.full_environment_prefix}-checkout"
-  vpc_id      = module.vpc.vpc_id
-
-  description = "Marker SG for checkout service"
-}
-
 module "checkout_redis" {
   source = "../aws-elasticache-redis"
 
@@ -104,25 +75,6 @@ resource "aws_security_group_rule" "checkout_redis_ingress" {
   from_port                 = module.checkout_redis.port
   to_port                   = module.checkout_redis.port
   protocol                  = "tcp"
-  source_security_group_id  = aws_security_group.checkout.id
+  source_security_group_id  = module.checkout_service.security_group_id
   security_group_id         = module.checkout_redis.security_group_id
-}
-
-resource "aws_service_discovery_service" "checkout" {
-  name  = "checkout"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.sd.id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
-
-    routing_policy = "MULTIVALUE"
-  }
-
-  health_check_custom_config {
-    failure_threshold = 1
-  }
 }

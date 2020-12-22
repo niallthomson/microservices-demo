@@ -106,7 +106,7 @@ resource "aws_security_group" "nsg_task" {
 }
 
 resource "aws_security_group_rule" "nsg_task_ingress_rule" {
-  description              = "Only allow connections from SG ${local.full_environment_prefix}-task on port 8080"
+  description              = "Only allow connections from SG ${local.full_environment_prefix} tasks on port 8080"
   type                     = "ingress"
   from_port                = 8080
   to_port                  = 8080

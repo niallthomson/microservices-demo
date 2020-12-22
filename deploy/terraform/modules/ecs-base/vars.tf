@@ -29,6 +29,10 @@ variable "dns_suffix" {
 
 }
 
+variable "ecs_deployment_controller" {
+  default = "ECS"
+}
+
 variable "aurora_engine_version" {
   default = "5.7.mysql_aurora.2.08.1"
 }
@@ -59,4 +63,14 @@ variable "orders_rds_global_cluster_id" {
 
 variable "orders_db_password" {
   default = ""
+}
+
+variable "carts_chaos" {
+  type = string
+  default = ""
+
+  validation {
+    condition     = contains(["", "errors", "latency"], var.carts_chaos)
+    error_message = "The carts_chaos parameter must be either '', 'errors', or 'latency'."
+  }
 }
