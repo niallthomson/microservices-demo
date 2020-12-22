@@ -1,0 +1,106 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  EnvironmentName:
+    Description: An environment name that is prefixed to resource names
+    Type: String
+
+Resources:
+  Vpc:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ../../common/vpc.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+
+  MQ:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ../../common/mq.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcId: !GetAtt Vpc.Outputs.VPC
+        SubnetIds: !GetAtt Vpc.Outputs.PrivateSubnets
+
+  IAM:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: iam.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+
+  UiService:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ui.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcId: !GetAtt Vpc.Outputs.VPC
+        PrivateSubnetIds: !GetAtt Vpc.Outputs.PrivateSubnets
+        PublicSubnetIds: !GetAtt Vpc.Outputs.PublicSubnets
+        CartsEndpoint: !GetAtt CartsService.Outputs.Endpoint
+        CatalogEndpoint: !GetAtt CatalogService.Outputs.Endpoint
+        OrdersEndpoint: !GetAtt OrdersService.Outputs.Endpoint
+        CheckoutEndpoint: !GetAtt CheckoutService.Outputs.Endpoint
+        AssetsEndpoint: !GetAtt AssetsService.Outputs.Endpoint
+
+  CatalogService:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: catalog.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcId: !GetAtt Vpc.Outputs.VPC
+        PrivateSubnetIds: !GetAtt Vpc.Outputs.PrivateSubnets
+        DatabaseSubnetIds: !GetAtt Vpc.Outputs.DatabaseSubnets
+        HostedZone: !GetAtt Vpc.Outputs.HostedZone
+
+  OrdersService:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: orders.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcId: !GetAtt Vpc.Outputs.VPC
+        PrivateSubnetIds: !GetAtt Vpc.Outputs.PrivateSubnets
+        DatabaseSubnetIds: !GetAtt Vpc.Outputs.DatabaseSubnets
+        HostedZone: !GetAtt Vpc.Outputs.HostedZone
+        ActiveMQBrokerUrl: !GetAtt MQ.Outputs.WireEndpoint
+        ActiveMQSecret: !GetAtt MQ.Outputs.Secret
+
+  CartsService:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: carts.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcId: !GetAtt Vpc.Outputs.VPC
+        PrivateSubnetIds: !GetAtt Vpc.Outputs.PrivateSubnets
+        HostedZone: !GetAtt Vpc.Outputs.HostedZone
+
+  CheckoutService:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: checkout.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcId: !GetAtt Vpc.Outputs.VPC
+        PrivateSubnetIds: !GetAtt Vpc.Outputs.PrivateSubnets
+        DatabaseSubnetIds: !GetAtt Vpc.Outputs.DatabaseSubnets
+        HostedZone: !GetAtt Vpc.Outputs.HostedZone
+        OrdersEndpoint: !GetAtt OrdersService.Outputs.Endpoint
+  
+  AssetsService:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: assets.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcId: !GetAtt Vpc.Outputs.VPC
+        PrivateSubnetIds: !GetAtt Vpc.Outputs.PrivateSubnets
+        HostedZone: !GetAtt Vpc.Outputs.HostedZone
+
+Outputs:
+  Endpoint:
+    Description: Store endpoint
+    Value: !GetAtt UiService.Outputs.Endpoint

@@ -1,0 +1,170 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Watchn Catalog service Elastic Beanstalk application
+
+Parameters:
+  EnvironmentName:
+    Description: An environment name that is prefixed to resource names
+    Type: String
+
+  VpcId:
+    Description: VPC ID
+    Type: 'AWS::EC2::VPC::Id'
+
+  PrivateSubnetIds:
+    Description: Private Subnet IDs
+    Type: String
+
+  DatabaseSubnetIds:
+    Description: Database Subnet IDs
+    Type: String
+
+  HostedZone:
+    Description: Private hosted zone for DNS
+    Type: String
+
+Resources:
+  Application:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      ApplicationName: !Sub '${EnvironmentName}-catalog'
+      Description: Watchn Catalog service
+
+  Version:
+    Type: AWS::ElasticBeanstalk::ApplicationVersion
+    Properties:
+      ApplicationName: !Ref Application
+      SourceBundle: ../packages/catalog.zip
+
+  Environment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties:
+      ApplicationName: !Ref Application
+      EnvironmentName: watchn-catalog
+      OptionSettings:
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AWS_REGION
+          Value: !Ref AWS::Region
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_ENDPOINT
+          Value: !Sub '${DB.Endpoint.Address}:${DB.Endpoint.Port}' 
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_USER
+          Value: !Sub '{{resolve:secretsmanager:${DBPassword}::username}}'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_PASSWORD
+          Value: !Sub '{{resolve:secretsmanager:${DBPassword}::password}}'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_READ_ENDPOINT
+          Value: !Sub '${DB.Endpoint.Address}:${DB.Endpoint.Port}' 
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_NAME
+          Value: catalog
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: IamInstanceProfile
+          Value: !Ref InstanceProfile
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: SecurityGroups
+          Value: !Ref InstanceSecurityGroup
+        - Namespace: aws:ec2:vpc
+          OptionName: VPCId
+          Value: !Ref VpcId
+        - Namespace: aws:ec2:vpc
+          OptionName: Subnets
+          Value: !Ref PrivateSubnetIds
+        - Namespace: aws:ec2:vpc
+          OptionName: ELBSubnets
+          Value: !Ref PrivateSubnetIds
+        - Namespace: aws:ec2:vpc
+          OptionName: ELBScheme
+          Value: internal
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: LoadBalancerType
+          Value: application
+      PlatformArn: !Sub arn:aws:elasticbeanstalk:${AWS::Region}::platform/Go 1 running on 64bit Amazon Linux 2/3.1.2
+      VersionLabel: !Ref Version
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - !Ref Role
+
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier
+      Path: /
+
+  DNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId : !Ref HostedZone
+      Name: catalog.watchn.local
+      ResourceRecords:
+      - !GetAtt Environment.EndpointURL
+      TTL: '30'
+      Type: CNAME
+
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${EnvironmentName}-catalog-sg'
+      GroupDescription: Marker security group for Catalog service
+      VpcId: !Ref VpcId
+
+  DBPassword:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: 'Watchn Catalog DB password'
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "admin"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 16
+        ExcludePunctuation: true
+
+  DB:
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      DBInstanceIdentifier: !Sub '${EnvironmentName}-catalog'
+      DBName: catalog
+      DBInstanceClass: db.m5.large
+      AllocatedStorage: '20'
+      Engine: MySQL
+      EngineVersion: 8.0.16
+      MasterUsername: !Sub '{{resolve:secretsmanager:${DBPassword}::username}}'
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${DBPassword}::password}}'
+      PubliclyAccessible: false
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      DBSecurityGroups:
+      - Ref: DBSecurityGroup
+
+  DBSubnetGroup: 
+    Type: AWS::RDS::DBSubnetGroup
+    Properties: 
+      DBSubnetGroupDescription: Catalog RDS subnet group
+      SubnetIds: !Split [',', !Ref DatabaseSubnetIds]
+
+  DBSecurityGroup:
+    Type: AWS::RDS::DBSecurityGroup
+    Properties:
+      GroupDescription: Ingress for CIDRIP
+      EC2VpcId: !Ref VpcId
+      DBSecurityGroupIngress:
+        EC2SecurityGroupId: !Ref InstanceSecurityGroup
+
+Outputs:
+  Endpoint:
+    Description: Service endpoint
+    Value: !Sub 'http://${DNSRecord}'

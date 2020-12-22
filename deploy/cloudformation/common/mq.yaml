@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Watchn ActiveMQ broker
+
+Parameters:
+  EnvironmentName:
+    Description: An environment name that is prefixed to resource names
+    Type: String
+
+  VpcId:
+    Description: VPC ID
+    Type: String
+
+  SubnetIds:
+    Description: Private Subnet IDs
+    Type: String
+
+Resources:
+  MQPassword:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: 'Watchn MQ password'
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "user"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 16
+        ExcludePunctuation: true
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${EnvironmentName}-mq-sg'
+      GroupDescription: Security group for Watchn MQ
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 0
+        ToPort: 65535
+        CidrIp: 0.0.0.0/0
+
+  Broker:
+    Type: AWS::AmazonMQ::Broker
+    Properties: 
+      AutoMinorVersionUpgrade: 'false'
+      BrokerName: !Sub '${EnvironmentName}-mq'
+      DeploymentMode: SINGLE_INSTANCE
+      EngineType: ActiveMQ
+      EngineVersion: '5.15.0'
+      HostInstanceType: mq.t2.micro
+      PubliclyAccessible: "false"
+      SecurityGroups:
+        - !Ref SecurityGroup
+      Users: 
+        - Password: !Sub '{{resolve:secretsmanager:${MQPassword}::password}}'          
+          Username: !Sub '{{resolve:secretsmanager:${MQPassword}::username}}'
+      SubnetIds: 
+        - !Select [ 0, !Split [',', !Ref SubnetIds] ]
+
+Outputs:
+  WireEndpoint:
+    Description: Wire endpoint
+    Value: !Sub
+      - ${Endpoint}
+      - { Endpoint: !Select [ 0, !GetAtt Broker.OpenWireEndpoints ] }
+
+  StompEndpoint:
+    Description: Stomp endpoint
+    Value: !Sub
+      - ${Endpoint}
+      - { Endpoint: !Select [ 0, !GetAtt Broker.StompEndpoints ] }
+
+  Secret:
+    Description: Username for MQ
+    Value: !Ref MQPassword

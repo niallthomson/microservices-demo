@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Watchn IAM common resources
+
+Parameters:
+  EnvironmentName:
+    Description: An environment name that is prefixed to resource names
+    Type: String
+
+Resources:
+  ServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - elasticbeanstalk.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                sts:ExternalId: "elasticbeanstalk"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService
+        - arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth
+      Path: /
+
+Outputs:
+  ElasticBeanstalkServiceRole:
+    Description: Elastic Beanstalk Service Role
+    Value: !Ref ServiceRole

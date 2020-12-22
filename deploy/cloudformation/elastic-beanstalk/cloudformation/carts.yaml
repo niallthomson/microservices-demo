@@ -1,0 +1,117 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Watchn Carts service Elastic Beanstalk application
+
+Parameters:
+  EnvironmentName:
+    Description: An environment name that is prefixed to resource names
+    Type: String
+
+  VpcId:
+    Description: VPC ID
+    Type: 'AWS::EC2::VPC::Id'
+
+  PrivateSubnetIds:
+    Description: Private Subnet IDs
+    Type: String
+
+  HostedZone:
+    Description: Private hosted zone for DNS
+    Type: String
+
+Resources:
+  Application:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      ApplicationName: !Sub '${EnvironmentName}-carts'
+      Description: Watchn Carts service
+
+  Version:
+    Type: AWS::ElasticBeanstalk::ApplicationVersion
+    Properties:
+      ApplicationName: !Ref Application
+      SourceBundle: ../packages/cart.zip
+
+  Environment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties:
+      ApplicationName: !Ref Application
+      EnvironmentName: watchn-carts
+      OptionSettings:
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AWS_REGION
+          Value: !Ref AWS::Region
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: CARTS_DYNAMODB_TABLENAME
+          Value: !Sub '${EnvironmentName}-carts'
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: IamInstanceProfile
+          Value: !Ref InstanceProfile
+        - Namespace: aws:ec2:vpc
+          OptionName: VPCId
+          Value: !Ref VpcId
+        - Namespace: aws:ec2:vpc
+          OptionName: Subnets
+          Value: !Ref PrivateSubnetIds
+        - Namespace: aws:ec2:vpc
+          OptionName: ELBSubnets
+          Value: !Ref PrivateSubnetIds
+        - Namespace: aws:ec2:vpc
+          OptionName: ELBScheme
+          Value: internal
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: LoadBalancerType
+          Value: application
+        - Namespace: aws:elasticbeanstalk:customoption
+          OptionName: CartsTableName
+          Value: !Sub '${EnvironmentName}-carts'
+      PlatformArn: !Sub arn:aws:elasticbeanstalk:${AWS::Region}::platform/Corretto 11 running on 64bit Amazon Linux 2/3.1.2
+      VersionLabel: !Ref Version
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - !Ref Role
+
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier
+      Path: /
+      Policies:
+        - PolicyName: dynamodb
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 'dynamodb:*'
+                Resource:
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-carts'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-carts/index/*'
+
+  DNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId : !Ref HostedZone
+      Name: carts.watchn.local
+      ResourceRecords:
+      - !GetAtt Environment.EndpointURL
+      TTL: '30'
+      Type: CNAME
+
+Outputs:
+  Endpoint:
+    Description: Service endpoint
+    Value: !Sub 'http://${DNSRecord}'

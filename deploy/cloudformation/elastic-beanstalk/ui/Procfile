@@ -1,0 +1,1 @@
+web: java -jar target/ui-0.0.1-SNAPSHOT.jar
