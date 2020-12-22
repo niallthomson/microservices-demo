@@ -19,7 +19,7 @@ variable "tags" {
 }
 
 variable "aurora_engine_version" {
-  default = "5.7.mysql_aurora.2.08.1"
+  default = "5.7.mysql_aurora.2.08.2"
 }
 
 variable "aurora_source_region" {
