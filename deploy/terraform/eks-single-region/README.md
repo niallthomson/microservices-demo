@@ -23,7 +23,7 @@ module "example" {
 
 ## Architecture
 
-![Architecture](architecture.png)
+![Architecture](docs/architecture.png)
 
 ## Variables
 
