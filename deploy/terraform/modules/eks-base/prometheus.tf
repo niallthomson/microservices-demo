@@ -15,9 +15,11 @@ data "template_file" "prometheus_values" {
 }
 
 resource "helm_release" "prometheus" {
-  name      = "prometheus"
-  chart     = "stable/prometheus"
-  namespace = kubernetes_namespace.prometheus.metadata[0].name
+  name       = "prometheus"
+  chart      = "prometheus"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  version    = "12.0.1"
+  namespace  = kubernetes_namespace.prometheus.metadata[0].name
 
   values = [data.template_file.prometheus_values.rendered]
 }
@@ -29,9 +31,11 @@ data "template_file" "prometheus_adapter_values" {
 resource "helm_release" "prometheus_adapter" {
   depends_on = [helm_release.prometheus]
 
-  name      = "prometheus-adapter"
-  chart     = "stable/prometheus-adapter"
-  namespace = kubernetes_namespace.prometheus.metadata[0].name
+  name       = "prometheus-adapter"
+  chart      = "prometheus-adapter"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  version    = "2.7.1"
+  namespace  = kubernetes_namespace.prometheus.metadata[0].name
 
   values = [data.template_file.prometheus_adapter_values.rendered]
 }
