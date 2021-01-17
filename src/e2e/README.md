@@ -12,10 +12,16 @@ The following components must be installed:
 
 ## Running
 
-A convenience script has been provided at `run.sh`, but this really just runs:
+First, update and start WebDriver by running:
 
 ```
 npm install
 
+npm run update:start-webdriver
+```
+
+Then, in a separate terminal run the tests:
+
+```
 npm test
 ```
