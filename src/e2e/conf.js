@@ -13,7 +13,7 @@ exports.config = {
       args: ['--window-size=1024,768'] // Without this the responsive layout breaks navigation assumptions
     }
   },
-  directConnect: true,
+  //directConnect: true,
   onPrepare: function () {
     //console logs configurations
     jasmine.getEnv().addReporter(new SpecReporter({
