@@ -22,6 +22,7 @@ services:
     mem_limit: 256m
     cap_drop:
       - ALL
+
   catalog:
     hostname: catalog
     build:
@@ -31,6 +32,7 @@ services:
     mem_limit: 128m
     cap_drop:
       - ALL
+
   catalog-db:
     image: mysql:5.7
     hostname: catalog-db
@@ -42,6 +44,7 @@ services:
       - MYSQL_USER=catalog_user
       - MYSQL_PASSWORD=default_password
     mem_limit: 128m
+
   carts:
     hostname: carts
     build:
@@ -61,11 +64,13 @@ services:
     mem_limit: 256m
     cap_drop:
       - ALL
+
   carts-db:
     image: amazon/dynamodb-local:1.13.1
     hostname: carts-db
     restart: always
     mem_limit: 128m
+    
   orders:
     hostname: orders
     build:
@@ -88,6 +93,7 @@ services:
     mem_limit: 256m
     cap_drop:
       - ALL
+
   orders-db:
     image: mysql:5.7
     hostname: orders-db
@@ -99,6 +105,7 @@ services:
       - MYSQL_USER=orders_user
       - MYSQL_PASSWORD=default_password
     mem_limit: 128m
+
   checkout:
     build:
       context: ../../src/checkout
@@ -115,11 +122,13 @@ services:
     mem_limit: 256m
     cap_drop:
       - ALL
+
   checkout-redis:
     image: redis:6.0-alpine
     hostname: checkout-redis
     restart: always
     mem_limit: 128m
+
   assets:
     hostname: assets
     build:
@@ -129,6 +138,7 @@ services:
     mem_limit: 64m
     cap_drop:
       - ALL
+
   activemq:
     build:
       context: .
