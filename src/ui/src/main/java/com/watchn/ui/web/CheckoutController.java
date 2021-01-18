@@ -98,8 +98,6 @@ public class CheckoutController extends BaseController {
                                        Model model) {
         String sessionId = getSessionID(request);
 
-        log.error("{}", checkoutDeliveryMethodRequest);
-
         if (result.hasErrors()) {
             return this.checkoutService.get(sessionId).map(c -> showDelivery(c, checkoutDeliveryMethodRequest, request, model));
         }

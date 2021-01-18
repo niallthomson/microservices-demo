@@ -29,9 +29,7 @@ public class MockCartsService implements CartsService {
         Cart cart;
 
         if (!carts.containsKey(sessionId)) {
-            cart = new Cart(new ArrayList<>());
-
-            this.carts.put(sessionId, cart);
+            cart = this.create(sessionId);
         } else {
             cart = carts.get(sessionId);
         }
@@ -39,9 +37,17 @@ public class MockCartsService implements CartsService {
         return cart;
     }
 
+    private Cart create(String sessionId) {
+        Cart cart = new Cart(new ArrayList<>());
+
+        this.carts.put(sessionId, cart);
+
+        return cart;
+    }
+
     @Override
     public Mono<Cart> deleteCart(String sessionId) {
-        return null;
+        return Mono.just(this.create(sessionId));
     }
 
     @Override
