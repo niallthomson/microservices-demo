@@ -1,16 +1,12 @@
-import { Checkout } from '../models/Checkout';
-import { Service } from 'typedi';
-import { ExistingOrder, Order, OrdersApi } from '../clients/orders/api';
-import * as config from 'config';
+import { Checkout } from '../../models/Checkout';
+import { ExistingOrder, Order, OrdersApi } from '../../clients/orders/api';
+import { IOrdersService } from './IOrdersService';
 
-@Service()
-export class OrdersService {
+export class HttpOrdersService implements IOrdersService {
 
   private ordersApi : OrdersApi;
 
-  constructor() {
-    let endpoint = config.get('endpoints.orders');
-
+  constructor(endpoint: string) {
     this.ordersApi = new OrdersApi(endpoint+"");
   }
 

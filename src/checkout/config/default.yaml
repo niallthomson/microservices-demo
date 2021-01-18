@@ -4,7 +4,7 @@ redis:
   url: ''
 
 endpoints:
-  orders: http://localhost:8083
+  orders: ''
 
 # none/debug/info
 loglevel: info

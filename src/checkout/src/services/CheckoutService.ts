@@ -5,13 +5,14 @@ import { CheckoutRequest } from '../models/CheckoutRequest';
 import { serialize , deserialize} from 'class-transformer';
 import { Repository } from '../repositories/Repository';
 import { ShippingService } from './ShippingService';
-import { OrdersService } from './OrdersService';
 import { CheckoutSubmitted } from '../models/CheckoutSubmitted';
+import { IOrdersService } from './orders/IOrdersService';
+import { OrdersService } from './orders/OrdersService';
 
 @Service()
 export class CheckoutService {
 
-  constructor(@Repository() private redis : IRepository, private shippingService : ShippingService, private ordersService : OrdersService) {
+  constructor(@Repository() private redis : IRepository, private shippingService : ShippingService, @OrdersService() private ordersService : IOrdersService) {
   }
 
   async get(customerId: string) : Promise<Checkout> {

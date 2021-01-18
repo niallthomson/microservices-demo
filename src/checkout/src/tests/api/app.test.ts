@@ -9,15 +9,19 @@ const valid = {
   items: [
       {
           id: 'a1',
+          name: 'A1',
           quantity: 1,
           unitCost: 123,
-          totalCost: 123
+          totalCost: 123,
+          imageUrl: "localhost:8080/image.jpg"
       },
       {
-          id: 'b2',
-          quantity: 3,
-          unitCost: 123,
-          totalCost: 369
+        id: 'b1',
+        name: 'B1',
+        quantity: 1,
+        unitCost: 123,
+        totalCost: 123,
+        imageUrl: "localhost:8080/image.jpg"
       }
   ],
   shippingAddress: {
@@ -49,7 +53,7 @@ describe('checkout does not exist', () => {
   });
 });
 
-describe('submit valid checkout', () => {
+describe('update valid checkout', () => {
   it('should be accepted', () => {
     return request(app.app).post('/checkout/123/update')
       .send(valid)
@@ -74,7 +78,7 @@ describe('checkout does exist', () => {
   });
 });
 
-describe('submit invalid checkout', () => {
+describe('update invalid checkout', () => {
   it('should be rejected', () => {
     return request(app.app).post('/checkout/456/update')
       .send({junk: true})
@@ -84,6 +88,20 @@ describe('submit invalid checkout', () => {
         expect(res.status).to.equal(400); 
         expect(res.get('Content-Type')).to.contain('json');
         expect(res.body.message).to.contain('You have an error');
+      });
+  });
+});
+
+describe('submit valid checkout', () => {
+  it('should be accepted', () => {
+    return request(app.app).post('/checkout/123/submit')
+      .send()
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .then((res) => {
+        expect(res.status).to.equal(200); 
+        expect(res.get('Content-Type')).to.contain('json');
+        expect(res.body.orderId).to.equal("abc123");
       });
   });
 });
