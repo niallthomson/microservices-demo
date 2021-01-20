@@ -22,6 +22,6 @@ jobs:
       uses: mamezou-tech/setup-helmfile@v0.7.0
     - name: Deploy
       run: |
-        cd deploy/kubernetes && IMAGE_TAG=${GITHUB_SHA} helmfile apply
+        cd deploy/kubernetes && IMAGE_TAG=${GITHUB_SHA} helmfile apply --suppress-diff
         kubectl get pod -A
     
