@@ -18,6 +18,10 @@ Parameters:
     Description: Private hosted zone for DNS
     Type: String
 
+  ServiceRoleArn:
+    Description: Elastic Beanstalk Service Role ARN
+    Type: String
+
 Resources:
   Application:
     Type: AWS::ElasticBeanstalk::Application
@@ -61,6 +65,9 @@ Resources:
         - Namespace: aws:elasticbeanstalk:environment
           OptionName: LoadBalancerType
           Value: application
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: ServiceRole
+          Value: !Ref ServiceRoleArn
         - Namespace: aws:elasticbeanstalk:customoption
           OptionName: CartsTableName
           Value: !Sub '${EnvironmentName}-carts'

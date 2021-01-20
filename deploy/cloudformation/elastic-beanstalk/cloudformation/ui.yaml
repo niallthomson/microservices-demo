@@ -18,6 +18,10 @@ Parameters:
     Description: Public Subnet IDs
     Type: String
 
+  ServiceRoleArn:
+    Description: Elastic Beanstalk Service Role ARN
+    Type: String
+
   CartsEndpoint:
     Description: Carts service endpoint
     Type: String
@@ -77,7 +81,7 @@ Resources:
           Value: !Ref AssetsEndpoint
         - Namespace: aws:elasticbeanstalk:environment
           OptionName: ServiceRole
-          Value: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-elasticbeanstalk-service-role
+          Value: !Ref ServiceRoleArn
         - Namespace: aws:autoscaling:launchconfiguration
           OptionName: IamInstanceProfile
           Value: !Ref InstanceProfile

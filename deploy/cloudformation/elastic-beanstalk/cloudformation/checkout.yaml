@@ -26,6 +26,10 @@ Parameters:
     Description: Orders service endpoint
     Type: String
 
+  ServiceRoleArn:
+    Description: Elastic Beanstalk Service Role ARN
+    Type: String
+
 Resources:
   Application:
     Type: AWS::ElasticBeanstalk::Application
@@ -75,6 +79,9 @@ Resources:
         - Namespace: aws:elasticbeanstalk:environment
           OptionName: LoadBalancerType
           Value: application
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: ServiceRole
+          Value: !Ref ServiceRoleArn
       PlatformArn: !Sub 'arn:aws:elasticbeanstalk:${AWS::Region}::platform/Node.js 12 running on 64bit Amazon Linux 2/5.2.2'
       VersionLabel: !Ref Version
 

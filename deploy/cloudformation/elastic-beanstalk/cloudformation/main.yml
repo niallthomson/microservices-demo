@@ -38,6 +38,7 @@ Resources:
         VpcId: !GetAtt Vpc.Outputs.VPC
         PrivateSubnetIds: !GetAtt Vpc.Outputs.PrivateSubnets
         PublicSubnetIds: !GetAtt Vpc.Outputs.PublicSubnets
+        ServiceRoleArn: !GetAtt IAM.Outputs.ElasticBeanstalkServiceRole
         CartsEndpoint: !GetAtt CartsService.Outputs.Endpoint
         CatalogEndpoint: !GetAtt CatalogService.Outputs.Endpoint
         OrdersEndpoint: !GetAtt OrdersService.Outputs.Endpoint
@@ -54,6 +55,7 @@ Resources:
         PrivateSubnetIds: !GetAtt Vpc.Outputs.PrivateSubnets
         DatabaseSubnetIds: !GetAtt Vpc.Outputs.DatabaseSubnets
         HostedZone: !GetAtt Vpc.Outputs.HostedZone
+        ServiceRoleArn: !GetAtt IAM.Outputs.ElasticBeanstalkServiceRole
 
   OrdersService:
     Type: AWS::CloudFormation::Stack
@@ -67,6 +69,7 @@ Resources:
         HostedZone: !GetAtt Vpc.Outputs.HostedZone
         ActiveMQBrokerUrl: !GetAtt MQ.Outputs.WireEndpoint
         ActiveMQSecret: !GetAtt MQ.Outputs.Secret
+        ServiceRoleArn: !GetAtt IAM.Outputs.ElasticBeanstalkServiceRole
 
   CartsService:
     Type: AWS::CloudFormation::Stack
@@ -77,6 +80,7 @@ Resources:
         VpcId: !GetAtt Vpc.Outputs.VPC
         PrivateSubnetIds: !GetAtt Vpc.Outputs.PrivateSubnets
         HostedZone: !GetAtt Vpc.Outputs.HostedZone
+        ServiceRoleArn: !GetAtt IAM.Outputs.ElasticBeanstalkServiceRole
 
   CheckoutService:
     Type: AWS::CloudFormation::Stack
@@ -89,6 +93,7 @@ Resources:
         DatabaseSubnetIds: !GetAtt Vpc.Outputs.DatabaseSubnets
         HostedZone: !GetAtt Vpc.Outputs.HostedZone
         OrdersEndpoint: !GetAtt OrdersService.Outputs.Endpoint
+        ServiceRoleArn: !GetAtt IAM.Outputs.ElasticBeanstalkServiceRole
   
   AssetsService:
     Type: AWS::CloudFormation::Stack
@@ -99,6 +104,7 @@ Resources:
         VpcId: !GetAtt Vpc.Outputs.VPC
         PrivateSubnetIds: !GetAtt Vpc.Outputs.PrivateSubnets
         HostedZone: !GetAtt Vpc.Outputs.HostedZone
+        ServiceRoleArn: !GetAtt IAM.Outputs.ElasticBeanstalkServiceRole
 
 Outputs:
   Endpoint:

@@ -110,9 +110,10 @@ function package()
 
   if [ -d "$script_dir/$component" ]; then
     (cd $script_dir/$component && zip -q -r $output .)
+    
   fi
 
-  (cd $component_dir && zip -q -r $output .)
+  $component_dir/package.sh $output
 }
 
 if [ -d "$temp_dir" ]; then
