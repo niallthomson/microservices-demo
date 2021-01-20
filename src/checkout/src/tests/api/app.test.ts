@@ -25,6 +25,8 @@ const valid = {
       }
   ],
   shippingAddress: {
+      'firstName': 'John',
+      'lastName': 'Doe',
       'address1': '999 Main St.',
       'address2': '#123',
       'city': 'Sometown',
@@ -62,6 +64,7 @@ describe('update valid checkout', () => {
       .then((res) => {
         expect(res.status).to.equal(200); 
         expect(res.get('Content-Type')).to.contain('json');
+        expect(res.body.request.subtotal).to.equal(valid.subtotal);
         expect(res.body.total).to.equal(valid.subtotal + res.body.tax);
       });
   });
