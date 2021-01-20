@@ -55,4 +55,4 @@ releases:
   values:
     - components.yaml.gotmpl
     - service:
-        type: LoadBalancer
+        type: {{ env "UI_SERVICE_TYPE" | default "LoadBalancer" }}
