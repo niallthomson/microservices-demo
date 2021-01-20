@@ -54,3 +54,8 @@ metrics: {}
 configMap:
   create: true
   name:
+
+persistence:
+  enabled: false
+  accessMode: ReadWriteOnce
+  storageClass: default

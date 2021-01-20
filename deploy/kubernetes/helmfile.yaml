@@ -14,21 +14,21 @@ releases:
   chart: ../../src/catalog/chart
   wait: true
   values:
-  - default.yaml.gotmpl
+  - components.yaml.gotmpl
 
 - name: "carts"
   namespace: "watchn"
   chart: ../../src/cart/chart
   wait: true
   values:
-  - default.yaml.gotmpl
+  - components.yaml.gotmpl
 
 - name: "orders"
   namespace: "watchn"
   chart: ../../src/orders/chart
   wait: true
   values:
-    - default.yaml.gotmpl
+    - components.yaml.gotmpl
     - messaging:
         activemq: 
           brokerUrl: "tcp://activemq-0.activemq:61616"
@@ -38,14 +38,14 @@ releases:
   chart: ../../src/checkout/chart
   wait: true
   values:
-  - default.yaml.gotmpl
+  - components.yaml.gotmpl
 
 - name: "assets"
   namespace: "watchn"
   chart: ../../src/assets/chart
   wait: true
   values:
-  - default.yaml.gotmpl
+  - components.yaml.gotmpl
 
 - name: "ui"
   namespace: "watchn"
@@ -53,6 +53,6 @@ releases:
   wait: true
   timeout: 600
   values:
-    - default.yaml.gotmpl
+    - components.yaml.gotmpl
     - service:
         type: LoadBalancer
