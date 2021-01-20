@@ -1,7 +1,7 @@
 repositories:
 # Stable repo of official helm charts
 - name: "stable"
-  url: "https://kubernetes-charts.storage.googleapis.com"
+  url: "https://charts.helm.sh/stable"
 
 releases:
 - name: "activemq"
@@ -13,17 +13,22 @@ releases:
   namespace: "watchn"
   chart: ../../src/catalog/chart
   wait: true
+  values:
+  - default.yaml.gotmpl
 
 - name: "carts"
   namespace: "watchn"
   chart: ../../src/cart/chart
   wait: true
+  values:
+  - default.yaml.gotmpl
 
 - name: "orders"
   namespace: "watchn"
   chart: ../../src/orders/chart
   wait: true
   values:
+    - default.yaml.gotmpl
     - messaging:
         activemq: 
           brokerUrl: "tcp://activemq-0.activemq:61616"
@@ -32,11 +37,15 @@ releases:
   namespace: "watchn"
   chart: ../../src/checkout/chart
   wait: true
+  values:
+  - default.yaml.gotmpl
 
 - name: "assets"
   namespace: "watchn"
   chart: ../../src/assets/chart
   wait: true
+  values:
+  - default.yaml.gotmpl
 
 - name: "ui"
   namespace: "watchn"
@@ -44,5 +53,6 @@ releases:
   wait: true
   timeout: 600
   values:
+    - default.yaml.gotmpl
     - service:
         type: LoadBalancer
