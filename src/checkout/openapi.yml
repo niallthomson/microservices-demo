@@ -27,6 +27,10 @@ components:
         - imageUrl
     ShippingAddress:
       properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
         address1:
           type: string
         address2:
