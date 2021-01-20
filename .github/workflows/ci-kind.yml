@@ -32,6 +32,13 @@ jobs:
         kind load docker-image watchn/watchn-ui:${GITHUB_SHA}
 
         cd deploy/kubernetes && IMAGE_TAG=${GITHUB_SHA} helmfile apply --suppress-diff
+
+        sleep 20
+
         kubectl get pod -A
         kubectl get svc -A
+
+        node_port=$(kubectl -n watchn get svc ui -o jsonpath='{.spec.ports[0].nodePort}')
+
+        curl localhost:${node_port}/home
     
