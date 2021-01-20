@@ -24,6 +24,13 @@ jobs:
       env:
         UI_SERVICE_TYPE: NodePort
       run: |
+        kind load docker-image watchn/watchn-assets:${GITHUB_SHA}
+        kind load docker-image watchn/watchn-cart:${GITHUB_SHA}
+        kind load docker-image watchn/watchn-catalog:${GITHUB_SHA}
+        kind load docker-image watchn/watchn-checkout:${GITHUB_SHA}
+        kind load docker-image watchn/watchn-orders:${GITHUB_SHA}
+        kind load docker-image watchn/watchn-ui:${GITHUB_SHA}
+
         cd deploy/kubernetes && IMAGE_TAG=${GITHUB_SHA} helmfile apply --suppress-diff
         kubectl get pod -A
         kubectl get svc -A
