@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -37,8 +36,6 @@ public class OrderService {
 
             item.setId(key);
         }
-
-        log.info("Creating order {}", order.getId());
 
         OrderEntity entity = repository.save(order);
 

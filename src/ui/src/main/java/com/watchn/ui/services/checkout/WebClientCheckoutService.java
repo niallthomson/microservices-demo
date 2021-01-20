@@ -50,9 +50,10 @@ public class WebClientCheckoutService implements CheckoutService {
     }
 
     @Override
-    public Mono<Checkout> shipping(String sessionId, ShippingAddress shippingAddress) {
+    public Mono<Checkout> shipping(String sessionId, String customerEmail, ShippingAddress shippingAddress) {
         return api.checkoutControllerGetCheckout(sessionId).flatMap(c -> {
             CheckoutRequest request = c.getRequest();
+            request.setCustomerEmail(customerEmail);
             request.setShippingAddress(this.mapper.clientShippingAddress(shippingAddress));
 
             return api.checkoutControllerUpdateCheckout(sessionId, request)
@@ -74,6 +75,9 @@ public class WebClientCheckoutService implements CheckoutService {
     @Override
     public Mono<CheckoutSubmittedResponse> submit(String sessionId) {
         return api.checkoutControllerSubmitCheckout(sessionId)
-            .zipWith(this.cartsService.deleteCart(sessionId), (e, f) -> new CheckoutSubmittedResponse(mapper.submitted(e), f));
+            .zipWith(this.cartsService.deleteCart(sessionId), (e, f) -> {
+                log.error("{}", e);
+                return new CheckoutSubmittedResponse(mapper.submitted(e), f);
+            });
     }
 }

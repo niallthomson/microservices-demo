@@ -55,7 +55,7 @@ public class MockCheckoutService implements CheckoutService {
     }
 
     @Override
-    public Mono<Checkout> shipping(String sessionId, ShippingAddress shippingAddress) {
+    public Mono<Checkout> shipping(String sessionId, String customerEmail, ShippingAddress shippingAddress) {
         return get(sessionId);
     }
 

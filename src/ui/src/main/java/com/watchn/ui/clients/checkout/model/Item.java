@@ -34,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   Item.JSON_PROPERTY_TOTAL_COST,
   Item.JSON_PROPERTY_IMAGE_URL
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-31T09:39:25.987708-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2021-01-19T15:03:37.310542-08:00[America/Los_Angeles]")
 public class Item {
   public static final String JSON_PROPERTY_ID = "id";
   private String id;

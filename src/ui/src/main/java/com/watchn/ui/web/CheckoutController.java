@@ -76,7 +76,7 @@ public class CheckoutController extends BaseController {
 
         String sessionId = getSessionID(request);
 
-        return this.checkoutService.shipping(sessionId, address)
+        return this.checkoutService.shipping(sessionId, shippingAddressRequest.getEmail(), address)
             .map(c -> this.showDelivery(c, new CheckoutDeliveryMethodRequest(), request, model));
     }
 

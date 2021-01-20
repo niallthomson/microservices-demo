@@ -27,14 +27,22 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * ShippingAddress
  */
 @JsonPropertyOrder({
+  ShippingAddress.JSON_PROPERTY_FIRST_NAME,
+  ShippingAddress.JSON_PROPERTY_LAST_NAME,
   ShippingAddress.JSON_PROPERTY_ADDRESS1,
   ShippingAddress.JSON_PROPERTY_ADDRESS2,
   ShippingAddress.JSON_PROPERTY_CITY,
   ShippingAddress.JSON_PROPERTY_STATE,
   ShippingAddress.JSON_PROPERTY_ZIP
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-31T09:39:25.987708-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2021-01-19T15:03:37.310542-08:00[America/Los_Angeles]")
 public class ShippingAddress {
+  public static final String JSON_PROPERTY_FIRST_NAME = "firstName";
+  private String firstName;
+
+  public static final String JSON_PROPERTY_LAST_NAME = "lastName";
+  private String lastName;
+
   public static final String JSON_PROPERTY_ADDRESS1 = "address1";
   private String address1;
 
@@ -49,6 +57,56 @@ public class ShippingAddress {
 
   public static final String JSON_PROPERTY_ZIP = "zip";
   private String zip;
+
+
+  public ShippingAddress firstName(String firstName) {
+    
+    this.firstName = firstName;
+    return this;
+  }
+
+   /**
+   * Get firstName
+   * @return firstName
+  **/
+  @javax.annotation.Nullable
+  @ApiModelProperty(value = "")
+  @JsonProperty(JSON_PROPERTY_FIRST_NAME)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public String getFirstName() {
+    return firstName;
+  }
+
+
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
+
+
+  public ShippingAddress lastName(String lastName) {
+    
+    this.lastName = lastName;
+    return this;
+  }
+
+   /**
+   * Get lastName
+   * @return lastName
+  **/
+  @javax.annotation.Nullable
+  @ApiModelProperty(value = "")
+  @JsonProperty(JSON_PROPERTY_LAST_NAME)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public String getLastName() {
+    return lastName;
+  }
+
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
 
   public ShippingAddress address1(String address1) {
@@ -181,7 +239,9 @@ public class ShippingAddress {
       return false;
     }
     ShippingAddress shippingAddress = (ShippingAddress) o;
-    return Objects.equals(this.address1, shippingAddress.address1) &&
+    return Objects.equals(this.firstName, shippingAddress.firstName) &&
+        Objects.equals(this.lastName, shippingAddress.lastName) &&
+        Objects.equals(this.address1, shippingAddress.address1) &&
         Objects.equals(this.address2, shippingAddress.address2) &&
         Objects.equals(this.city, shippingAddress.city) &&
         Objects.equals(this.state, shippingAddress.state) &&
@@ -190,7 +250,7 @@ public class ShippingAddress {
 
   @Override
   public int hashCode() {
-    return Objects.hash(address1, address2, city, state, zip);
+    return Objects.hash(firstName, lastName, address1, address2, city, state, zip);
   }
 
 
@@ -198,6 +258,8 @@ public class ShippingAddress {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ShippingAddress {\n");
+    sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
+    sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");
     sb.append("    address1: ").append(toIndentedString(address1)).append("\n");
     sb.append("    address2: ").append(toIndentedString(address2)).append("\n");
     sb.append("    city: ").append(toIndentedString(city)).append("\n");

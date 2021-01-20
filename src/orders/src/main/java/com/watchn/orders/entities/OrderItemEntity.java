@@ -12,7 +12,7 @@ public class OrderItemEntity {
     @Embeddable
     @Data
     public static class Key implements Serializable {
-        private long orderId;
+        private String orderId;
         private String productId;
     }
 

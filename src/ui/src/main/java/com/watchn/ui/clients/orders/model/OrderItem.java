@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
   OrderItem.JSON_PROPERTY_PRODUCT_ID,
   OrderItem.JSON_PROPERTY_QUANTITY
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2020-10-31T09:39:25.136168-07:00[America/Los_Angeles]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2021-01-19T15:03:36.090791-08:00[America/Los_Angeles]")
 public class OrderItem {
   public static final String JSON_PROPERTY_PRICE = "price";
   private Integer price;
