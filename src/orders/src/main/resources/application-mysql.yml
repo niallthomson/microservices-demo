@@ -1,11 +1,9 @@
 spring:
   jpa:
     generate-ddl: true
+    show-sql: false
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
   datasource:
     writer:
