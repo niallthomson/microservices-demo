@@ -21,9 +21,9 @@ public class OrderEntity {
     private String email;
 
     @OneToMany(
-            mappedBy = "order",
-            orphanRemoval = true,
-            fetch = FetchType.EAGER
+        mappedBy = "order",
+        orphanRemoval = true,
+        fetch = FetchType.EAGER
     )
     private List<OrderItemEntity> items = new ArrayList<>();
 }
