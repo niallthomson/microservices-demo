@@ -18,6 +18,8 @@ jobs:
         java-version: 11
     - name: Run
       env:
+        AWS_ACCESS_KEY_ID: dummy
+        AWS_SECRET_ACCESS_KEY: dummy
         MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
       run: |
         src/cart/scripts/ci.sh
