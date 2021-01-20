@@ -1,0 +1,21 @@
+name: Kind CI
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Build images
+      env:
+        IMAGE_TAG: test
+      run: |
+        scripts/build-all.sh
+    - uses: engineerd/setup-kind@v0.5.0
+    
