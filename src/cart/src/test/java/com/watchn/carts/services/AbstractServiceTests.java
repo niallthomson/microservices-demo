@@ -34,6 +34,18 @@ public abstract class AbstractServiceTests {
     }
 
     @Test
+    public void testRemoveItem() {
+        this.getService().add("234", "1", 1, 150);
+
+        this.getService().deleteItem("234", "1");
+
+        CartEntity cartEntity = this.getService().get("234");
+
+        assertEquals("234", cartEntity.getCustomerId());
+        assertEquals(0, cartEntity.getItems().size());
+    }
+
+    @Test
     public void testDeleteCart() {
         this.getService().get("deleteme");
 
