@@ -15,3 +15,5 @@ if [[ "$status_code" -ne 200 ]] ; then
   echo "Error: HTTP status code not 200 ($status_code)"
   exit 1
 fi
+
+echo "Success: Got $status_code from $url"
