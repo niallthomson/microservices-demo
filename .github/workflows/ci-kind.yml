@@ -17,6 +17,27 @@ jobs:
         REPO: watchn
       run: |
         TAG=${GITHUB_SHA} scripts/build-all.sh
+    - uses: "finnp/create-file-action@master"
+      env:
+        FILE_NAME: "config.yaml"
+        FILE_DATA: |
+          kind: Cluster
+          apiVersion: kind.x-k8s.io/v1alpha4
+          nodes:
+          - role: control-plane
+            kubeadmConfigPatches:
+            - |
+              kind: InitConfiguration
+              nodeRegistration:
+                kubeletExtraArgs:
+                  node-labels: "ingress-ready=true"
+            extraPortMappings:
+            - containerPort: 80
+              hostPort: 80
+              protocol: TCP
+            - containerPort: 443
+              hostPort: 443
+              protocol: TCP
     - uses: engineerd/setup-kind@v0.5.0
     - name: Setup helmfile
       uses: mamezou-tech/setup-helmfile@v0.7.0
@@ -24,6 +45,8 @@ jobs:
       env:
         UI_SERVICE_TYPE: NodePort
       run: |
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
+
         kind load docker-image watchn/watchn-assets:${GITHUB_SHA}
         kind load docker-image watchn/watchn-cart:${GITHUB_SHA}
         kind load docker-image watchn/watchn-catalog:${GITHUB_SHA}
@@ -33,12 +56,8 @@ jobs:
 
         cd deploy/kubernetes && IMAGE_TAG=${GITHUB_SHA} helmfile apply --suppress-diff
 
-        sleep 20
+        sleep 60
 
         kubectl get pod -A
         kubectl get svc -A
-
-        node_port=$(kubectl -n watchn get svc ui -o jsonpath='{.spec.ports[0].nodePort}')
-
-        curl localhost:${node_port}/home
     
