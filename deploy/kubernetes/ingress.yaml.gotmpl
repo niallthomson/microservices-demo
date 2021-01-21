@@ -1,0 +1,8 @@
+{{if env "INGRESS" }}
+ingress:
+  enabled: ${ingress_enabled}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - localhost
+{{end}}

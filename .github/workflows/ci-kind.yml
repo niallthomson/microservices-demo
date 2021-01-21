@@ -1,7 +1,7 @@
 name: Kind CI
 
 on:
-  push:
+  pull_request:
     branches:
     - master
 
@@ -17,11 +17,41 @@ jobs:
         REPO: watchn
       run: |
         TAG=${GITHUB_SHA} scripts/build-all.sh
+    - uses: "finnp/create-file-action@master"
+      env:
+        FILE_NAME: "config.yaml"
+        FILE_BASE64: a2luZDogQ2x1c3RlcgphcGlWZXJzaW9uOiBraW5kLngtazhzLmlvL3YxYWxwaGE0Cm5vZGVzOgotIHJvbGU6IGNvbnRyb2wtcGxhbmUKICBrdWJlYWRtQ29uZmlnUGF0Y2hlczoKICAtIHwKICAgIGtpbmQ6IEluaXRDb25maWd1cmF0aW9uCiAgICBub2RlUmVnaXN0cmF0aW9uOgogICAgICBrdWJlbGV0RXh0cmFBcmdzOgogICAgICAgIG5vZGUtbGFiZWxzOiAiaW5ncmVzcy1yZWFkeT10cnVlIgogIGV4dHJhUG9ydE1hcHBpbmdzOgogIC0gY29udGFpbmVyUG9ydDogODAKICAgIGhvc3RQb3J0OiA4MAogICAgcHJvdG9jb2w6IFRDUAogIC0gY29udGFpbmVyUG9ydDogNDQzCiAgICBob3N0UG9ydDogNDQzCiAgICBwcm90b2NvbDogVENQ
     - uses: engineerd/setup-kind@v0.5.0
+      with:
+        config: config.yaml
     - name: Setup helmfile
       uses: mamezou-tech/setup-helmfile@v0.7.0
     - name: Deploy
+      env:
+        INGRESS: 1
       run: |
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
+
+        kubectl wait --namespace ingress-nginx \
+          --for=condition=ready pod \
+          --selector=app.kubernetes.io/component=controller \
+          --timeout=90s
+
+        kind load docker-image watchn/watchn-assets:${GITHUB_SHA}
+        kind load docker-image watchn/watchn-cart:${GITHUB_SHA}
+        kind load docker-image watchn/watchn-catalog:${GITHUB_SHA}
+        kind load docker-image watchn/watchn-checkout:${GITHUB_SHA}
+        kind load docker-image watchn/watchn-orders:${GITHUB_SHA}
+        kind load docker-image watchn/watchn-ui:${GITHUB_SHA}
+
         cd deploy/kubernetes && IMAGE_TAG=${GITHUB_SHA} helmfile apply --suppress-diff
-        kubectl get pod -A
+
+        sleep 60
+
+        status_code=$(curl -o /dev/null -s -w "%{http_code}\n" http://localhost/home)
+
+        if [[ "$status_code" -ne 200 ]] ; then
+          echo "Error: HTTP status code not 200 ($status_code)"
+          exit 1
+        fi
     
