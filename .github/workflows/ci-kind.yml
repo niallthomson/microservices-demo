@@ -39,6 +39,8 @@ jobs:
               hostPort: 443
               protocol: TCP
     - uses: engineerd/setup-kind@v0.5.0
+      with:
+        config: config.yaml
     - name: Setup helmfile
       uses: mamezou-tech/setup-helmfile@v0.7.0
     - name: Deploy
@@ -46,6 +48,11 @@ jobs:
         UI_SERVICE_TYPE: NodePort
       run: |
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
+
+        kubectl wait --namespace ingress-nginx \
+          --for=condition=ready pod \
+          --selector=app.kubernetes.io/component=controller \
+          --timeout=90s
 
         kind load docker-image watchn/watchn-assets:${GITHUB_SHA}
         kind load docker-image watchn/watchn-cart:${GITHUB_SHA}
