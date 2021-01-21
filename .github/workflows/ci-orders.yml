@@ -28,4 +28,7 @@ jobs:
         MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
       run: |
         src/orders/scripts/ci.sh
+    - name: Docker Compose
+      run: |
+        (cd src/orders && docker-compose up -d)
     

@@ -26,4 +26,7 @@ jobs:
     - name: Run
       run: |
         src/checkout/scripts/ci.sh
+    - name: Docker Compose
+      run: |
+        (cd src/checkout && docker-compose up -d)
     
