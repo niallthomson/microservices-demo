@@ -4,5 +4,9 @@ image:
 {{end}}
 {{if env "INGRESS" }}
 ingress:
-  enabled: true
+  enabled: ${ingress_enabled}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - localhost
 {{end}}
