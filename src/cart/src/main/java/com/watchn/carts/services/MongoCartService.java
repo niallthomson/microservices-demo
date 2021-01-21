@@ -23,7 +23,7 @@ public class MongoCartService implements CartService {
     }
 
     private MongoCartEntity create(String customerId) {
-        log.error("Creating new cart for {}", customerId);
+        log.debug("Creating new cart for {}", customerId);
 
         return cartRepository.save(new MongoCartEntity(customerId));
     }
@@ -36,7 +36,7 @@ public class MongoCartService implements CartService {
 
     @Override
     public void delete(String customerId) {
-        log.error("Deleting cart for {}", customerId);
+        log.debug("Deleting cart for {}", customerId);
 
         this.cartRepository.deleteById(customerId);
     }
