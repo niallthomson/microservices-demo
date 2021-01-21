@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -e
 
 url=$1
 
@@ -9,11 +9,11 @@ if [ -z "$url" ]; then
   exit 1
 fi
 
-status_code=$(curl -o /dev/null -s -w "%{http_code}\n" $url)
+status_code=$(curl -o /dev/null -s -w "%{http_code}\n" $url || true)
 
 if [[ "$status_code" -ne 200 ]] ; then
-  echo "Error: HTTP status code not 200 ($status_code)"
+  echo "Error: HTTP status code not 200 ($status_code) from $url"
   exit 1
 fi
 
-echo "Success: Got $status_code from $url"
+echo "Success: HTTP status code $status_code from $url"
