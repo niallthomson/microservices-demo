@@ -33,3 +33,5 @@ jobs:
     - name: Docker Compose
       run: |
         (cd src/cart && docker-compose up -d)
+
+        scripts/check-url.sh localhost:8082/actuator/health
