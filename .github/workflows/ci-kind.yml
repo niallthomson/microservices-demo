@@ -48,7 +48,7 @@ jobs:
 
         sleep 60
 
-        curl -o /dev/null -s -w "%{http_code}\n" http://localhost/home
+        status_code=$(curl -o /dev/null -s -w "%{http_code}\n" http://localhost/home)
 
         if [[ "$status_code" -ne 200 ]] ; then
           echo "Error: HTTP status code not 200 ($status_code)"
