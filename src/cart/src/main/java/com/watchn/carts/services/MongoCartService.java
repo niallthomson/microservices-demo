@@ -101,4 +101,9 @@ public class MongoCartService implements CartService {
             }
         );
     }
+
+    @Override
+    public boolean exists(String customerId) {
+        return cartRepository.findById(customerId).isPresent();
+    }
 }

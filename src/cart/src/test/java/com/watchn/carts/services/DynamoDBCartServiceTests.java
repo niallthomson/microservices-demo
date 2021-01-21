@@ -26,15 +26,15 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(
-        classes = {DynamoDBCartServiceTests.TestConfiguration.class, DynamoDBProperties.class},
-        properties = {
-                "carts.dynamodb.createTable=true"
-        })
+    classes = {DynamoDBCartServiceTests.TestConfiguration.class, DynamoDBProperties.class},
+    properties = {
+            "carts.dynamodb.createTable=true"
+    })
 @Testcontainers
 @ContextConfiguration(initializers = DynamoDBCartServiceTests.Initializer.class)
 @ActiveProfiles({"dynamodb"})
 @Tag("docker")
-public class DynamoDBCartServiceTests {
+public class DynamoDBCartServiceTests extends AbstractServiceTests {
 
     private static final int DYNAMODB_PORT = 8000;
 
@@ -49,13 +49,9 @@ public class DynamoDBCartServiceTests {
             new GenericContainer<>("amazon/dynamodb-local:1.13.3")
                     .withExposedPorts(DYNAMODB_PORT);
 
-    @Test
-    public void testAddItem() {
-        ItemEntity itemEntity = this.service.add("123", "1", 1, 150);
-
-        CartEntity cartEntity = this.service.get("123");
-
-        assertEquals(1, cartEntity.getItems().size());
+    @Override
+    public CartService getService() {
+        return this.service;
     }
 
     @EnableAutoConfiguration
@@ -76,7 +72,7 @@ public class DynamoDBCartServiceTests {
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             String endpoint = String.format("carts.dynamodb.endpoint=http://%s:%s",
                     dynamodbContainer.getContainerIpAddress(),
-                    dynamodbContainer.getMappedPort(8000));
+                    dynamodbContainer.getMappedPort(DYNAMODB_PORT));
 
             TestPropertyValues.of(endpoint).applyTo(configurableApplicationContext);
         }

@@ -83,6 +83,11 @@ public class InMemoryCartService implements CartService {
 
         return Optional.empty();
     }
+
+    @Override
+    public boolean exists(String customerId) {
+        return this.carts.containsKey(customerId);
+    }
 }
 
 @Data

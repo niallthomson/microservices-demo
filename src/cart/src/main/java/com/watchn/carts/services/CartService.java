@@ -22,4 +22,6 @@ public interface CartService {
     void deleteItem(String customerId, String itemId);
 
     Optional<? extends ItemEntity> update(String customerId, String itemId, int quantity, int unitPrice);
+
+    boolean exists(String customerId);
 }

@@ -151,6 +151,11 @@ public class DynamoDBCartService implements CartService {
         );
     }
 
+    @Override
+    public boolean exists(String customerId) {
+        return this.items(customerId).size() > 0;
+    }
+
     private String hashKey(String customerId, String itemId) {
         return customerId+":"+itemId;
     }
