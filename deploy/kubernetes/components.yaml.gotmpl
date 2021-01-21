@@ -2,3 +2,7 @@
 image:
   tag: {{ env "IMAGE_TAG" }}
 {{end}}
+{{if env "INGRESS" }}
+ingress:
+  enabled: true
+{{end}}

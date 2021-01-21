@@ -28,7 +28,7 @@ jobs:
       uses: mamezou-tech/setup-helmfile@v0.7.0
     - name: Deploy
       env:
-        UI_SERVICE_TYPE: NodePort
+        INGRESS: 1
       run: |
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
 
