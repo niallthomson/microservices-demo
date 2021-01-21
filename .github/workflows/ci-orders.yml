@@ -1,4 +1,4 @@
-name: UI CI
+name: Orders CI
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
     branches:
     - master
     paths:
-    - 'src/ui/**'
+    - 'src/orders/**'
 
 jobs:
   build:
@@ -25,5 +25,5 @@ jobs:
       env:
         MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
       run: |
-        src/ui/scripts/ci.sh
+        src/orders/scripts/ci.sh
     

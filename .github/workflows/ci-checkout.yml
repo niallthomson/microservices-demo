@@ -1,4 +1,4 @@
-name: UI CI
+name: Checkout CI
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
     branches:
     - master
     paths:
-    - 'src/ui/**'
+    - 'src/checkout/**'
 
 jobs:
   build:
@@ -17,13 +17,11 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v2
-    - name: Set up JDK
-      uses: actions/setup-java@v1
+    - name: Set up Nodejs
+      uses: actions/setup-node@v1
       with:
-        java-version: 11
+        node-version: 12
     - name: Run
-      env:
-        MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
       run: |
-        src/ui/scripts/ci.sh
+        src/checkout/scripts/ci.sh
     
