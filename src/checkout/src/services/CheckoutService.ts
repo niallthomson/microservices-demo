@@ -4,19 +4,20 @@ import { IRepository } from '../repositories/IRepository';
 import { CheckoutRequest } from '../models/CheckoutRequest';
 import { serialize , deserialize} from 'class-transformer';
 import { Repository } from '../repositories/Repository';
-import { ShippingService } from './ShippingService';
+import { IShippingService } from './shipping/IShippingService';
 import { CheckoutSubmitted } from '../models/CheckoutSubmitted';
 import { IOrdersService } from './orders/IOrdersService';
 import { OrdersService } from './orders/OrdersService';
+import { ShippingService } from './shipping/ShippingService';
 
 @Service()
 export class CheckoutService {
 
-  constructor(@Repository() private redis : IRepository, private shippingService : ShippingService, @OrdersService() private ordersService : IOrdersService) {
+  constructor(@Repository() private repository : IRepository, @ShippingService() private shippingService : IShippingService, @OrdersService() private ordersService : IOrdersService) {
   }
 
   async get(customerId: string) : Promise<Checkout> {
-    const json = await this.redis.get(customerId);
+    const json = await this.repository.get(customerId);
 
     if(!json) {
       return null;
@@ -51,7 +52,7 @@ export class CheckoutService {
         total: request.subtotal + tax,
       };
 
-      await this.redis.set(customerId, serialize(checkout));
+      await this.repository.set(customerId, serialize(checkout));
 
       return checkout;
     });

@@ -1,10 +1,10 @@
-import { Checkout } from '../models/Checkout';
 import { Service } from 'typedi';
-import { CheckoutRequest } from '../models/CheckoutRequest';
-import { ShippingRates } from '../models/ShippingRates';
+import { CheckoutRequest } from '../../models/CheckoutRequest';
+import { ShippingRates } from '../../models/ShippingRates';
+import { IShippingService } from './IShippingService';
 
 @Service()
-export class ShippingService {
+export class MockShippingService implements IShippingService {
 
   async getShippingRates(request : CheckoutRequest) : Promise<ShippingRates> {
     return Promise.resolve({
@@ -24,7 +24,7 @@ export class ShippingService {
   }
 
   private makeid(length) {
-    let result           = '';
+    let result             = '';
     const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
     for ( let i = 0; i < length; i++ ) {
