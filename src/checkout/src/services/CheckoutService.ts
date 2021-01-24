@@ -28,6 +28,7 @@ export class CheckoutService {
 
   async update(customerId: string, request : CheckoutRequest) : Promise<Checkout> {
     const tax = request.shippingAddress ? Math.floor(request.subtotal * 0.05) : -1; // Hardcoded 5% tax for now
+    const effectiveTax = tax == -1 ? 0 : tax;
 
     return this.shippingService.getShippingRates(request).then(async (shippingRates) => {
       let shipping = -1;
@@ -49,7 +50,7 @@ export class CheckoutService {
         paymentToken: this.makeid(32),
         shipping,
         tax,
-        total: request.subtotal + tax,
+        total: request.subtotal + effectiveTax,
       };
 
       await this.repository.set(customerId, serialize(checkout));
@@ -74,7 +75,7 @@ export class CheckoutService {
   }
 
   private makeid(length) {
-    let result           = '';
+    let result             = '';
     const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
     for ( let i = 0; i < length; i++ ) {
