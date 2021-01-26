@@ -4,14 +4,6 @@ This component provides a suite of end-to-end tests that exercise a broad set of
 
 The tests are executed using `protractor`, and will run inside a headless Chrome browser.
 
-## Prerequisites
-
-The tests can be run in Docker, removing the need for most pre-requisites. All that is required for this mode is Docker to be installed locally.
-
-Alternatively, to execute the tests directly the following components must be installed:
-- NodeJS >= 12 & NPM
-- Chrome web browser
-
 ## Running
 
 There are two ways to run the tests.
@@ -20,16 +12,20 @@ There are two ways to run the tests.
 
 This is the easiest way to run the tests:
 
-`./run-docker.sh 'http://endpoint:8080'`
+`./scripts/run-docker.sh 'http://endpoint:8080'`
 
-Where the parameter should be adjusted to point at the endpoint of the UI service.
+Where the parameter should be adjusted to point at the endpoint of the UI service. Use the `-h` flag to display complete documentation for the script.
 
 ### NPM
 
-The tests can be run using NPM:
+The tests can be run locally using NPM. To do so the following components must be installed:
+- NodeJS >= 12 & NPM
+- Chrome web browser
 
 ```
 npm install
 
-npm test
+ENDPOINT='http://endpoint:8080' npm test
 ```
+
+Where the `ENDPOINT` environment variable should be adjusted to point at the endpoint of the UI service.
