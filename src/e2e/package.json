@@ -4,10 +4,8 @@
   "description": "TODO",
   "main": "conf.js",
   "scripts": {
-    "update-webdriver": "webdriver-manager update",
-    "start-webdriver": "webdriver-manager start",
-    "update:start-webdriver": "npm-run-all update-webdriver start-webdriver",
-    "test": "protractor conf.js"
+    "test": "protractor conf.js",
+    "postinstall": "./node_modules/protractor/bin/webdriver-manager update --versions.chrome=76.0.3809.100"
   },
   "keywords": [],
   "author": "",
