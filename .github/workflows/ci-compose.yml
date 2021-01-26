@@ -12,9 +12,11 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v2
-    - name: Run
+    - name: Build Images
+      run: |
+        (cd deploy/docker-compose && docker-compose build)
+    - name: Run Tests
       run: |
         (cd deploy/docker-compose && docker-compose up -d)
-
         (cd src/e2e && ./run-docker.sh -n docker-compose_default 'http://ui:8080')
     
