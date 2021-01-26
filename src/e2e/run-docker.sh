@@ -91,4 +91,4 @@ else
   echo "Found, will use existing image"
 fi
 
-docker run -it --network $network -e "ENDPOINT=${args[0]}" watchn/watchn-e2e:$IMAGE_TAG
+docker run -i --network $network -e "ENDPOINT=${args[0]}" watchn/watchn-e2e:$IMAGE_TAG
