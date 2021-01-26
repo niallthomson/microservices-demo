@@ -34,7 +34,7 @@ variable "ecs_deployment_controller" {
 }
 
 variable "aurora_engine_version" {
-  default = "5.7.mysql_aurora.2.08.1"
+  default = "5.7.mysql_aurora.2.09.1"
 }
 
 variable "aurora_source_region" {
@@ -73,4 +73,14 @@ variable "carts_chaos" {
     condition     = contains(["", "errors", "latency"], var.carts_chaos)
     error_message = "The carts_chaos parameter must be either '', 'errors', or 'latency'."
   }
+}
+
+variable "fargate" {
+  default = true
+}
+
+variable "ec2_instance_type" {
+  type        = string
+  description = "EC2 instance type used for ASG capacity providers"
+  default     = "m5a.xlarge"
 }

@@ -12,6 +12,8 @@ module "checkout_service" {
   sd_namespace_id           = aws_service_discovery_private_dns_namespace.sd.id
   cpu                       = 256
   memory                    = 512
+  capacity_provider_ec2     = aws_ecs_capacity_provider.asg_ondemand.name
+  fargate                   = var.fargate
 
   container_definitions = <<DEFINITION
 [

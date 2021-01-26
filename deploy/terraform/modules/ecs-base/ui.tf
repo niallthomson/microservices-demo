@@ -66,11 +66,11 @@ DEFINITION
 }
 
 resource "aws_ecs_service" "ui" {
-  name             = "${local.full_environment_prefix}-ui"
-  cluster          = aws_ecs_cluster.cluster.id
-  task_definition  = aws_ecs_task_definition.ui.arn
-  desired_count    = 3
-  platform_version = "1.4.0"
+  name                              = "${local.full_environment_prefix}-ui"
+  cluster                           = aws_ecs_cluster.cluster.id
+  task_definition                   = aws_ecs_task_definition.ui.arn
+  desired_count                     = 3
+  platform_version                  = "1.4.0"
 
   network_configuration {
     security_groups = [aws_security_group.nsg_task.id, aws_security_group.ui.id]

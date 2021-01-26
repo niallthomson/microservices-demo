@@ -57,3 +57,15 @@ variable "health_check_path" {
   type    = string
   default = "/health"
 }
+
+variable "fargate" {
+  default = true
+}
+
+variable "capacity_provider_ec2" {
+  type = string
+}
+
+variable health_check_grace_period {
+  default = 0
+}

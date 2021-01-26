@@ -19,7 +19,7 @@ variable "tags" {
 }
 
 variable "aurora_engine_version" {
-  default = "5.7.mysql_aurora.2.08.2"
+  default = "5.7.mysql_aurora.2.09.1"
 }
 
 variable "aurora_source_region" {
@@ -43,7 +43,7 @@ variable "db_password" {
 }
 
 variable "instance_type" {
-  default = "db.r5.large" # db.t3.medium
+  default = "db.r6g.large"
 }
 
 variable "read_replica_count" {

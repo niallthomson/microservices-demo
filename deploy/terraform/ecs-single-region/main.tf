@@ -1,7 +1,7 @@
 provider "aws" {
   region = var.region
 
-  version = "~> 3.3.0"
+  version = "~> 3.25.0"
 }
 
 module "availability_zones" {
@@ -20,6 +20,7 @@ module "ecs_base" {
   dns_hosted_zone_id = data.aws_route53_zone.zone.id
   dns_base           = var.hosted_zone_name
   dns_suffix         = "watchn.${var.hosted_zone_name}"
+  fargate            = var.fargate
 }
 
 data "aws_route53_zone" "zone" {

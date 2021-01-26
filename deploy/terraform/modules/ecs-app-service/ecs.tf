@@ -12,11 +12,12 @@ resource "aws_ecs_task_definition" "task" {
 }
 
 resource "aws_ecs_service" "service" {
-  name             = "${var.environment_name}-${var.service_name}"
-  cluster          = var.cluster_id
-  task_definition  = aws_ecs_task_definition.task.arn
-  desired_count    = 3
-  platform_version = "1.4.0"
+  name                              = "${var.environment_name}-${var.service_name}"
+  cluster                           = var.cluster_id
+  task_definition                   = aws_ecs_task_definition.task.arn
+  desired_count                     = 3
+  platform_version                  = var.fargate ? "1.4.0" : null
+  health_check_grace_period_seconds = var.health_check_grace_period
 
   lifecycle {
     ignore_changes = [
@@ -37,6 +38,16 @@ resource "aws_ecs_service" "service" {
     container_port   = 8080
   }
 
+  ordered_placement_strategy {
+    field = "attribute:ecs.availability-zone"
+    type  = "spread"
+  }
+
+  ordered_placement_strategy {
+    field = "memory"
+    type  = "binpack"
+  }
+
   deployment_controller {
     type = var.ecs_deployment_controller
   }
@@ -46,13 +57,13 @@ resource "aws_ecs_service" "service" {
   }
 
   capacity_provider_strategy {
-    capacity_provider  = "FARGATE"
+    capacity_provider  = var.fargate ? "FARGATE" : var.capacity_provider_ec2
     weight = 1
     base = 3
   }
 
-  capacity_provider_strategy {
+  /*capacity_provider_strategy {
     capacity_provider  = "FARGATE_SPOT"
     weight = 4
-  }
+  }*/
 }

@@ -13,6 +13,8 @@ module "assets_service" {
   cpu                       = 256
   memory                    = 512
   health_check_path         = "/health.html"
+  capacity_provider_ec2     = aws_ecs_capacity_provider.asg_ondemand.name
+  fargate                   = var.fargate
 
   container_definitions = <<DEFINITION
 [
