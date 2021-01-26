@@ -1,0 +1,20 @@
+name: Compose CI
+
+on:
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  build:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Run
+      run: |
+        (cd deploy/docker-compose && docker-compose up -d)
+
+        (cd src/e2e && ./run-docker.sh -n docker-compose_default 'http://ui:8080')
+    
