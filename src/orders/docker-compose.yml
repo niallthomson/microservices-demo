@@ -31,6 +31,16 @@ services:
       - SPRING_ACTIVEMQ_BROKERURL=tcp://activemq:61616
     ports:
       - "8083:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      orders-db:
+        condition: service_healthy
+
   orders-db:
     image: mysql:5.7
     hostname: orders-db
@@ -44,6 +54,12 @@ services:
       - MYSQL_PASSWORD=default_password
     ports:
       - "3306:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysql -u root -pmy-secret-pw -e 'SELECT 1 cache'"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
   activemq:
     build:
       context: .
@@ -54,4 +70,14 @@ services:
     ports:
       - "61616:61616"
       - "8161:8161"
+
+  waiter:
+    image: busybox:1.33.0
+    restart: 'no'
+    cap_drop:
+      - all
+    command: echo 'Ready'
+    depends_on:
+      orders:
+        condition: service_healthy
   

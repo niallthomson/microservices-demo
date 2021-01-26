@@ -1,6 +1,6 @@
 import { ExpressConfig } from '../../config/Express';
 import * as request from 'supertest';
-import {expect} from 'chai'
+import { expect } from 'chai'
 
 const app = new ExpressConfig();
 
