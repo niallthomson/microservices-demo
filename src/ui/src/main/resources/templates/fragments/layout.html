@@ -185,6 +185,8 @@
       </div>
     </div>
     <div id="metadata" style="display:none">
+      <b>Environment Type</b>:
+      <span th:text="${metadata.environmentType}">num</span>
       <div th:each="metadataItem : ${metadata.attributes}">
         <b th:text="${metadataItem.key}">keyvalue</b>:
         <span th:text="${metadataItem.value}">num</span>

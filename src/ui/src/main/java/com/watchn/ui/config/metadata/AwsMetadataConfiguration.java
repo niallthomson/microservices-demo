@@ -23,9 +23,9 @@ public class AwsMetadataConfiguration {
 
     @Bean
     public Metadata metadata() {
-        return new Metadata()
-                .add("az", this.availabilityZone)
-                .add("instance-id", this.instanceId)
-                .add("instance-type", this.instanceType);
+        return new Metadata("EC2")
+            .add("az", this.availabilityZone)
+            .add("instance-id", this.instanceId)
+            .add("instance-type", this.instanceType);
     }
 }
