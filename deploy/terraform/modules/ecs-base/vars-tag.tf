@@ -1,3 +1,3 @@
 variable "image_tag" {
-  default = "build.1611636216"
+  default = "build.1611705817"
 }
