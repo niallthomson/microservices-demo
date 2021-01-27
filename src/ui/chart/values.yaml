@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: watchn/watchn-ui
   pullPolicy: IfNotPresent
-  tag: "build.1611636216"
+  tag: "build.1611705817"
 
 imagePullSecrets: []
 nameOverride: ""
