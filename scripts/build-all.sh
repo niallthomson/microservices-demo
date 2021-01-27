@@ -20,3 +20,4 @@ $DIR/../src/cart/scripts/build.sh
 $DIR/../src/orders/scripts/build.sh
 $DIR/../src/checkout/scripts/build.sh
 $DIR/../src/assets/scripts/build.sh
+$DIR/../src/e2e/scripts/build.sh
