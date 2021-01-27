@@ -2,26 +2,30 @@
 
 This component provides a suite of end-to-end tests that exercise a broad set of functionality of the application as a whole. They are designed to be cross-cutting and treat the application as a black box rather than a set of distinct components.
 
-The tests are executed using `protractor`, and will run inside a Chrome browser.
-
-## Prerequisites
-
-The following components must be installed:
-- NodeJS + NPM
-- Chrome web browser
+The tests are executed using `protractor`, and will run inside a headless Chrome browser.
 
 ## Running
 
-First, update and start WebDriver by running:
+There are two ways to run the tests.
+
+### Docker
+
+This is the easiest way to run the tests:
+
+`./scripts/run-docker.sh 'http://endpoint:8080'`
+
+Where the parameter should be adjusted to point at the endpoint of the UI service. Use the `-h` flag to display complete documentation for the script.
+
+### NPM
+
+The tests can be run locally using NPM. To do so the following components must be installed:
+- NodeJS >= 12 & NPM
+- Chrome web browser
 
 ```
 npm install
 
-npm run update:start-webdriver
+ENDPOINT='http://endpoint:8080' npm test
 ```
 
-Then, in a separate terminal run the tests:
-
-```
-npm test
-```
+Where the `ENDPOINT` environment variable should be adjusted to point at the endpoint of the UI service.

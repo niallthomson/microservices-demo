@@ -20,3 +20,5 @@ variable "image_tag" {
   default = "$TAG"
 }
 EOF
+
+echo "IMAGE_TAG='$TAG'" > $DIR/image-tag.sh
