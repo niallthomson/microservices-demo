@@ -1,3 +1,7 @@
+locals {
+  ami_id = var.ami_override_id == "" ? data.aws_ssm_parameter.ecs_ami.value : var.ami_override_id
+}
+
 data "aws_ssm_parameter" "ecs_ami" {
   name = "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
 }
@@ -19,7 +23,7 @@ EOT
 
 resource "aws_launch_template" "node" {
   name_prefix            = local.full_environment_prefix
-  image_id               = data.aws_ssm_parameter.ecs_ami.value
+  image_id               = local.ami_id
   instance_type          = var.ec2_instance_type
   vpc_security_group_ids = [aws_security_group.asg_sg.id]
   user_data              = data.template_cloudinit_config.asg_userdata_ondemand.rendered
@@ -31,15 +35,18 @@ resource "aws_launch_template" "node" {
 }
 
 resource "aws_autoscaling_group" "ecs_ondemand" {
-  name_prefix           = "${local.full_environment_prefix}-ondemand"
+  count = length(module.vpc.private_subnets)
+
+  name_prefix           = "${local.full_environment_prefix}-ondemand-${var.availability_zones[count.index]}"
   max_size              = 40
-  min_size              = var.fargate ? 0 : length(module.vpc.private_subnets)
-  vpc_zone_identifier   = module.vpc.private_subnets
+  min_size              = var.fargate ? 0 : 2
+  vpc_zone_identifier   = [module.vpc.private_subnets[count.index]]
   protect_from_scale_in = false
+  min_elb_capacity      = var.fargate ? 0 : 2
 
   launch_template {
     id       = aws_launch_template.node.id
-    version  = "$Latest"
+    version  = aws_launch_template.node.latest_version
   }
 
   lifecycle {
@@ -49,7 +56,71 @@ resource "aws_autoscaling_group" "ecs_ondemand" {
   instance_refresh {
     strategy = "Rolling"
     preferences {
-      min_healthy_percentage = 50
+      min_healthy_percentage = 90
+    }
+  }
+
+  tag {
+    key                 = "AmazonECSManaged"
+    propagate_at_launch = true
+    value               = ""
+  }
+}
+
+resource "aws_autoscaling_group" "ecs_spot" {
+  name_prefix           = "${local.full_environment_prefix}-spot"
+  max_size              = 40
+  min_size              = 0
+  vpc_zone_identifier   = module.vpc.private_subnets
+  protect_from_scale_in = false
+
+  mixed_instances_policy {
+    instances_distribution {
+      on_demand_base_capacity                  = 0
+      on_demand_percentage_above_base_capacity = 0
+      spot_allocation_strategy                 = "capacity-optimized"
+    }
+
+    launch_template {
+      launch_template_specification {
+        launch_template_id = aws_launch_template.node.id
+      }
+
+      override {
+        instance_type     = "c5a.xlarge"
+        weighted_capacity = "4"
+      }
+
+      override {
+        instance_type     = "c5.xlarge"
+        weighted_capacity = "4"
+      }
+
+      override {
+        instance_type     = "c5d.xlarge"
+        weighted_capacity = "4"
+      }
+
+      override {
+        instance_type     = "c5a.2xlarge"
+        weighted_capacity = "8"
+      }
+
+      override {
+        instance_type     = "c5.2xlarge"
+        weighted_capacity = "8"
+      }
+    }
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      min_healthy_percentage = 90
     }
   }
 
@@ -81,20 +152,4 @@ resource "aws_security_group_rule" "asg_egress" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.asg_sg.id
   type              = "egress"
-}
-
-resource "aws_ecs_capacity_provider" "asg_ondemand" {
-  name = "${local.full_environment_prefix}-ondemand"
-
-  auto_scaling_group_provider {
-    auto_scaling_group_arn         = aws_autoscaling_group.ecs_ondemand.arn
-    managed_termination_protection = "DISABLED"
-
-    managed_scaling {
-      maximum_scaling_step_size = 10
-      minimum_scaling_step_size = 1
-      status                    = "ENABLED"
-      target_capacity           = 100
-    }
-  }
 }

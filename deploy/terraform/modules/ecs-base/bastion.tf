@@ -43,10 +43,10 @@ data "aws_ami" "default" {
 }
 
 locals {
-  ami_id        = data.aws_ami.default.id
-  disk_size     = 64
-  instance_type = "t3.micro"
-  username      = "ubuntu"
+  bastion_ami_id = data.aws_ami.default.id
+  disk_size      = 64
+  instance_type  = "t3.micro"
+  username       = "ubuntu"
 }
 
 resource "aws_eip" "provisioner" {
@@ -55,7 +55,7 @@ resource "aws_eip" "provisioner" {
 }
 
 resource "aws_instance" "provisioner" {
-  ami                    = local.ami_id
+  ami                    = local.bastion_ami_id
   instance_type          = local.instance_type
   key_name               = aws_key_pair.generated_key.key_name
   subnet_id              = module.vpc.public_subnets[0]
@@ -97,7 +97,6 @@ resource "aws_iam_role" "bastion" {
   ]
 }
 POLICY
-  tags               = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "bastion_policy" {

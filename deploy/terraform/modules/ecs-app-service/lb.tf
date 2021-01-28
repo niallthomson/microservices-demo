@@ -19,7 +19,7 @@ resource "aws_alb_target_group" "main" {
 resource "aws_alb" "main" {
   name            = "${var.environment_name}-${var.service_name}"
   subnets         = var.subnet_ids
-  security_groups = [aws_security_group.lb_sg.id]
+  security_groups = [aws_security_group.lb_sg.id, var.lb_security_group_id]
   internal        = true
 }
 

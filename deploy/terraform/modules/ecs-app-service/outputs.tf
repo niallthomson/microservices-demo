@@ -2,10 +2,6 @@ output "service_name" {
   value = aws_ecs_service.service.name
 }
 
-output "security_group_id" {
-  value = aws_security_group.sg.id
-}
-
 output "sd_service_name" {
   value = aws_service_discovery_service.sd.name
 }

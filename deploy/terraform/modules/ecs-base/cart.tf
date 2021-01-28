@@ -18,13 +18,13 @@ module "carts_service" {
   task_role_arn             = aws_iam_role.carts_role.arn
   vpc_id                    = module.vpc.vpc_id
   subnet_ids                = module.vpc.private_subnets
-  security_group_id         = aws_security_group.nsg_task.id
+  security_group_ids        = [ aws_security_group.nsg_task.id ]
+  lb_security_group_id      = aws_security_group.lb_sg.id
   sd_namespace_id           = aws_service_discovery_private_dns_namespace.sd.id
   cpu                       = 512
   memory                    = 1024
   health_check_path         = "/actuator/health"
   health_check_grace_period = 120
-  capacity_provider_ec2     = aws_ecs_capacity_provider.asg_ondemand.name
   fargate                   = var.fargate
 
   container_definitions = <<DEFINITION

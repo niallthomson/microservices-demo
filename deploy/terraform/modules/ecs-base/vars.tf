@@ -82,5 +82,11 @@ variable "fargate" {
 variable "ec2_instance_type" {
   type        = string
   description = "EC2 instance type used for ASG capacity providers"
-  default     = "m5a.xlarge"
+  default     = "c5a.xlarge"
+}
+
+variable "ami_override_id" {
+  type        = string
+  description = "AMI ID to override the SSM parameter lookup, for testing upgrades"
+  default     = ""
 }

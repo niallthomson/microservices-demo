@@ -22,3 +22,7 @@ variable "hosted_zone_name" {
 variable "fargate" {
   default = true
 }
+
+variable "ami_override_id" {
+  default = ""
+}

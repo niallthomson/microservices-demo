@@ -1,7 +1,7 @@
 resource "aws_ecs_task_definition" "task" {
   family                   = "${var.environment_name}-${var.service_name}"
   network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
+  requires_compatibilities = var.fargate ? ["FARGATE"] : []
   execution_role_arn       = var.execution_role_arn
   task_role_arn            = var.task_role_arn
 
@@ -23,12 +23,13 @@ resource "aws_ecs_service" "service" {
     ignore_changes = [
       task_definition,
       load_balancer,
-      platform_version
+      platform_version,
+      capacity_provider_strategy
     ]
   }
 
   network_configuration {
-    security_groups = [var.security_group_id, aws_security_group.sg.id]
+    security_groups = var.security_group_ids
     subnets         = var.subnet_ids
   }
 
@@ -38,16 +39,6 @@ resource "aws_ecs_service" "service" {
     container_port   = 8080
   }
 
-  ordered_placement_strategy {
-    field = "attribute:ecs.availability-zone"
-    type  = "spread"
-  }
-
-  ordered_placement_strategy {
-    field = "memory"
-    type  = "binpack"
-  }
-
   deployment_controller {
     type = var.ecs_deployment_controller
   }
@@ -55,15 +46,4 @@ resource "aws_ecs_service" "service" {
   service_registries {
     registry_arn = aws_service_discovery_service.sd.arn
   }
-
-  capacity_provider_strategy {
-    capacity_provider  = var.fargate ? "FARGATE" : var.capacity_provider_ec2
-    weight = 1
-    base = 3
-  }
-
-  /*capacity_provider_strategy {
-    capacity_provider  = "FARGATE_SPOT"
-    weight = 4
-  }*/
 }

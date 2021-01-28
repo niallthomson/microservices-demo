@@ -41,8 +41,12 @@ variable "subnet_ids" {
   type = list(string)
 }
 
-variable "security_group_id" {
+variable "lb_security_group_id" {
   type = string
+}
+
+variable "security_group_ids" {
+  type = list(string)
 }
 
 variable "ecs_deployment_controller" {
@@ -60,10 +64,6 @@ variable "health_check_path" {
 
 variable "fargate" {
   default = true
-}
-
-variable "capacity_provider_ec2" {
-  type = string
 }
 
 variable health_check_grace_period {

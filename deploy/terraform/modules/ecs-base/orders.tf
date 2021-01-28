@@ -8,13 +8,13 @@ module "orders_service" {
   execution_role_arn        = aws_iam_role.ecs_task_execution_role.arn
   vpc_id                    = module.vpc.vpc_id
   subnet_ids                = module.vpc.private_subnets
-  security_group_id         = aws_security_group.nsg_task.id
+  security_group_ids        = [ aws_security_group.nsg_task.id, aws_security_group.orders.id ]
+  lb_security_group_id      = aws_security_group.lb_sg.id
   sd_namespace_id           = aws_service_discovery_private_dns_namespace.sd.id
   cpu                       = 512
   memory                    = 1024
   health_check_path         = "/actuator/health"
   health_check_grace_period = 120
-  capacity_provider_ec2     = aws_ecs_capacity_provider.asg_ondemand.name
   fargate                   = var.fargate
 
   container_definitions = <<DEFINITION
@@ -104,14 +104,21 @@ module "orders_service" {
 DEFINITION
 }
 
+resource "aws_security_group" "orders" {
+  name_prefix = "${local.full_environment_prefix}-orders"
+  vpc_id      = module.vpc.vpc_id
+
+  description = "Marker SG for orders service"
+}
+
 resource "aws_security_group_rule" "orders_rds_ingress" {
-  description = "From allowed CIDRs"
+  description = "Allow access from orders ECS task"
 
   type                      = "ingress"
   from_port                 = 3306
   to_port                   = 3306
   protocol                  = "tcp"
-  source_security_group_id  = module.orders_service.security_group_id
+  source_security_group_id  = aws_security_group.orders.id
   security_group_id         = module.orders_rds.security_group_id
 }
 

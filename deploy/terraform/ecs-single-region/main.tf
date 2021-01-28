@@ -21,6 +21,7 @@ module "ecs_base" {
   dns_base           = var.hosted_zone_name
   dns_suffix         = "watchn.${var.hosted_zone_name}"
   fargate            = var.fargate
+  ami_override_id    = var.ami_override_id
 }
 
 data "aws_route53_zone" "zone" {

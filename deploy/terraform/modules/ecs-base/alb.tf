@@ -19,7 +19,7 @@ resource "aws_alb_target_group" "main" {
 resource "aws_alb" "main" {
   name            = local.full_environment_prefix
   subnets         = module.vpc.public_subnets
-  security_groups = [aws_security_group.lb_sg.id]
+  security_groups = [aws_security_group.ui_lb_sg.id, aws_security_group.lb_sg.id]
 }
 
 resource "aws_alb_listener" "front_end_ssl" {
@@ -36,7 +36,6 @@ resource "aws_alb_listener" "front_end_ssl" {
   }
 }
 
-## No SSL
 resource "aws_alb_listener" "front_end" {
   load_balancer_arn = aws_alb.main.id
 
@@ -49,33 +48,33 @@ resource "aws_alb_listener" "front_end" {
   }
 }
 
-resource "aws_security_group" "lb_sg" {
+resource "aws_security_group" "ui_lb_sg" {
   description = "controls access to the application ELB"
 
   vpc_id      = module.vpc.vpc_id
-  name_prefix = local.full_environment_prefix
+  name_prefix = "${local.full_environment_prefix}-lb-ui"
 
   lifecycle {
     ignore_changes = [ingress]
   }
 }
 
-resource "aws_security_group_rule" "alb_http" {
+resource "aws_security_group_rule" "ui_alb_http" {
   type              = "ingress"
   from_port         = 80
   to_port           = 80
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.lb_sg.id
+  security_group_id = aws_security_group.ui_lb_sg.id
 }
 
-resource "aws_security_group_rule" "alb_https" {
+resource "aws_security_group_rule" "ui_alb_https" {
   type              = "ingress"
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.lb_sg.id
+  security_group_id = aws_security_group.ui_lb_sg.id
 }
 
 resource "aws_security_group_rule" "alb_egress" {
@@ -84,5 +83,12 @@ resource "aws_security_group_rule" "alb_egress" {
   to_port           = 0
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.lb_sg.id
+  security_group_id = aws_security_group.ui_lb_sg.id
+}
+
+resource "aws_security_group" "lb_sg" {
+  description = "Marker security group for tasks to allow ingress"
+
+  vpc_id      = module.vpc.vpc_id
+  name_prefix = "${local.full_environment_prefix}-lb"
 }

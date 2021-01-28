@@ -8,11 +8,11 @@ module "checkout_service" {
   execution_role_arn        = aws_iam_role.ecs_task_execution_role.arn
   vpc_id                    = module.vpc.vpc_id
   subnet_ids                = module.vpc.private_subnets
-  security_group_id         = aws_security_group.nsg_task.id
+  security_group_ids        = [ aws_security_group.nsg_task.id, aws_security_group.catalog.id ]
+  lb_security_group_id      = aws_security_group.lb_sg.id
   sd_namespace_id           = aws_service_discovery_private_dns_namespace.sd.id
   cpu                       = 256
   memory                    = 512
-  capacity_provider_ec2     = aws_ecs_capacity_provider.asg_ondemand.name
   fargate                   = var.fargate
 
   container_definitions = <<DEFINITION
@@ -61,6 +61,24 @@ module "checkout_service" {
 DEFINITION
 }
 
+resource "aws_security_group" "checkout" {
+  name_prefix = "${local.full_environment_prefix}-checkout"
+  vpc_id      = module.vpc.vpc_id
+
+  description = "Marker SG for checkout service"
+}
+
+resource "aws_security_group_rule" "checkout_redis_ingress" {
+  description = "Allow access from checkout ECS task"
+
+  type                      = "ingress"
+  from_port                 = module.checkout_redis.port
+  to_port                   = module.checkout_redis.port
+  protocol                  = "tcp"
+  source_security_group_id  = aws_security_group.checkout.id
+  security_group_id         = module.checkout_redis.security_group_id
+}
+
 module "checkout_redis" {
   source = "../aws-elasticache-redis"
 
@@ -68,15 +86,4 @@ module "checkout_redis" {
   instance_name    = "checkout"
   vpc_id           = module.vpc.vpc_id
   subnet_ids       = module.vpc.database_subnets
-}
-
-resource "aws_security_group_rule" "checkout_redis_ingress" {
-  description = "From allowed CIDRs"
-
-  type                      = "ingress"
-  from_port                 = module.checkout_redis.port
-  to_port                   = module.checkout_redis.port
-  protocol                  = "tcp"
-  source_security_group_id  = module.checkout_service.security_group_id
-  security_group_id         = module.checkout_redis.security_group_id
 }
