@@ -7,7 +7,7 @@ module "checkout_service" {
   ecs_deployment_controller = var.ecs_deployment_controller
   vpc_id                    = module.vpc.vpc_id
   subnet_ids                = module.vpc.private_subnets
-  security_group_ids        = [ aws_security_group.nsg_task.id, aws_security_group.catalog.id ]
+  security_group_ids        = [ aws_security_group.nsg_task.id, aws_security_group.checkout.id ]
   lb_security_group_id      = aws_security_group.lb_sg.id
   sd_namespace_id           = aws_service_discovery_private_dns_namespace.sd.id
   cpu                       = 256
