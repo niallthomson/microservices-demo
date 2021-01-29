@@ -21,7 +21,7 @@ module "orders_service" {
 [
   {
     "name": "application",
-    "image": "watchn/watchn-orders:${var.image_tag}",
+    "image": "watchn/watchn-orders:${module.image_tag.image_tag}",
     "memory": 1024,
     "cpu": 512,
     "essential": true,

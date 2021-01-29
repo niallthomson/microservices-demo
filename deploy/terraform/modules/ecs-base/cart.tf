@@ -30,7 +30,7 @@ module "carts_service" {
 [
   {
     "name": "application",
-    "image": "watchn/watchn-cart:${var.image_tag}",
+    "image": "watchn/watchn-cart:${module.image_tag.image_tag}",
     "memory": 1024,
     "cpu": 512,
     "essential": true,

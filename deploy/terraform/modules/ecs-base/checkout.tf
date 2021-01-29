@@ -19,7 +19,7 @@ module "checkout_service" {
 [
   {
     "name": "application",
-    "image": "watchn/watchn-checkout:${var.image_tag}",
+    "image": "watchn/watchn-checkout:${module.image_tag.image_tag}",
     "memory": 512,
     "essential": true,
     "environment": [

@@ -19,7 +19,7 @@ module "catalog_service" {
 [
   {
     "name": "application",
-    "image": "watchn/watchn-catalog:${var.image_tag}",
+    "image": "watchn/watchn-catalog:${module.image_tag.image_tag}",
     "memory": 512,
     "essential": true,
     "environment": [

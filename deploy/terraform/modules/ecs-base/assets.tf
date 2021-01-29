@@ -20,7 +20,7 @@ module "assets_service" {
 [
   {
     "name": "application",
-    "image": "watchn/watchn-assets:${var.image_tag}",
+    "image": "watchn/watchn-assets:${module.image_tag.image_tag}",
     "memory": 512,
     "essential": true,
     "portMappings": [

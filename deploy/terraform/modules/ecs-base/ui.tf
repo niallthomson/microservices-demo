@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "ui" {
 [
   {
     "name": "application",
-    "image": "watchn/watchn-ui:cloudwatch1",
+    "image": "watchn/watchn-ui:${module.image_tag.image_tag}",
     "cpu": 512,
     "memory": 1024,
     "essential": true,
