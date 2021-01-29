@@ -23,7 +23,7 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "myinfluxdb",
+      "datasource": "influxdb",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -158,7 +158,7 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "myinfluxdb",
+      "datasource": "influxdb",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -292,7 +292,7 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "myinfluxdb",
+      "datasource": "influxdb",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -432,7 +432,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "myinfluxdb",
+      "datasource": "influxdb",
       "description": "Grouped by 1 sec intervals",
       "fieldConfig": {
         "defaults": {
@@ -728,7 +728,7 @@
         "mode": "opacity"
       },
       "dataFormat": "timeseries",
-      "datasource": "myinfluxdb",
+      "datasource": "influxdb",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -819,7 +819,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "myinfluxdb",
+      "datasource": "influxdb",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -949,7 +949,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "myinfluxdb",
+      "datasource": "influxdb",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -1111,7 +1111,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "k6",
+  "title": "Watchn Load Generator - Main",
   "uid": "vxpeLUMGk",
   "version": 1
 }

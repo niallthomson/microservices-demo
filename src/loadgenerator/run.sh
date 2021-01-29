@@ -7,7 +7,7 @@ script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 
 usage() {
   cat <<EOF
-Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] <store endpoint>
+Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-t <target>] [-d <duration>] [--dashboard] <store endpoint>
 
 Runs a k6 load test against a Watchn store instance.
 
@@ -15,6 +15,9 @@ Available options:
 
 -h, --help      Print this help and exit
 -v, --verbose   Print script debug info
+-d, --duration  Duration of the load test in minutes
+-t, --target    Target number of virtual users
+--dashboard     Makes a dashboard available while the generator is running (http://localhost:8888)
 EOF
   exit
 }
@@ -48,6 +51,7 @@ parse_params() {
   # default values of variables set from params
   target='20'
   duration='20'
+  dashboard='0'
 
   while :; do
     case "${1-}" in
@@ -62,6 +66,7 @@ parse_params() {
       duration="${2-}"
       shift
       ;;
+    --dashboard) dashboard='1' ;;
     -?*) die "Unknown option: $1" ;;
     *) break ;;
     esac
@@ -71,7 +76,7 @@ parse_params() {
   args=("$@")
 
   # check required params and arguments
-  [[ ${#args[@]} -eq 0 ]] && die "Missing script arguments"
+  [[ ${#args[@]} -eq 0 ]] && die "You must specify the endpoint argument"
 
   return 0
 }
@@ -83,4 +88,8 @@ endpoint="${args[0]}"
 
 msg "Running load test against endpoint:\n\n${endpoint}\n"
 
-docker run -i -e "WATCHN_BASE_URL=${endpoint}" -e "WATCHN_TARGET=${target}" -e "WATCHN_DURATION=${duration}" loadimpact/k6 run - <js/script.js
+if [[ "$dashboard" == '1' ]]; then
+  WATCHN_BASE_URL="${endpoint}" WATCHN_TARGET="${target}" WATCHN_DURATION="${duration}" K6_OUT="influxdb=http://influxdb:8086/k6" docker-compose up --quiet-pull --build --abort-on-container-exit
+else
+  docker run -i -e "WATCHN_BASE_URL=${endpoint}" -e "WATCHN_TARGET=${target}" -e "WATCHN_DURATION=${duration}" loadimpact/k6:0.30.0 run - <js/script.js
+fi

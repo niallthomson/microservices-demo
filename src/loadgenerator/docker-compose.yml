@@ -6,7 +6,7 @@ networks:
 
 services:
   influxdb:
-    image: influxdb:latest
+    image: influxdb:1.8.3
     networks:
       - k6
       - grafana
@@ -14,32 +14,38 @@ services:
       - "8086:8086"
     environment:
       - INFLUXDB_DB=k6
+    logging:
+      driver: none
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:7.3.7
     networks:
       - grafana
     ports:
-      - "80:3000"
+      - "8888:3000"
     cap_add:
       - CAP_NET_BIND_SERVICE
     environment:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_BASIC_ENABLED=false
+    logging:
+      driver: none
     volumes:
-      - ./grafana-datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - ./provisioning/:/etc/grafana/provisioning/
 
   k6:
-    image: loadimpact/k6:latest
+    image: loadimpact/k6:0.30.0
     networks:
       - k6
     ports:
       - "6565:6565"
     environment:
-      - K6_OUT=${WATCHN_K6_OUT}
+      - K6_OUT=${K6_OUT}
       - WATCHN_BASE_URL=${WATCHN_BASE_URL}
       - WATCHN_REGION=${WATCHN_REGION}
       - WATCHN_TARGET=${WATCHN_TARGET}
+      - WATCHN_DURATION=${WATCHN_DURATION}
+    command: run /js/script.js
     volumes:
       - ./js:/js
