@@ -21,7 +21,7 @@ EOT
   }
 }
 
-resource "aws_launch_template" "node" {
+resource "aws_launch_template" "ondemand" {
   name_prefix            = local.full_environment_prefix
   image_id               = local.ami_id
   instance_type          = var.ec2_instance_type
@@ -45,8 +45,8 @@ resource "aws_autoscaling_group" "ecs_ondemand" {
   min_elb_capacity      = var.fargate ? 0 : 2
 
   launch_template {
-    id       = aws_launch_template.node.id
-    version  = aws_launch_template.node.latest_version
+    id       = aws_launch_template.ondemand.id
+    version  = aws_launch_template.ondemand.latest_version
   }
 
   lifecycle {
@@ -67,6 +67,35 @@ resource "aws_autoscaling_group" "ecs_ondemand" {
   }
 }
 
+data "template_cloudinit_config" "asg_userdata_spot" {
+  gzip          = false
+  base64_encode = true
+
+  part {
+    content_type = "text/x-shellscript"
+    content      = <<EOT
+#!/bin/bash
+echo ECS_CLUSTER="${local.full_environment_prefix}" >> /etc/ecs/ecs.config
+echo ECS_ENABLE_CONTAINER_METADATA=true >> /etc/ecs/ecs.config
+echo ECS_ENABLE_SPOT_INSTANCE_DRAINING=true >> /etc/ecs/ecs.config
+EOT
+  }
+}
+
+resource "aws_launch_template" "spot" {
+  name_prefix            = local.full_environment_prefix
+  image_id               = local.ami_id
+  instance_type          = var.ec2_instance_type
+  vpc_security_group_ids = [aws_security_group.asg_sg.id]
+  user_data              = data.template_cloudinit_config.asg_userdata_ondemand.rendered
+  update_default_version = true
+
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ecs_node.name
+  }
+}
+
+
 resource "aws_autoscaling_group" "ecs_spot" {
   name_prefix           = "${local.full_environment_prefix}-spot"
   max_size              = 40
@@ -83,7 +112,7 @@ resource "aws_autoscaling_group" "ecs_spot" {
 
     launch_template {
       launch_template_specification {
-        launch_template_id = aws_launch_template.node.id
+        launch_template_id = aws_launch_template.spot.id
       }
 
       override {
