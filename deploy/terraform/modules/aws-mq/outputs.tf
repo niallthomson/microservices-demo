@@ -17,3 +17,11 @@ output "user" {
 output "password" {
   value = random_password.password.result
 }
+
+output "password_ssm_name" {
+  value = aws_ssm_parameter.password.name
+}
+
+output "password_ssm_arn" {
+  value = aws_ssm_parameter.password.arn
+}

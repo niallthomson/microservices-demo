@@ -17,3 +17,19 @@ output "password" {
 output "security_group_id" {
   value = aws_security_group.rds.id
 }
+
+output "password_ssm_name" {
+  value = aws_ssm_parameter.password.name
+}
+
+output "password_ssm_arn" {
+  value = aws_ssm_parameter.password.arn
+}
+
+output "root_password_ssm_name" {
+  value = aws_ssm_parameter.root_password.name
+}
+
+output "root_password_ssm_arn" {
+  value = aws_ssm_parameter.root_password.arn
+}

@@ -14,8 +14,6 @@ module "carts_service" {
   service_name              = "cart"
   cluster_id                = aws_ecs_cluster.cluster.id
   ecs_deployment_controller = var.ecs_deployment_controller
-  execution_role_arn        = aws_iam_role.ecs_task_execution_role.arn
-  task_role_arn             = aws_iam_role.carts_role.arn
   vpc_id                    = module.vpc.vpc_id
   subnet_ids                = module.vpc.private_subnets
   security_group_ids        = [ aws_security_group.nsg_task.id ]
@@ -26,6 +24,7 @@ module "carts_service" {
   health_check_path         = "/actuator/health"
   health_check_grace_period = 120
   fargate                   = var.fargate
+  ssm_kms_policy_arn        = aws_iam_policy.ssm_kms.arn
 
   container_definitions = <<DEFINITION
 [
@@ -85,28 +84,8 @@ module "carts_service" {
 ]
 DEFINITION
 }
-
-resource "aws_iam_role" "carts_role" {
-  name = "${local.full_environment_prefix}-carts"
- 
-  assume_role_policy = <<EOF
-{
- "Version": "2012-10-17",
- "Statement": [
-   {
-     "Action": "sts:AssumeRole",
-     "Principal": {
-       "Service": "ecs-tasks.amazonaws.com"
-     },
-     "Effect": "Allow",
-     "Sid": ""
-   }
- ]
-}
-EOF
-}
  
 resource "aws_iam_role_policy_attachment" "carts_role_attachment" {
-  role       = aws_iam_role.carts_role.name
+  role       = module.carts_service.task_execution_role_name
   policy_arn = aws_iam_policy.carts_dynamo.arn
 }

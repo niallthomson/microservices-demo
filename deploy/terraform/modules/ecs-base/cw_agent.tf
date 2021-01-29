@@ -175,17 +175,16 @@ resource "aws_iam_role" "cwagent_task_role" {
  
   assume_role_policy = <<EOF
 {
- "Version": "2012-10-17",
- "Statement": [
-   {
-     "Action": "sts:AssumeRole",
-     "Principal": {
-       "Service": "ecs-tasks.amazonaws.com"
-     },
-     "Effect": "Allow",
-     "Sid": ""
-   }
- ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+      },
+      "Effect": "Allow"
+    }
+  ]
 }
 EOF
 }
@@ -233,17 +232,17 @@ resource "aws_iam_role" "cwagent_execution_role" {
  
   assume_role_policy = <<EOF
 {
- "Version": "2012-10-17",
- "Statement": [
-   {
-     "Action": "sts:AssumeRole",
-     "Principal": {
-       "Service": "ecs-tasks.amazonaws.com"
-     },
-     "Effect": "Allow",
-     "Sid": ""
-   }
- ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
 }
 EOF
 }
@@ -257,28 +256,24 @@ resource "aws_iam_role_policy_attachment" "cwagent_execution_role_ecsmanaged" {
   role       = aws_iam_role.cwagent_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
- 
-resource "aws_iam_role_policy_attachment" "cwagent_execution_role_custom" {
-  role       = aws_iam_role.cwagent_execution_role.name
-  policy_arn = aws_iam_policy.cwagent_execution_role_policy.arn
-}
 
-resource "aws_iam_policy" "cwagent_execution_role_policy" {
-  name        = "${var.environment_name}-cwagent-execution"
-  path        = "/"
-  description = "Cloudwatch policy for cwagent application"
+resource "aws_iam_role_policy" "cwagent_execution_role_policy" {
+  name = "${local.full_environment_prefix}-cwagent-execution"
+  role = aws_iam_role.cwagent_execution_role.name
 
-  policy = <<EOF
+  policy = <<-EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "AllAPIActionsOnCart",
       "Effect": "Allow",
       "Action": [
         "ssm:GetParameters"
       ],
-      "Resource": "*"
+      "Resource": [
+        "${aws_ssm_parameter.cwagent_prometheus_config.arn}",
+        "${aws_ssm_parameter.cwagent_config.arn}"
+      ]
     }
   ]
 }

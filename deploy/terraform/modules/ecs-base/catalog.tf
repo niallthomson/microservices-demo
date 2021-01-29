@@ -5,7 +5,6 @@ module "catalog_service" {
   service_name              = "catalog"
   cluster_id                = aws_ecs_cluster.cluster.id
   ecs_deployment_controller = var.ecs_deployment_controller
-  execution_role_arn        = aws_iam_role.ecs_task_execution_role.arn
   vpc_id                    = module.vpc.vpc_id
   subnet_ids                = module.vpc.private_subnets
   security_group_ids        = [ aws_security_group.nsg_task.id, aws_security_group.catalog.id ]
@@ -14,6 +13,7 @@ module "catalog_service" {
   cpu                       = 256
   memory                    = 512
   fargate                   = var.fargate
+  ssm_kms_policy_arn        = aws_iam_policy.ssm_kms.arn
 
   container_definitions = <<DEFINITION
 [
@@ -32,16 +32,18 @@ module "catalog_service" {
         "value": "${module.catalog_rds.username}"
       },
       {
-        "name": "DB_PASSWORD",
-        "value": "${module.catalog_rds.password}"
-      },
-      {
         "name": "DB_READ_ENDPOINT",
         "value": "${module.catalog_rds.reader_endpoint}"
       },
       {
         "name": "DB_NAME",
         "value": "catalog"
+      }
+    ],
+    "secrets": [
+      {
+        "name": "DB_PASSWORD",
+        "valueFrom": "${module.catalog_rds.password_ssm_name}"
       }
     ],
     "portMappings": [
@@ -103,4 +105,5 @@ module "catalog_rds" {
   vpc_id           = module.vpc.vpc_id
   subnet_ids       = module.vpc.database_subnets
   db_name          = "catalog"
+  ssm_key_id       = aws_kms_key.ssm_key.key_id
 }

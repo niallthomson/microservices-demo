@@ -53,3 +53,8 @@ variable "read_replica_count" {
 variable "enable_autoscaling" {
   default = false
 }
+
+variable "ssm_key_id" {
+  type    = string
+  default = null
+}

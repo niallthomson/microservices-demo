@@ -12,3 +12,8 @@ variable "vpc_id" {
 variable "subnet_ids" {
   type = list(string)
 }
+
+variable "ssm_key_id" {
+  type    = string
+  default = null
+}

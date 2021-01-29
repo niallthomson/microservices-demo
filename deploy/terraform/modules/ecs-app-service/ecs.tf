@@ -2,13 +2,12 @@ resource "aws_ecs_task_definition" "task" {
   family                   = "${var.environment_name}-${var.service_name}"
   network_mode             = "awsvpc"
   requires_compatibilities = var.fargate ? ["FARGATE"] : []
-  execution_role_arn       = var.execution_role_arn
-  task_role_arn            = var.task_role_arn
+  execution_role_arn       = aws_iam_role.ecs_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
+  cpu                      = var.cpu
+  memory                   = var.memory
 
-  cpu    = var.cpu
-  memory = var.memory
-
-  container_definitions    = var.container_definitions
+  container_definitions = var.container_definitions
 }
 
 resource "aws_ecs_service" "service" {
@@ -21,7 +20,6 @@ resource "aws_ecs_service" "service" {
 
   lifecycle {
     ignore_changes = [
-      task_definition,
       load_balancer,
       platform_version,
       capacity_provider_strategy

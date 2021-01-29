@@ -5,7 +5,6 @@ module "assets_service" {
   service_name              = "assets"
   cluster_id                = aws_ecs_cluster.cluster.id
   ecs_deployment_controller = var.ecs_deployment_controller
-  execution_role_arn        = aws_iam_role.ecs_task_execution_role.arn
   vpc_id                    = module.vpc.vpc_id
   subnet_ids                = module.vpc.private_subnets
   security_group_ids        = [ aws_security_group.nsg_task.id ]
@@ -15,6 +14,7 @@ module "assets_service" {
   memory                    = 512
   health_check_path         = "/health.html"
   fargate                   = var.fargate
+  ssm_kms_policy_arn        = aws_iam_policy.ssm_kms.arn
 
   container_definitions = <<DEFINITION
 [

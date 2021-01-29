@@ -2,7 +2,7 @@ resource "aws_ecs_task_definition" "ui" {
   family                   = "${local.full_environment_prefix}-ui"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  execution_role_arn       = aws_iam_role.ecs_execution_role.arn
   task_role_arn            = aws_iam_role.ui_role.arn
 
   cpu = 512
@@ -141,18 +141,12 @@ resource "aws_iam_role" "ui_role" {
 }
 EOF
 }
- 
-resource "aws_iam_role_policy_attachment" "ui_role_attachment" {
-  role       = aws_iam_role.ui_role.name
-  policy_arn = aws_iam_policy.ui_cloudwatch.arn
-}
 
-resource "aws_iam_policy" "ui_cloudwatch" {
-  name        = "${var.environment_name}-ui-cloudwatch"
-  path        = "/"
-  description = "Cloudwatch policy for ui application"
+resource "aws_iam_role_policy" "ui_role" {
+  name = "${local.full_environment_prefix}-ui"
+  role = aws_iam_role.ui_role.name
 
-  policy = <<EOF
+  policy = <<-EOF
 {
   "Version": "2012-10-17",
   "Statement": [

@@ -24,15 +24,6 @@ variable "memory" {
   default = 512
 }
 
-variable "execution_role_arn" {
-  type = string
-}
-
-variable "task_role_arn" {
-  type    = string
-  default = null
-}
-
 variable "vpc_id" {
   type = string
 }
@@ -68,4 +59,8 @@ variable "fargate" {
 
 variable health_check_grace_period {
   default = 0
+}
+
+variable ssm_kms_policy_arn {
+  type = string
 }
