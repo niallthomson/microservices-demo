@@ -107,3 +107,25 @@ module "catalog_rds" {
   db_name          = "catalog"
   ssm_key_id       = aws_kms_key.ssm_key.key_id
 }
+
+resource "aws_iam_role_policy" "catalog_execution" {
+  name = "${local.full_environment_prefix}-catalog-execution"
+  role = module.catalog_service.execution_role_name
+
+  policy = <<-EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ssm:GetParameters"
+      ],
+      "Resource": [
+        "${module.catalog_rds.password_ssm_arn}"
+      ]
+    }
+  ]
+}
+EOF
+}
