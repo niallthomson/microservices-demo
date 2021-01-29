@@ -31,7 +31,6 @@ export class ExpressConfig {
     setupMetrics(this.app);
 
     this.app.use(cors());
-    this.app.use(health.ping());
 
     // Parse class-validator classes into JSON Schema:
     const schemas = validationMetadatasToSchemas({

@@ -1,8 +1,6 @@
 import { BadRequestError, ExpressErrorMiddlewareInterface, HttpError, Middleware } from 'routing-controllers';
 import { ValidationError } from 'class-validator';
 import * as express from 'express';
-import { timeStamp } from 'console';
-import { ConsoleTransportOptions } from 'winston/lib/winston/transports';
 
 /**
  * Express middleware to catch all errors throwed in controlers.
