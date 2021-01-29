@@ -15,9 +15,9 @@ for i in $DIR/../src/**/chart/values.yaml; do
     sed -ri "0,/tag/{s/^(\s*)(tag:.*$)/\1tag: \"$TAG\"/}" $i
 done
 
-cat << EOF > $DIR/../deploy/terraform/modules/ecs-base/vars-tag.tf
-variable "image_tag" {
-  default = "$TAG"
+cat << EOF > $DIR/../deploy/terraform/modules/image-tag/outputs.tf
+output "image_tag" {
+  value = "$TAG"
 }
 EOF
 
