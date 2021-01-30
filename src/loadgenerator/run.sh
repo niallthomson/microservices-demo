@@ -89,7 +89,9 @@ endpoint="${args[0]}"
 msg "Running load test against endpoint:\n\n${endpoint}\n"
 
 if [[ "$dashboard" == '1' ]]; then
-  WATCHN_BASE_URL="${endpoint}" WATCHN_TARGET="${target}" WATCHN_DURATION="${duration}" K6_OUT="influxdb=http://influxdb:8086/k6" docker-compose up --quiet-pull --build --abort-on-container-exit
+  WATCHN_BASE_URL="${endpoint}" WATCHN_TARGET="${target}" WATCHN_DURATION="${duration}" K6_OUT="influxdb=http://influxdb:8086/k6" docker-compose up --quiet-pull --build --exit-code-from k6
+
+  docker-compose down
 else
-  docker run -i -e "WATCHN_BASE_URL=${endpoint}" -e "WATCHN_TARGET=${target}" -e "WATCHN_DURATION=${duration}" loadimpact/k6:0.30.0 run - <js/script.js
+  docker run -rm -i -e "WATCHN_BASE_URL=${endpoint}" -e "WATCHN_TARGET=${target}" -e "WATCHN_DURATION=${duration}" loadimpact/k6:0.30.0 run - <js/script.js
 fi
