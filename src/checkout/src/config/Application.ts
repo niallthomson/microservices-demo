@@ -26,7 +26,7 @@ export class Application {
     }
 
     const terminusConfiguration = {
-      signal: 'SIGINT',
+      signal: 'SIGTERM',
       healthChecks: {
         '/health': onHealthCheck
       },
