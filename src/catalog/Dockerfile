@@ -42,4 +42,4 @@ USER appuser
 COPY --chown=appuser:appuser --from=build-env /src/main /app/
 COPY --chown=appuser:appuser db/ /app/db/
 
-ENTRYPOINT /app/main
+ENTRYPOINT ["/app/main"]
