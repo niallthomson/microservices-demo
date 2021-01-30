@@ -15,4 +15,4 @@ ADD . /app
 # TypeScript
 RUN npm run build
 
-CMD [ "npm", "start" ]
+ENTRYPOINT [ "node", "index.js" ]
