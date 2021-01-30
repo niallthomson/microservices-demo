@@ -1,5 +1,6 @@
 locals {
-  ami_id = var.ami_override_id == "" ? data.aws_ssm_parameter.ecs_ami.value : var.ami_override_id
+  ami_id   = var.ami_override_id == "" ? data.aws_ssm_parameter.ecs_ami.value : var.ami_override_id
+  asg_list = concat(aws_autoscaling_group.ecs_ondemand.*.name, [aws_autoscaling_group.ecs_spot.name])
 }
 
 data "aws_ssm_parameter" "ecs_ami" {
@@ -57,6 +58,7 @@ resource "aws_autoscaling_group" "ecs_ondemand" {
     strategy = "Rolling"
     preferences {
       min_healthy_percentage = 90
+      instance_warmup        = 120
     }
   }
 
@@ -150,6 +152,7 @@ resource "aws_autoscaling_group" "ecs_spot" {
     strategy = "Rolling"
     preferences {
       min_healthy_percentage = 90
+      instance_warmup        = 120
     }
   }
 

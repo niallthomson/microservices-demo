@@ -38,6 +38,10 @@ resource "aws_ecs_task_definition" "ui" {
         "value": "http://${module.assets_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
       },
       {
+        "name": "SPRING_PROFILES_ACTIVE",
+        "value": "prod"
+      },
+      {
         "name": "JAVA_OPTS",
         "value": "-XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom"
       }
@@ -183,7 +187,7 @@ resource "aws_appautoscaling_policy" "ui_policy" {
       resource_label         = "${aws_alb.main.arn_suffix}/${aws_alb_target_group.main.arn_suffix}"
     }
 
-    target_value       = 50
+    target_value       = 400
     scale_in_cooldown  = 300
     scale_out_cooldown = 300
   }

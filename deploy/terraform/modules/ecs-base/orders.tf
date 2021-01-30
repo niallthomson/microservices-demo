@@ -52,7 +52,7 @@ module "orders_service" {
       },
       {
         "name": "SPRING_PROFILES_ACTIVE",
-        "value": "mysql,activemq"
+        "value": "mysql,activemq,prod"
       },
       {
         "name": "JAVA_OPTS",

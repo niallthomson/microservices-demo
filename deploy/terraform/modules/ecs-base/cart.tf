@@ -4,7 +4,7 @@ locals {
     "errors" = ["chaos-monkey", "chaos-errors"]
     "latency" = ["chaos-monkey", "chaos-latency"]
   }
-  carts_spring_profiles = ["dynamodb"]
+  carts_spring_profiles = ["prod", "dynamodb"]
 }
 
 module "carts_service" {
