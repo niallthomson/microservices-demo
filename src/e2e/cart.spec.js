@@ -6,7 +6,7 @@ let CartItem = require('./pages/CartItem')
 let Product = require('./pages/Product');
 
 var cart = new Cart(baseUrl);
-var product = new Product(baseUrl, "510a0d7e-8e83-4193-b483-e27e09ddc34d");
+var product = new Product(baseUrl, '510a0d7e-8e83-4193-b483-e27e09ddc34d');
 
 describe('when on cart', function() {
   beforeAll(function() { 
@@ -45,8 +45,8 @@ describe('when on cart', function() {
 
       let item = new CartItem(cart.getItems().get(0));
 
-      expect(item.getName()).toEqual("Gentleman");
-      expect(item.getPrice()).toEqual("$795");
+      expect(item.getName()).toEqual('Gentleman');
+      expect(item.getPrice()).toEqual('$795');
     });
   });
 

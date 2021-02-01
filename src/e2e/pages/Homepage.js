@@ -7,7 +7,7 @@ class Homepage extends Page {
   }
 
   getPath() {
-    return "/home";
+    return '/home';
   }
 }
 module.exports = Homepage;

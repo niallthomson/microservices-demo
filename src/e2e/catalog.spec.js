@@ -5,7 +5,7 @@ let Catalog = require('./pages/Catalog');
 let Product = require('./pages/Product');
 
 var catalog = new Catalog(baseUrl);
-var product = new Product(baseUrl, "510a0d7e-8e83-4193-b483-e27e09ddc34d");
+var product = new Product(baseUrl, '510a0d7e-8e83-4193-b483-e27e09ddc34d');
 
 describe('when on catalog', function() {
   beforeAll(function() { 
@@ -29,7 +29,7 @@ describe('when on catalog', function() {
   describe('and select page', function() {
     beforeEach(function() { 
       catalog.go();
-      catalog.page("2");
+      catalog.page('2');
     });
 
     it('should show page', function() {
@@ -41,7 +41,7 @@ describe('when on catalog', function() {
   describe('and select page size', function() {
     beforeEach(function() { 
       catalog.go();
-      catalog.size("9");
+      catalog.size('9');
     });
 
     it('should show products', function() {
@@ -51,7 +51,7 @@ describe('when on catalog', function() {
 
     describe('and select tag', function() {
       beforeEach(function() { 
-        catalog.tag("Dress");
+        catalog.tag('Dress');
       });
   
       it('should filter products', function() {
@@ -64,7 +64,7 @@ describe('when on catalog', function() {
   describe('and select tag', function() {
     beforeEach(function() { 
       catalog.go();
-      catalog.tag("Luxury");
+      catalog.tag('Luxury');
     });
 
     it('should filter products', function() {

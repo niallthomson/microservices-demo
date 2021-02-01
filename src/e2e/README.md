@@ -16,6 +16,12 @@ This is the easiest way to run the tests:
 
 Where the parameter should be adjusted to point at the endpoint of the UI service. Use the `-h` flag to display complete documentation for the script.
 
+To run against Docker Compose running locally:
+
+```
+./scripts/run-docker.sh --network docker-compose_default 'http://ui:8080'
+```
+
 ### NPM
 
 The tests can be run locally using NPM. To do so the following components must be installed:

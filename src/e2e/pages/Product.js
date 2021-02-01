@@ -9,7 +9,7 @@ class Product extends Page {
   }
 
   getPath() {
-    return "/catalog/"+this.id;
+    return '/catalog/'+this.id;
   }
 
   getRecommendations() {

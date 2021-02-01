@@ -30,7 +30,7 @@ class Page {
   };
 
   getBreadcrumb() {
-    return element(by.css(".breadcrumb-item.active"))
+    return element(by.css('.breadcrumb-item.active'))
   }
 
   getPath() {

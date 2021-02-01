@@ -7,7 +7,7 @@ class Catalog extends Page {
   }
 
   getPath() {
-    return "/catalog";
+    return '/catalog';
   }
 
   tag(name) {

@@ -6,7 +6,7 @@ let EC = protractor.ExpectedConditions;
 let Product = require('./pages/Product');
 let Cart = require('./pages/Cart');
 
-var product = new Product(baseUrl, "510a0d7e-8e83-4193-b483-e27e09ddc34d");
+var product = new Product(baseUrl, '510a0d7e-8e83-4193-b483-e27e09ddc34d');
 var cart = new Cart(baseUrl);
 
 describe('when on product', function() {
