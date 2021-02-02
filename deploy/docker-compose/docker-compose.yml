@@ -110,7 +110,6 @@ services:
     build:
       context: ../../src/checkout
       dockerfile: ../../images/nodejs/Dockerfile
-    image: microservices-demo/checkout
     hostname: checkout
     restart: always
     read_only: true
