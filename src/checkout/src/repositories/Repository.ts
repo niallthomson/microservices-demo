@@ -6,13 +6,18 @@ import { InMemoryRepository } from './InMemoryRepository';
 
 export function Repository() {
   return function(object: Object, propertyName: string, index?: number) {
-    const redisUrl = config.get('redis.url').toString();
+    let redisUrl = config.get('redis.url').toString();
+    let redisReaderUrl = config.get('redis.reader.url').toString();
+
+    if(!redisReaderUrl) {
+      redisReaderUrl = redisUrl;
+    }
 
     let repository : IRepository;
 
     if(redisUrl) {
       console.log('Creating RedisRepository...');
-      repository = new RedisRepository(redisUrl);
+      repository = new RedisRepository(redisUrl, redisReaderUrl);
     }
     else {
       console.log('Creating InMemoryRepository...');

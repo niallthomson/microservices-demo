@@ -18,4 +18,10 @@ export class InMemoryRepository implements IRepository {
 
     return Promise.resolve(value);
   }
+
+  async remove(key : string) : Promise<void> {
+    this.map.delete(key);
+
+    return Promise.resolve(null);
+  }
 }

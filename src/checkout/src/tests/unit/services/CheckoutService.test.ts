@@ -11,7 +11,8 @@ import { Item } from '../../../models/Item';
 describe('CheckoutService', () => {
   const mockedRepository: jest.Mocked<IRepository> = {
     get: jest.fn(),
-    set: jest.fn()
+    set: jest.fn(),
+    remove: jest.fn()
   }
 
   const mockedShippingService: jest.Mocked<IShippingService> = {
