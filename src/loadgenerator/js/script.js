@@ -56,7 +56,8 @@ export let options = {
     { duration: "2s", target: target },  // Ramp
     { duration: `${duration}m`, target: target }, // Work
     { duration: "2s", target: 0 },   // Down
-  ]
+  ],
+  concurrentResourceLoading: true
 }
 
 export default function () {
@@ -66,6 +67,8 @@ export default function () {
 
   let home = http.get(`${__ENV.WATCHN_BASE_URL}/home`);
   recordStatusMetric(home);
+
+  getResources(home);
 
   sleep(1);
 
@@ -105,10 +108,10 @@ export default function () {
     fields: { 
       firstName: 'John', 
       lastName: 'Doe',
-      email: 'john@localhost',
-      address: '12345 Main St.',
+      email: 'john@example.com',
+      address1: '12345 Main St.',
       address2: '#123',
-      country: 'United States',
+      city: 'New York',
       state: 'CA',
       zip: '12345'
     },
@@ -153,4 +156,48 @@ function recordStatusMetric(response) {
   else {
     http_req_status_2xx.add(1);
   }
+}
+
+function getResources(response) {
+  const resources = [];
+  response
+    .html()
+    .find('*[href]:not(a)')
+    .each((index, element) => {
+      resources.push(element.attributes().href.value);
+    });
+  response
+    .html()
+    .find('*[src]:not(a)')
+    .each((index, element) => {
+      resources.push(element.attributes().src.value);
+    });
+
+  if (options.concurrentResourceLoading) {
+    const responses = http.batch(
+      resources.map((r) => {
+        return ['GET', resolveUrl(r, response.url), null];
+      })
+    );
+    responses.forEach((response) => {
+      recordStatusMetric(response);
+    });
+  } else {
+    resources.forEach((r) => {
+      const res = http.get(resolveUrl(r, response.url));
+      recordStatusMetric(res);
+    });
+  }
+}
+
+function resolveUrl(path, url) {
+  if(path.charAt(0) != '/') {
+    return path;
+  }
+
+  var parts = url.split( '/' );
+  var pos = url.lastIndexOf(parts[parts.length - 1]);
+  var origin = url.slice(0, pos-1);
+
+  return origin+path;
 }

@@ -93,5 +93,5 @@ if [[ "$dashboard" == '1' ]]; then
 
   docker-compose down
 else
-  docker run -rm -i -e "WATCHN_BASE_URL=${endpoint}" -e "WATCHN_TARGET=${target}" -e "WATCHN_DURATION=${duration}" loadimpact/k6:0.30.0 run - <js/script.js
+  docker run --rm -i -e "WATCHN_BASE_URL=${endpoint}" -e "WATCHN_TARGET=${target}" -e "WATCHN_DURATION=${duration}" loadimpact/k6:0.30.0 run - <js/script.js
 fi
