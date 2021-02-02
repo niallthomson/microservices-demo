@@ -1,38 +1,20 @@
-let Page = require('./Page');
+let Checkout = require('./Checkout');
 
-class CheckoutAddress extends Page {
+class CheckoutAddress extends Checkout {
 
   constructor(baseUrl) {
     super(baseUrl);
   }
 
-  getPath() {
-    return '/checkout';
-  }
-
   async populate(firstName, lastName, email, address, city, state, zip) {
-    var EC = protractor.ExpectedConditions;
+    this.populateField('firstName', firstName);
+    this.populateField('lastName', lastName);
+    this.populateField('email', email);
+    this.populateField('address1', address);
+    this.populateField('city', city);
+    this.populateField('zip', zip);
 
-    await this.populateField('firstName', firstName);
-    await this.populateField('lastName', lastName);
-    await this.populateField('email', email);
-    await this.populateField('address1', address);
-    await this.populateField('city', city);
-    await this.populateField('zip', zip);
-
-    let stateEl = await element(by.cssContainingText('option', state));
-    
-    return stateEl.click();
-  }
-
-  async next() {
-    return await element(by.id('checkoutForm')).element(by.css('.btn-primary')).click();
-  };
-
-  async populateField(name, value) {
-    let el = await element(by.id(name));
-
-    return el.sendKeys(value);
+    return element(by.cssContainingText('option', state)).click();
   }
 }
 module.exports = CheckoutAddress;

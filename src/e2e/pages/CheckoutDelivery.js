@@ -1,17 +1,13 @@
-let Page = require('./Page');
+let Checkout = require('./Checkout');
 
-class CheckoutDelivery extends Page {
+class CheckoutDelivery extends Checkout {
 
   constructor(baseUrl) {
     super(baseUrl);
   }
 
-  getPath() {
-    return '/checkout';
+  async populate(shippingToken) {
+    return element(by.id(shippingToken)).click();
   }
-
-  async next() {
-    return await element(by.id('checkoutForm')).element(by.css('.btn-primary')).click();
-  };
 }
 module.exports = CheckoutDelivery;
