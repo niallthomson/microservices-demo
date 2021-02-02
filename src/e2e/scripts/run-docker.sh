@@ -78,18 +78,9 @@ cd $script_dir/../
 
 source ../../scripts/image-tag.sh
 
-echo "Checking for local image..."
+#echo "Checking for local image..."
 
-inspect=$(docker inspect --type=image watchn/watchn-e2e:$IMAGE_TAG > /dev/null && echo "OK" || echo "NOK")
-
-#if [[ "$inspect" == "NOK" ]]; then
-#  echo "Not found"
-#  echo "Building image..."
-#
-#  docker build -t watchn/watchn-e2e:$IMAGE_TAG .
-#else
-#  echo "Found, will use existing image"
-#fi
+#inspect=$(docker inspect --type=image watchn/watchn-e2e:$IMAGE_TAG > /dev/null && echo "OK" || echo "NOK")
 
 docker build -t watchn/watchn-e2e:$IMAGE_TAG .
 
