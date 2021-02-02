@@ -47,7 +47,7 @@ public class Clients {
     @Value("${endpoints.logging}")
     private boolean logging;
 
-    private WebClient createWebClient(ObjectMapper mapper) {
+    private WebClient createWebClient(ObjectMapper mapper, WebClient.Builder webClientBuilder) {
         TcpClient tcpClient = TcpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000) // Connection Timeout
                 .doOnConnected(connection ->
@@ -60,7 +60,7 @@ public class Clients {
                     clientDefaultCodecsConfigurer.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(mapper, MediaType.APPLICATION_JSON));
                 }).build();
 
-        return WebClient.builder()
+        return webClientBuilder
                 .clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient)))
                 .exchangeStrategies(strategies)
                 .filters( exchangeFilterFunctions -> {
@@ -72,7 +72,6 @@ public class Clients {
                 .build();
     }
 
-    // This method returns filter function which will log request data
     private static ExchangeFilterFunction logRequest() {
         return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
             log.info("Request: {} {}", clientRequest.method(), clientRequest.url());
@@ -95,42 +94,47 @@ public class Clients {
     }
 
     @Bean
-    public CatalogApi catalogApi() {
-        ObjectMapper mapper = new ObjectMapper();
+    public ObjectMapper apiClientsObjectMapper() {
+        return new ObjectMapper();
+    }
 
-        return new CatalogApi(new com.watchn.ui.clients.catalog.ApiClient(this.createWebClient(mapper), mapper, createDefaultDateFormat())
+    @Bean
+    public CatalogApi catalogApi(WebClient.Builder webClientBuilder) {
+        ObjectMapper mapper = apiClientsObjectMapper();
+
+        return new CatalogApi(new com.watchn.ui.clients.catalog.ApiClient(this.createWebClient(mapper, webClientBuilder), mapper, createDefaultDateFormat())
                 .setBasePath(this.catalogEndpoint));
     }
 
     @Bean
-    public CartsApi cartsApi() {
-        ObjectMapper mapper = new ObjectMapper();
+    public CartsApi cartsApi(WebClient.Builder webClientBuilder) {
+        ObjectMapper mapper = apiClientsObjectMapper();
 
-        return new CartsApi(new com.watchn.ui.clients.carts.ApiClient(this.createWebClient(mapper), mapper, createDefaultDateFormat())
+        return new CartsApi(new com.watchn.ui.clients.carts.ApiClient(this.createWebClient(mapper, webClientBuilder), mapper, createDefaultDateFormat())
                 .setBasePath(this.cartsEndpoint));
     }
 
     @Bean
-    public ItemsApi itemsApi() {
-        ObjectMapper mapper = new ObjectMapper();
+    public ItemsApi itemsApi(WebClient.Builder webClientBuilder) {
+        ObjectMapper mapper = apiClientsObjectMapper();
 
-        return new ItemsApi(new com.watchn.ui.clients.carts.ApiClient(this.createWebClient(mapper), mapper, createDefaultDateFormat())
+        return new ItemsApi(new com.watchn.ui.clients.carts.ApiClient(this.createWebClient(mapper, webClientBuilder), mapper, createDefaultDateFormat())
                 .setBasePath(this.cartsEndpoint));
     }
 
     @Bean
-    public OrdersApi ordersApi() {
-        ObjectMapper mapper = new ObjectMapper();
+    public OrdersApi ordersApi(WebClient.Builder webClientBuilder) {
+        ObjectMapper mapper = apiClientsObjectMapper();
 
-        return new OrdersApi(new com.watchn.ui.clients.orders.ApiClient(this.createWebClient(mapper), mapper, createDefaultDateFormat())
+        return new OrdersApi(new com.watchn.ui.clients.orders.ApiClient(this.createWebClient(mapper, webClientBuilder), mapper, createDefaultDateFormat())
                 .setBasePath(this.ordersEndpoint));
     }
 
     @Bean
-    public CheckoutApi checkoutApi() {
-        ObjectMapper mapper = new ObjectMapper();
+    public CheckoutApi checkoutApi(WebClient.Builder webClientBuilder) {
+        ObjectMapper mapper = apiClientsObjectMapper();
 
-        return new CheckoutApi(new com.watchn.ui.clients.checkout.ApiClient(this.createWebClient(mapper), mapper, createDefaultDateFormat())
+        return new CheckoutApi(new com.watchn.ui.clients.checkout.ApiClient(this.createWebClient(mapper, webClientBuilder), mapper, createDefaultDateFormat())
                 .setBasePath(this.checkoutEndpoint));
     }
 }
