@@ -7,7 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/niallthomson/microservices-demo/catalog/api"
-	"github.com/niallthomson/microservices-demo/catalog/config"
 	"github.com/niallthomson/microservices-demo/catalog/httputil"
 	"github.com/niallthomson/microservices-demo/catalog/model"
 )
@@ -18,12 +17,7 @@ type Controller struct {
 }
 
 // NewController example
-func NewController(config config.AppConfiguration) (*Controller, error) {
-	api, err := api.NewCatalogAPI(config.Database)
-	if err != nil {
-		return nil, err
-	}
-
+func NewController(api *api.CatalogAPI) (*Controller, error) {
 	return &Controller{
 		api: api,
 	}, nil

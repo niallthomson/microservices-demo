@@ -5,6 +5,7 @@ import (
 
 	"github.com/niallthomson/microservices-demo/catalog/config"
 	"github.com/niallthomson/microservices-demo/catalog/model"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 type Repository interface {
@@ -12,6 +13,8 @@ type Repository interface {
 	Count(tags []string) (int, error)
 	Get(id string) (*model.Product, error)
 	Tags() ([]model.Tag, error)
+	Collector() prometheus.Collector
+	ReaderCollector() prometheus.Collector
 }
 
 func NewRepository(config config.DatabaseConfiguration) (Repository, error) {

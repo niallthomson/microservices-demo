@@ -12,10 +12,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/niallthomson/microservices-demo/catalog/api"
 	"github.com/niallthomson/microservices-demo/catalog/config"
 	"github.com/niallthomson/microservices-demo/catalog/controller"
 	_ "github.com/niallthomson/microservices-demo/catalog/docs"
 	"github.com/niallthomson/microservices-demo/catalog/repository"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sethvargo/go-envconfig/pkg/envconfig"
 	ginprometheus "github.com/zsais/go-gin-prometheus"
 
@@ -41,14 +43,25 @@ func main() {
 		log.Fatal(err)
 	}
 
-	_, err := repository.NewRepository(config.Database)
+	db, err := repository.NewRepository(config.Database)
 	if err != nil {
-		log.Println("Error creating repository", err)
+		log.Fatal(err)
+	}
+
+	api, err := api.NewCatalogAPI(db)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	r := gin.Default()
 
-	c, err := controller.NewController(config)
+	p := ginprometheus.NewPrometheus("gin")
+	p.Use(r)
+
+	prometheus.MustRegister(db.Collector())
+	prometheus.MustRegister(db.ReaderCollector())
+
+	c, err := controller.NewController(api)
 	if err != nil {
 		log.Fatalln("Error creating controller", err)
 	}
@@ -66,9 +79,6 @@ func main() {
 	r.GET("/health", func(c *gin.Context) {
 		c.String(http.StatusOK, "OK")
 	})
-
-	p := ginprometheus.NewPrometheus("gin")
-	p.Use(r)
 
 	srv := &http.Server{
 		Addr:    ":" + strconv.Itoa(config.Port),

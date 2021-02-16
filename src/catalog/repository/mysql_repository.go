@@ -7,12 +7,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dlmiddlecote/sqlstats"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jmoiron/sqlx"
 	"github.com/niallthomson/microservices-demo/catalog/config"
 	"github.com/niallthomson/microservices-demo/catalog/model"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 // ErrNotFound is returned when there is no product for a given ID.
@@ -217,6 +219,14 @@ func (s *mySQLRepository) Tags() ([]model.Tag, error) {
 	}
 
 	return tags, nil
+}
+
+func (s *mySQLRepository) Collector() prometheus.Collector {
+	return sqlstats.NewStatsCollector("db", s.db)
+}
+
+func (s *mySQLRepository) ReaderCollector() prometheus.Collector {
+	return sqlstats.NewStatsCollector("reader_db", s.db)
 }
 
 func cut(products []model.Product, pageNum, pageSize int) []model.Product {

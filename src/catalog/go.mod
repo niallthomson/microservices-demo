@@ -6,6 +6,7 @@ require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/deckarep/golang-set v1.7.1
+	github.com/dlmiddlecote/sqlstats v1.0.2
 	github.com/gin-contrib/static v0.0.0-20191128031702-f81c604d8ac2
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-openapi/spec v0.19.8 // indirect
@@ -16,6 +17,7 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/jwangsadinata/go-multimap v0.0.0-20190620162914-c29f3d7f33b6
 	github.com/mailru/easyjson v0.7.1 // indirect
+	github.com/prometheus/client_golang v1.3.0
 	github.com/sethvargo/go-envconfig v0.1.1
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.2.0

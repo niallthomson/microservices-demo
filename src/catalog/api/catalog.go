@@ -1,9 +1,6 @@
 package api
 
 import (
-	"log"
-
-	"github.com/niallthomson/microservices-demo/catalog/config"
 	"github.com/niallthomson/microservices-demo/catalog/model"
 	"github.com/niallthomson/microservices-demo/catalog/repository"
 )
@@ -30,12 +27,12 @@ func (a *CatalogAPI) GetSize(tags []string) (int, error) {
 }
 
 // NewCatalogAPI constructor
-func NewCatalogAPI(configuration config.DatabaseConfiguration) (*CatalogAPI, error) {
-	repository, err := repository.NewRepository(configuration)
+func NewCatalogAPI(repository repository.Repository) (*CatalogAPI, error) {
+	/*repository, err := repository.NewRepository(configuration)
 	if err != nil {
 		log.Println("Error creating catalog API", err)
 		return nil, err
-	}
+	}*/
 
 	return &CatalogAPI{
 		repository: repository,
