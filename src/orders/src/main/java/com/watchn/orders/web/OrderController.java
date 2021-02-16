@@ -26,7 +26,6 @@ public class OrderController {
     @PostMapping
     @ApiOperation(value = "Create an order", nickname = "createOrder")
     public ExistingOrder order(@RequestBody Order orderRequest) {
-        log.error("{}", orderRequest);
         return this.orderMapper.toExistingOrder(this.service.create(this.orderMapper.toOrderEntity(orderRequest)));
     }
 

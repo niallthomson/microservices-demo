@@ -1,4 +1,4 @@
-version: '2'
+version: '3.4'
 
 services:
   orders:
@@ -37,9 +37,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
-    depends_on:
-      orders-db:
-        condition: service_healthy
 
   orders-db:
     image: mysql:5.7
@@ -70,14 +67,4 @@ services:
     ports:
       - "61616:61616"
       - "8161:8161"
-
-  waiter:
-    image: busybox:1.33.0
-    restart: 'no'
-    cap_drop:
-      - all
-    command: echo 'Ready'
-    depends_on:
-      orders:
-        condition: service_healthy
   
