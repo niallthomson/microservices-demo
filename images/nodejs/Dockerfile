@@ -2,7 +2,7 @@
 FROM node:14-alpine
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache curl
+    apk add --no-cache curl python3 alpine-sdk
 
 WORKDIR /app
 
