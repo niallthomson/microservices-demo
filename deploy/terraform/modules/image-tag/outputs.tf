@@ -1,3 +1,3 @@
 output "image_tag" {
-  value = "build.1613458634"
+  value = "build.1613533436"
 }
