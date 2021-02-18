@@ -4,12 +4,12 @@ import { Counter } from 'k6/metrics';
 
 // TODO: Make this pull products from API instead of hardcoding
 const productData = [
-  "6d62d909-f957-430e-8689-b5129c0bb75e",
-  "a0a4f044-b040-410d-8ead-4de0446aec7e",
-  "808a2de1-1aaa-4c25-a9b9-6612e8f29a38",
-  "510a0d7e-8e83-4193-b483-e27e09ddc34d",
-  "ee3715be-b4ba-11ea-b3de-0242ac130004",
-  "f4ebd070-b4ba-11ea-b3de-0242ac130004"
+  '6d62d909-f957-430e-8689-b5129c0bb75e',
+  'a0a4f044-b040-410d-8ead-4de0446aec7e',
+  '808a2de1-1aaa-4c25-a9b9-6612e8f29a38',
+  '510a0d7e-8e83-4193-b483-e27e09ddc34d',
+  'ee3715be-b4ba-11ea-b3de-0242ac130004',
+  'f4ebd070-b4ba-11ea-b3de-0242ac130004'
 ]
 
 let baseUrl = __ENV.WATCHN_BASE_URL
@@ -43,6 +43,12 @@ else {
   duration = parseInt(duration)
 }
 
+let fetch = __ENV.WATCHN_FETCH
+
+if(!fetch) {
+  fetch = "true"
+}
+
 export let http_req_status_2xx = new Counter("http_req_status_2xx");
 export let http_req_status_3xx = new Counter("http_req_status_3xx");
 export let http_req_status_4xx = new Counter("http_req_status_4xx");
@@ -57,7 +63,8 @@ export let options = {
     { duration: `${duration}m`, target: target }, // Work
     { duration: "2s", target: 0 },   // Down
   ],
-  concurrentResourceLoading: true
+  concurrentResourceLoading: true,
+  fetchResources: fetch == 'true' ? true : false
 }
 
 export default function () {
@@ -65,7 +72,7 @@ export default function () {
 
   let products = Array.from({length: numProducts}, () => productData[Math.floor(Math.random() * productData.length)]);
 
-  let home = http.get(`${__ENV.WATCHN_BASE_URL}/home`);
+  let home = http.get(`${baseUrl}/home`);
   recordStatusMetric(home);
 
   getResources(home);
@@ -79,7 +86,7 @@ export default function () {
   var itemId = products[Math.floor(Math.random() * products.length)];
 
   products.forEach((productId) => {
-    product = http.get(`${__ENV.WATCHN_BASE_URL}/catalog/`+productId);
+    product = http.get(`${baseUrl}/catalog/${productId}`);
     recordStatusMetric(product);
 
     if (productId == itemId) {
@@ -95,12 +102,12 @@ export default function () {
     sleep(1);
   });
 
-  let cart = http.get(`${__ENV.WATCHN_BASE_URL}/cart`);
+  let cart = http.get(`${baseUrl}/cart`);
   recordStatusMetric(cart);
 
   sleep(1);
 
-  let checkout = http.get(`${__ENV.WATCHN_BASE_URL}/checkout`);
+  let checkout = http.get(`${baseUrl}/checkout`);
   recordStatusMetric(checkout);
 
   let delivery = checkout.submitForm({
@@ -159,12 +166,18 @@ function recordStatusMetric(response) {
 }
 
 function getResources(response) {
+  if(!options.fetchResources) {
+    return;
+  }
+
   const resources = [];
   response
     .html()
     .find('*[href]:not(a)')
     .each((index, element) => {
-      resources.push(element.attributes().href.value);
+      if(!element.attributes().href.value.startsWith('data')) {
+        resources.push(element.attributes().href.value);
+      }
     });
   response
     .html()

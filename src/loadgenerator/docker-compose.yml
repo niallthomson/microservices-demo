@@ -46,6 +46,7 @@ services:
       - WATCHN_REGION=${WATCHN_REGION}
       - WATCHN_TARGET=${WATCHN_TARGET}
       - WATCHN_DURATION=${WATCHN_DURATION}
+      - WATCHN_FETCH=${WATCHN_FETCH}
     command: run /js/script.js
     volumes:
       - ./js:/js
