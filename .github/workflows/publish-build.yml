@@ -14,6 +14,12 @@ jobs:
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
+
+    - name: Install Pack
+      run: |
+        wget https://github.com/buildpack/pack/releases/download/v0.17.0/pack-v0.17.0-linux.tgz \
+          && tar -xvf pack-v0.17.0-linux.tgz \
+          && mv pack /usr/local/bin/pack
    
     - name: Get the version
       id: get_version
