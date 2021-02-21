@@ -130,6 +130,8 @@ services:
 
   assets:
     hostname: assets
+    environment:
+      - PORT=8080
     build:
       context: ../../src/assets
       dockerfile: Dockerfile

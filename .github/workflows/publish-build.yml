@@ -27,10 +27,9 @@ jobs:
 
     - name: Build Images
       env:
-        REPO: watchn
         TAG: "${{ steps.get_version.outputs.VERSION }}"
       run: |
-        scripts/push-all.sh
+        scripts/build-image.sh -r watchn -t $TAG -a -p
         
     - name: Patch Tags
       env:
