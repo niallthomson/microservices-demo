@@ -135,17 +135,23 @@ function build()
 
     msg "Running pack build..."
     pack $quiet_args --no-color build watchn-$component:build --builder $builder --path $component_dir --tag $repository/watchn-$component:$cnb_tag $pack_args
+
+    if [ "$push" = true ] ; then
+      msg "Pushing image for ${GREEN}$component${NOFORMAT}..."
+
+      docker push -q $repository/watchn-$component:$cnb_tag
+    fi
   fi
 
   if [ "$cnb" != true ] || [ "$all" = true ]; then
     msg "Running Docker build..."
     docker build $quiet_args -f "$component_dir/$dockerfile" $docker_build_args -t $repository/watchn-$component:$tag $component_dir
-  fi
 
-  if [ "$push" = true ] ; then
-    msg "Pushing image for ${GREEN}$component${NOFORMAT}..."
+    if [ "$push" = true ] ; then
+      msg "Pushing image for ${GREEN}$component${NOFORMAT}..."
 
-    docker push -q $repository/watchn-$component:$tag
+      docker push -q $repository/watchn-$component:$tag
+    fi
   fi
 
   msg "Finished ${GREEN}$component${NOFORMAT}!"
