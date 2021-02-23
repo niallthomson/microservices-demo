@@ -72,7 +72,7 @@ cd deploy/kubernetes
 Use `helmfile` to install all of the components via their Helm charts:
 
 ```
-helmfile apply
+NODE_PORT=1 helmfile apply
 ```
 
 Open the frontend in a browser window:

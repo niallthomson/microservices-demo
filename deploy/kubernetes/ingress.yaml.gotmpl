@@ -6,3 +6,7 @@ ingress:
   hosts:
     - localhost
 {{end}}
+{{if env "NODE_PORT" }}
+service:
+  type: NodePort
+{{end}}
