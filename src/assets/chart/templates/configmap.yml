@@ -4,5 +4,5 @@ kind: ConfigMap
 metadata:
   name: {{ include "assets.configMapName" . }}
 data:
-  PORT: 8080
+  PORT: '8080'
 {{- end }}
