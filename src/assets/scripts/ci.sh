@@ -4,9 +4,9 @@ set -euo pipefail
 
 DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 
-cd $DIR
+cd $DIR/..
 
-docker build -t assets-ci ..
+docker build -t assets-ci
 
 docker run -d --rm -p 8080:8080 -e PORT=8080 assets-ci
 
