@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: ["ui", "catalog", "cart", "checkout", "orders", "assets"]
+        service: ["ui", "catalog", "cart", "orders", "assets"]
     steps:
 
     - name: Check out code into the Go module directory
