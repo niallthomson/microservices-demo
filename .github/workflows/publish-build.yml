@@ -10,6 +10,9 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: ["ui", "catalog", "cart", "checkout", "orders", "assets"]
     steps:
 
     - name: Check out code into the Go module directory
@@ -33,12 +36,25 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v1
+
     - name: Build Images
       env:
         TAG: "${{ steps.get_version.outputs.VERSION }}"
       run: |
-        scripts/build-image.sh -r watchn -t $TAG -a -p
-        
+        scripts/build-image.sh -r watchn -t $TAG -a -p -s {{ matrix.service }}
+
+  patch_tags:
+    name: Patch tags
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
     - name: Patch Tags
       env:
         TAG: "${{ steps.get_version.outputs.VERSION }}"
