@@ -43,8 +43,9 @@ jobs:
     - name: Build Images
       env:
         TAG: "${{ steps.get_version.outputs.VERSION }}"
+        SERVICE: "${{ matrix.service }}"
       run: |
-        scripts/build-image.sh -r watchn -t $TAG -a -p -s {{ matrix.service }}
+        scripts/build-image.sh -r watchn -t $TAG -a -p -s $SERVICE
 
   patch_tags:
     name: Patch tags
