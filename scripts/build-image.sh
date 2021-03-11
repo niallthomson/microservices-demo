@@ -56,6 +56,7 @@ parse_params() {
   push=false
   all=false
   cnb=false
+  arm=false
   quiet=false
   builder='paketobuildpacks/builder:base'
   repository='watchn'
@@ -71,6 +72,7 @@ parse_params() {
     -q | --quiet) quiet=true ;;
     -a | --all) all=true ;;
     --cnb) cnb=true ;;
+    --arm) arm=true ;;
     -s | --service)
       service="${2-}"
       shift
@@ -144,8 +146,13 @@ function build()
   fi
 
   if [ "$cnb" != true ] || [ "$all" = true ]; then
-    msg "Running Docker build..."
-    docker build $quiet_args -f "$component_dir/$dockerfile" $docker_build_args -t $repository/watchn-$component:$tag $component_dir
+    if [ "$arm" = true ] || [ "$all" = true ]; then
+      msg "Running Docker buildx..."
+      docker buildx build --progress plain --push --platform linux/amd64,linux/arm64 $quiet_args -f "$component_dir/$dockerfile" $docker_build_args -t $repository/watchn-$component:$tag $component_dir
+    else
+      msg "Running Docker build..."
+      docker build $quiet_args -f "$component_dir/$dockerfile" $docker_build_args -t $repository/watchn-$component:$tag $component_dir
+    fi
 
     if [ "$push" = true ] ; then
       msg "Pushing image for ${GREEN}$component${NOFORMAT}..."

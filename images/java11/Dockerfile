@@ -16,18 +16,19 @@ RUN mvn -DskipTests package
 RUN mv /$JAR_PATH /app.jar
 
 # Package Stage
-FROM adoptopenjdk:11-jre-openj9
+FROM amazoncorretto:11-al2-full
+
+RUN yum install -y \
+    shadow-utils
 
 ENV APPUSER=appuser
 ENV APPUID=1000
 ENV APPGID=1000
 
-RUN addgroup --gid $APPGID "$APPUSER" \
-    && adduser \
-    --disabled-password \
-    --gecos "" \
+RUN useradd \
     --home "/app" \
-    --ingroup "$APPUSER" \
+    --create-home \
+    --user-group \
     --uid "$APPUID" \
     "$APPUSER"
 

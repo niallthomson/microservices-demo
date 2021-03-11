@@ -1,5 +1,5 @@
 # Package Stage
-FROM node:14-alpine
+FROM node:12-alpine
 
 RUN apk update && apk upgrade && \
     apk add --no-cache curl python3 alpine-sdk

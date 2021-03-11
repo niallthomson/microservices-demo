@@ -1,11 +1,19 @@
 # Build Stage
-FROM golang:1.13.0-alpine as build-env
+FROM alpine:3.12 as build-env
 
 ARG MAIN_PATH
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh
+    apk add --no-cache bash git openssh make musl-dev go
 
+# Configure Go
+ENV GOROOT /usr/lib/go
+ENV GOPATH /go
+ENV PATH /go/bin:$PATH
+
+RUN mkdir -p ${GOPATH}/src ${GOPATH}/bin
+
+# App
 RUN mkdir /src
 WORKDIR /src
 
