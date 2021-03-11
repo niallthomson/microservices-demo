@@ -152,12 +152,12 @@ function build()
     else
       msg "Running Docker build..."
       docker build $quiet_args -f "$component_dir/$dockerfile" $docker_build_args -t $repository/watchn-$component:$tag $component_dir
-    fi
 
-    if [ "$push" = true ] ; then
-      msg "Pushing image for ${GREEN}$component${NOFORMAT}..."
+      if [ "$push" = true ] ; then
+        msg "Pushing image for ${GREEN}$component${NOFORMAT}..."
 
-      docker push -q $repository/watchn-$component:$tag
+        docker push -q $repository/watchn-$component:$tag
+      fi
     fi
   fi
 
