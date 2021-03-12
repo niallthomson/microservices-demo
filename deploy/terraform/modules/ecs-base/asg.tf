@@ -2,6 +2,7 @@ locals {
   base_ami_id = var.graviton2 ? data.aws_ssm_parameter.ecs_ami_arm64.value : data.aws_ssm_parameter.ecs_ami_x64.value
   ami_id   = var.ami_override_id == "" ? local.base_ami_id : var.ami_override_id
   asg_list = concat(aws_autoscaling_group.ecs_ondemand.*.name, [aws_autoscaling_group.ecs_spot.name])
+  spot_instance_types = var.graviton2 ? var.spot_instance_types_arm64 : var.spot_instance_types_x64
 }
 
 data "aws_ssm_parameter" "ecs_ami_x64" {
@@ -131,29 +132,14 @@ resource "aws_autoscaling_group" "ecs_spot" {
         launch_template_id = aws_launch_template.spot.id
       }
 
-      override {
-        instance_type     = "c5a.xlarge"
-        weighted_capacity = "4"
-      }
+      dynamic "override" {
+        for_each = local.spot_instance_types
+        iterator = type
 
-      override {
-        instance_type     = "c5.xlarge"
-        weighted_capacity = "4"
-      }
-
-      override {
-        instance_type     = "c5d.xlarge"
-        weighted_capacity = "4"
-      }
-
-      override {
-        instance_type     = "c5a.2xlarge"
-        weighted_capacity = "8"
-      }
-
-      override {
-        instance_type     = "c5.2xlarge"
-        weighted_capacity = "8"
+        content {
+          instance_type     = type.value
+          weighted_capacity = 4
+        }
       }
     }
   }

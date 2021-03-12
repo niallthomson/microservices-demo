@@ -96,6 +96,18 @@ variable "ec2_instance_type_arm64" {
   default     = "c6g.xlarge"
 }
 
+variable "spot_instance_types_x64" {
+  type        = list(string)
+  description = "EC2 instance types used for x64 Spot ASG capacity providers"
+  default     = ["c5a.xlarge", "c5.xlarge", "c5d.xlarge"]
+}
+
+variable "spot_instance_types_arm64" {
+  type        = list(string)
+  description = "EC2 instance types used for ARM64 Spot ASG capacity providers"
+  default     = ["c6g.xlarge"]
+}
+
 variable "ec2_instance_refresh" {
   type        = bool
   description = "Whether to enable instance refresh on the ASGs for the capacity providers"
