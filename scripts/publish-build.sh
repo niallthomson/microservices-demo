@@ -8,4 +8,4 @@ timestamp=$(date +%s)
 tag="build.$timestamp"
 
 git tag -a $tag -m "Published build $tag"
-git push origin --tags
+git push origin $tag
