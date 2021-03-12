@@ -1,10 +1,15 @@
 locals {
-  ami_id   = var.ami_override_id == "" ? data.aws_ssm_parameter.ecs_ami.value : var.ami_override_id
+  base_ami_id = var.graviton2 ? data.aws_ssm_parameter.ecs_ami_arm64.value : data.aws_ssm_parameter.ecs_ami_x64.value
+  ami_id   = var.ami_override_id == "" ? local.base_ami_id : var.ami_override_id
   asg_list = concat(aws_autoscaling_group.ecs_ondemand.*.name, [aws_autoscaling_group.ecs_spot.name])
 }
 
-data "aws_ssm_parameter" "ecs_ami" {
+data "aws_ssm_parameter" "ecs_ami_x64" {
   name = "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
+}
+
+data "aws_ssm_parameter" "ecs_ami_arm64" {
+  name = "/aws/service/ecs/optimized-ami/amazon-linux-2/arm64/recommended/image_id"
 }
 
 data "template_cloudinit_config" "asg_userdata_ondemand" {
@@ -25,7 +30,7 @@ EOT
 resource "aws_launch_template" "ondemand" {
   name_prefix            = local.full_environment_prefix
   image_id               = local.ami_id
-  instance_type          = var.ec2_instance_type
+  instance_type          = var.graviton2 ? var.ec2_instance_type_arm64 : var.ec2_instance_type_x64
   vpc_security_group_ids = [aws_security_group.asg_sg.id]
   user_data              = data.template_cloudinit_config.asg_userdata_ondemand.rendered
   update_default_version = true
@@ -54,12 +59,22 @@ resource "aws_autoscaling_group" "ecs_ondemand" {
     create_before_destroy = true
   }
 
-  instance_refresh {
+  /*instance_refresh {
     strategy = "Rolling"
     preferences {
       min_healthy_percentage = 90
       instance_warmup        = 120
     }
+  }*/
+
+  initial_lifecycle_hook {
+    name                 = "ecs-drain"
+    default_result       = "ABANDON"
+    heartbeat_timeout    = 900
+    lifecycle_transition = "autoscaling:EC2_INSTANCE_TERMINATING"
+
+    notification_target_arn = aws_sns_topic.drain_lambda_sns.arn
+    role_arn                = aws_iam_role.asg_drain_lifecycle.arn
   }
 
   tag {
@@ -87,7 +102,7 @@ EOT
 resource "aws_launch_template" "spot" {
   name_prefix            = local.full_environment_prefix
   image_id               = local.ami_id
-  instance_type          = var.ec2_instance_type
+  instance_type          = var.graviton2 ? var.ec2_instance_type_arm64 : var.ec2_instance_type_x64
   vpc_security_group_ids = [aws_security_group.asg_sg.id]
   user_data              = data.template_cloudinit_config.asg_userdata_ondemand.rendered
   update_default_version = true
@@ -96,7 +111,6 @@ resource "aws_launch_template" "spot" {
     name = aws_iam_instance_profile.ecs_node.name
   }
 }
-
 
 resource "aws_autoscaling_group" "ecs_spot" {
   name_prefix           = "${local.full_environment_prefix}-spot"
@@ -148,13 +162,13 @@ resource "aws_autoscaling_group" "ecs_spot" {
     create_before_destroy = true
   }
 
-  instance_refresh {
+  /*instance_refresh {
     strategy = "Rolling"
     preferences {
       min_healthy_percentage = 90
       instance_warmup        = 120
     }
-  }
+  }*/
 
   tag {
     key                 = "AmazonECSManaged"

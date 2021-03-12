@@ -191,20 +191,3 @@ resource "aws_iam_role_policy" "asg_drain_lifecycle" {
 }
 EOF
 }
-
-resource "aws_autoscaling_lifecycle_hook" "asg_terminate_hook" {
-  count = length(local.asg_list)
-
-  name                    = "${local.full_environment_prefix}-asg-lifecycle-${count.index}"
-  autoscaling_group_name  = local.asg_list[count.index]
-  default_result          = "ABANDON"
-  heartbeat_timeout       = 900
-  lifecycle_transition    = "autoscaling:EC2_INSTANCE_TERMINATING"
-  notification_target_arn = aws_sns_topic.drain_lambda_sns.arn
-  role_arn                = aws_iam_role.asg_drain_lifecycle.arn
-}
-
-/*resource "aws_iam_role_policy_attachment" "asg_drain_lambda" {
-  role       = aws_iam_role.asg_drain_lambda.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AutoScalingNotificationAccessRole"
-}*/

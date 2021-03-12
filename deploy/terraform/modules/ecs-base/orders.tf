@@ -3,6 +3,7 @@ module "orders_service" {
 
   environment_name          = local.full_environment_prefix
   service_name              = "orders"
+  region                    = var.region
   cluster_id                = aws_ecs_cluster.cluster.id
   ecs_deployment_controller = var.ecs_deployment_controller
   vpc_id                    = module.vpc.vpc_id
@@ -16,94 +17,48 @@ module "orders_service" {
   health_check_grace_period = 120
   fargate                   = var.fargate
   ssm_kms_policy_arn        = aws_iam_policy.ssm_kms.arn
-
-  container_definitions = <<DEFINITION
-[
-  {
-    "name": "application",
-    "image": "watchn/watchn-orders:${module.image_tag.image_tag}",
-    "memory": 1024,
-    "cpu": 512,
-    "essential": true,
-    "environment": [
-      {
-        "name": "SPRING_DATASOURCE_WRITER_URL",
-        "value": "jdbc:mysql://${module.orders_rds.writer_endpoint}:3306/orders"
-      },
-      {
-        "name": "SPRING_DATASOURCE_WRITER_USERNAME",
-        "value": "${module.orders_rds.username}"
-      },
-      {
-        "name": "SPRING_DATASOURCE_READER_URL",
-        "value": "jdbc:mysql://${module.orders_rds.reader_endpoint}:3306/orders"
-      },
-      {
-        "name": "SPRING_DATASOURCE_READER_USERNAME",
-        "value": "${module.orders_rds.username}"
-      },
-      {
-        "name": "SPRING_ACTIVEMQ_BROKERURL",
-        "value": "${module.mq.wire_endpoint}"
-      },
-      {
-        "name": "SPRING_ACTIVEMQ_USER",
-        "value": "${module.mq.user}"
-      },
-      {
-        "name": "SPRING_PROFILES_ACTIVE",
-        "value": "mysql,activemq,prod"
-      },
-      {
-        "name": "JAVA_OPTS",
-        "value": "-XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom"
-      }
-    ],
-    "secrets": [
-      {
-        "name": "SPRING_DATASOURCE_WRITER_PASSWORD",
-        "valueFrom": "${module.orders_rds.password_ssm_name}"
-      },
-      {
-        "name": "SPRING_DATASOURCE_READER_PASSWORD",
-        "valueFrom": "${module.orders_rds.password_ssm_name}"
-      },
-      {
-        "name": "SPRING_ACTIVEMQ_PASSWORD",
-        "valueFrom": "${module.mq.password_ssm_name}"
-      }
-    ],
-    "portMappings": [
-      {
-        "protocol": "tcp",
-        "containerPort": 8080
-      }
-    ],
-    "healthCheck": {
-      "command" : [ 
-        "CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"
-      ],
-      "interval" : 30,
-      "retries" : 3,
-      "startPeriod" : 60,
-      "timeout" : 10
-    },
-    "linuxParameters": {
-      "capabilities": {
-        "drop": ["ALL"]
-      }
-    },
-    "logConfiguration": {
-      "logDriver": "awslogs",
-      "options": {
-        "awslogs-group": "${aws_cloudwatch_log_group.logs.name}",
-        "awslogs-region": "${var.region}",
-        "awslogs-stream-prefix": "ecs"
-      }
-    }
+  docker_labels             = {
+    "platform" = "java"
   }
-]
-DEFINITION
+
+  container_image           = "watchn/watchn-orders:${module.image_tag.image_tag}"
+  environment               = [{
+    name  = "SPRING_DATASOURCE_WRITER_URL",
+    value = "jdbc:mysql://${module.orders_rds.writer_endpoint}:3306/orders"
+  },{
+    name  = "SPRING_DATASOURCE_WRITER_USERNAME",
+    value = module.orders_rds.username
+  },{
+    name  = "SPRING_DATASOURCE_READER_URL",
+    value = "jdbc:mysql://${module.orders_rds.reader_endpoint}:3306/orders"
+  },{
+    name  = "SPRING_DATASOURCE_READER_USERNAME",
+    value = module.orders_rds.username
+  },{
+    name  = "SPRING_ACTIVEMQ_BROKERURL",
+    value = module.mq.wire_endpoint
+  },{
+    name  = "SPRING_ACTIVEMQ_USER",
+    value = module.mq.user
+  },{
+    name  = "SPRING_PROFILES_ACTIVE",
+    value = "mysql,activemq,prod"
+  },{
+    name  = "JAVA_OPTS",
+    value = "-XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom"
+  }]
+  secrets               = [{
+    name      = "SPRING_DATASOURCE_WRITER_PASSWORD",
+    valueFrom = module.orders_rds.password_ssm_name
+  },{
+    name      = "SPRING_DATASOURCE_READER_PASSWORD",
+    valueFrom = module.orders_rds.password_ssm_name
+  },{
+    name      = "SPRING_ACTIVEMQ_PASSWORD",
+    valueFrom = module.mq.password_ssm_name
+  }]
+
+  cloudwatch_dashboard_elements = module.orders_rds.cloudwatch_dashboard_elements
 }
 
 resource "aws_security_group" "orders" {

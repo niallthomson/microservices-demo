@@ -1,3 +1,11 @@
+locals {
+  catalog_dns  = var.use_cloud_map ? "${module.catalog_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}" : module.catalog_service.alb_dns
+  checkout_dns = var.use_cloud_map ? "${module.checkout_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}" : module.checkout_service.alb_dns
+  carts_dns    = var.use_cloud_map ? "${module.carts_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}" : module.carts_service.alb_dns
+  orders_dns   = var.use_cloud_map ? "${module.orders_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}" : module.orders_service.alb_dns
+  assets_dns  = var.use_cloud_map ? "${module.assets_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}" : module.assets_service.alb_dns
+}
+
 resource "aws_ecs_task_definition" "ui" {
   family                   = "${local.full_environment_prefix}-ui"
   network_mode             = "awsvpc"
@@ -5,7 +13,7 @@ resource "aws_ecs_task_definition" "ui" {
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
   task_role_arn            = aws_iam_role.ui_role.arn
 
-  cpu = 512
+  cpu    = 512
   memory = 1024
 
   container_definitions = <<DEFINITION
@@ -19,23 +27,23 @@ resource "aws_ecs_task_definition" "ui" {
     "environment": [
       {
         "name": "ENDPOINTS_CATALOG",
-        "value": "http://${module.catalog_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
+        "value": "http://${local.catalog_dns}:8080"
       },
       {
         "name": "ENDPOINTS_CARTS",
-        "value": "http://${module.carts_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
+        "value": "http://${local.carts_dns}:8080"
       },
       {
         "name": "ENDPOINTS_ORDERS",
-        "value": "http://${module.orders_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
+        "value": "http://${local.orders_dns}:8080"
       },
       {
         "name": "ENDPOINTS_CHECKOUT",
-        "value": "http://${module.checkout_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
+        "value": "http://${local.checkout_dns}:8080"
       },
       {
         "name": "ENDPOINTS_ASSETS",
-        "value": "http://${module.assets_service.sd_service_name}.${aws_service_discovery_private_dns_namespace.sd.name}:8080"
+        "value": "http://${local.assets_dns}:8080"
       },
       {
         "name": "SPRING_PROFILES_ACTIVE",
@@ -52,15 +60,6 @@ resource "aws_ecs_task_definition" "ui" {
         "containerPort": 8080
       }
     ],
-    "healthCheck": {
-      "command" : [ 
-        "CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"
-      ],
-      "interval" : 30,
-      "retries" : 3,
-      "startPeriod" : 60,
-      "timeout" : 10
-    },
     "readonlyRootFilesystem": true,
     "linuxParameters": {
       "capabilities": {
@@ -70,10 +69,13 @@ resource "aws_ecs_task_definition" "ui" {
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "${aws_cloudwatch_log_group.logs.name}",
+        "awslogs-group": "${aws_cloudwatch_log_group.ui_logs.name}",
         "awslogs-region": "${var.region}",
         "awslogs-stream-prefix": "ecs"
       }
+    },
+    "dockerLabels": {
+      "platform": "java"
     }
   }
 ]
@@ -84,7 +86,7 @@ resource "aws_ecs_service" "ui" {
   name                              = "${local.full_environment_prefix}-ui"
   cluster                           = aws_ecs_cluster.cluster.id
   task_definition                   = aws_ecs_task_definition.ui.arn
-  desired_count                     = 3
+  desired_count                     = length(module.vpc.private_subnets)
   platform_version                  = "1.4.0"
 
   network_configuration {
@@ -103,7 +105,7 @@ resource "aws_ecs_service" "ui" {
   capacity_provider_strategy {
     capacity_provider  = "FARGATE"
     weight = 0
-    base = 3
+    base = length(module.vpc.private_subnets)
   }
 
   capacity_provider_strategy {
@@ -168,7 +170,7 @@ EOF
 
 resource "aws_appautoscaling_target" "ui_target" {
   max_capacity       = 9
-  min_capacity       = 3
+  min_capacity       = length(module.vpc.private_subnets)
   resource_id        = "service/${aws_ecs_cluster.cluster.name}/${aws_ecs_service.ui.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
@@ -191,4 +193,9 @@ resource "aws_appautoscaling_policy" "ui_policy" {
     scale_in_cooldown  = 300
     scale_out_cooldown = 300
   }
+}
+
+resource "aws_cloudwatch_log_group" "ui_logs" {
+  name              = "/watchn-ecs/${var.environment_name}/ui"
+  retention_in_days = 7
 }

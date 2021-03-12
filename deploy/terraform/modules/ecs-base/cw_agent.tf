@@ -1,6 +1,7 @@
 resource "aws_ssm_parameter" "cwagent_config" {
   name  = "${local.full_environment_prefix}-cwagentconfig"
   type  = "String"
+  tier  = "Advanced"
   value = <<CONTENT
 {
   "logs": {
@@ -17,6 +18,24 @@ resource "aws_ssm_parameter" "cwagent_config" {
               "sd_job_name": "watchn-ui",
               "sd_metrics_ports": "8080",
               "sd_task_definition_arn_pattern": ".*:task-definition/${local.full_environment_prefix}-ui:[0-9]+",
+              "sd_metrics_path": "/actuator/prometheus"
+            },
+            {
+              "sd_job_name": "watchn-catalog",
+              "sd_metrics_ports": "8080",
+              "sd_task_definition_arn_pattern": ".*:task-definition/${local.full_environment_prefix}-catalog:[0-9]+",
+              "sd_metrics_path": "/metrics"
+            },
+            {
+              "sd_job_name": "watchn-carts",
+              "sd_metrics_ports": "8080",
+              "sd_task_definition_arn_pattern": ".*:task-definition/${local.full_environment_prefix}-cart:[0-9]+",
+              "sd_metrics_path": "/actuator/prometheus"
+            },
+            {
+              "sd_job_name": "watchn-orders",
+              "sd_metrics_ports": "8080",
+              "sd_task_definition_arn_pattern": ".*:task-definition/${local.full_environment_prefix}-orders:[0-9]+",
               "sd_metrics_path": "/actuator/prometheus"
             }
           ]
@@ -50,40 +69,43 @@ resource "aws_ssm_parameter" "cwagent_config" {
               ]
             },
             {
-              "source_labels": ["Java_EMF_Metrics"],
-              "label_matcher": "^true$",
-              "dimensions": [["ClusterName","TaskDefinitionFamily"]],
-              "metric_selectors": [
-                "^jvm_threads_(current|daemon)$",
-                "^jvm_classes_loaded$",
-                "^java_lang_operatingsystem_(freephysicalmemorysize|totalphysicalmemorysize|freeswapspacesize|totalswapspacesize|systemcpuload|processcpuload|availableprocessors|openfiledescriptorcount)$",
-                "^catalina_manager_(rejectedsessions|activesessions)$",
-                "^jvm_gc_collection_seconds_(count|sum)$",
-                "^catalina_globalrequestprocessor_(bytesreceived|bytessent|requestcount|errorcount|processingtime)$"
-              ]
-            },
-            {
-              "source_labels": ["Java_EMF_Metrics"],
-              "label_matcher": "^true$",
-              "dimensions": [["ClusterName","TaskDefinitionFamily","area"]],
-              "metric_selectors": [
-                "^jvm_memory_bytes_used$"
-              ]
-            },
-            {
-              "source_labels": ["Java_EMF_Metrics"],
-              "label_matcher": "^true$",
-              "dimensions": [["ClusterName","TaskDefinitionFamily","pool"]],
-              "metric_selectors": [
-                "^jvm_memory_pool_bytes_used$"
-              ]
-            },
-            {
-              "source_labels": ["container_name"],
-              "label_matcher": "application",
+              "source_labels": ["platform"],
+              "label_matcher": "java",
               "dimensions": [["ClusterName","TaskDefinitionFamily","status"]],
               "metric_selectors": [
                 "http_server_requests_seconds_count"
+              ]
+            },
+            {
+              "source_labels": ["TaskDefinitionFamily"],
+              "label_matcher": "${aws_ecs_service.ui.name}",
+              "dimensions": [["ClusterName","TaskDefinitionFamily","status","clientName"]],
+              "metric_selectors": [
+                "http_client_requests_seconds_(count|sum)"
+              ]
+            },
+            {
+              "source_labels": ["platform"],
+              "label_matcher": "go",
+              "dimensions": [["ClusterName","TaskDefinitionFamily"]],
+              "metric_selectors": [
+                "gin_request_duration_seconds_(sum|count)"
+              ]
+            },
+            {
+              "source_labels": ["platform"],
+              "label_matcher": "go",
+              "dimensions": [["ClusterName","TaskDefinitionFamily","db_name"]],
+              "metric_selectors": [
+                "go_sql_stats_connections_(blocked_seconds|closed_max_idle|closed_max_lifetime|idle|in_use|max_open|open|waited_for)"
+              ]
+            },
+            {
+              "source_labels": ["platform"],
+              "label_matcher": "go",
+              "dimensions": [["ClusterName","TaskDefinitionFamily","code"]],
+              "metric_selectors": [
+                "gin_requests_total"
               ]
             }
           ]
@@ -146,6 +168,9 @@ resource "aws_ecs_task_definition" "cwagent" {
         "awslogs-region": "${var.region}",
         "awslogs-stream-prefix": "ecs"
       }
+    },
+    "dockerLabels": {
+      "config_hash": "${base64sha256(aws_ssm_parameter.cwagent_config.value)}"
     }
   }
 ]

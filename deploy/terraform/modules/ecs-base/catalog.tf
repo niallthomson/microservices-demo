@@ -3,6 +3,7 @@ module "catalog_service" {
 
   environment_name          = local.full_environment_prefix
   service_name              = "catalog"
+  region                    = var.region
   cluster_id                = aws_ecs_cluster.cluster.id
   ecs_deployment_controller = var.ecs_deployment_controller
   vpc_id                    = module.vpc.vpc_id
@@ -14,69 +15,31 @@ module "catalog_service" {
   memory                    = 512
   fargate                   = var.fargate
   ssm_kms_policy_arn        = aws_iam_policy.ssm_kms.arn
-
-  container_definitions = <<DEFINITION
-[
-  {
-    "name": "application",
-    "image": "watchn/watchn-catalog:${module.image_tag.image_tag}",
-    "memory": 512,
-    "essential": true,
-    "environment": [
-      {
-        "name": "DB_ENDPOINT",
-        "value": "${module.catalog_rds.writer_endpoint}"
-      },
-      {
-        "name": "DB_USER",
-        "value": "${module.catalog_rds.username}"
-      },
-      {
-        "name": "DB_READ_ENDPOINT",
-        "value": "${module.catalog_rds.reader_endpoint}"
-      },
-      {
-        "name": "DB_NAME",
-        "value": "catalog"
-      }
-    ],
-    "secrets": [
-      {
-        "name": "DB_PASSWORD",
-        "valueFrom": "${module.catalog_rds.password_ssm_name}"
-      }
-    ],
-    "portMappings": [
-      {
-        "protocol": "tcp",
-        "containerPort": 8080
-      }
-    ],
-    "healthcheck": {
-      "command" : [ 
-        "CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"
-      ],
-      "interval" : 30,
-      "retries" : 3,
-      "startPeriod" : 30,
-      "timeout" : 10
-    },
-    "linuxParameters": {
-      "capabilities": {
-        "drop": ["ALL"]
-      }
-    },
-    "logConfiguration": {
-      "logDriver": "awslogs",
-      "options": {
-        "awslogs-group": "${aws_cloudwatch_log_group.logs.name}",
-        "awslogs-region": "${var.region}",
-        "awslogs-stream-prefix": "ecs"
-      }
-    }
+  docker_labels             = {
+    "platform" = "go"
   }
-]
-DEFINITION
+
+  container_image           = "watchn/watchn-catalog:${module.image_tag.image_tag}"
+  environment               = [{
+    name  = "DB_ENDPOINT",
+    value = module.catalog_rds.writer_endpoint
+  },{
+    name  = "DB_USER",
+    value = module.catalog_rds.username
+  },{
+    name  = "DB_READ_ENDPOINT",
+    value = module.catalog_rds.reader_endpoint
+  },{
+    name  = "DB_NAME",
+    value = "catalog"
+  }]
+  secrets               = [{
+    name      = "DB_PASSWORD",
+    valueFrom = module.catalog_rds.password_ssm_name
+  }]
+
+  #cloudwatch_dashboard_elements = "${data.template_file.catalog_dashboard_elements.rendered},${module.catalog_rds.cloudwatch_dashboard_elements}"
+  cloudwatch_dashboard_elements = module.catalog_rds.cloudwatch_dashboard_elements
 }
 
 resource "aws_security_group" "catalog" {
@@ -126,6 +89,66 @@ resource "aws_iam_role_policy" "catalog_execution" {
       ]
     }
   ]
+}
+EOF
+}
+
+data "template_file" "catalog_dashboard_elements" {
+
+  template = <<EOF
+{
+  "type": "text",
+  "width": 24,
+  "height": 1,
+  "properties": {
+    "markdown": "\n# Database Client\n"
+  }
+},
+{
+  "type": "metric",
+  "width": 12,
+  "height": 6,
+  "properties": {
+    "metrics": [
+      [ "ECS/ContainerInsights/Prometheus", "go_sql_stats_connections_idle", "db_name", "db", "TaskDefinitionFamily", "${module.catalog_service.service_name}", "ClusterName", "${aws_ecs_cluster.cluster.name}" ],
+      [ ".", "go_sql_stats_connections_max_open", ".", ".", ".", ".", ".", "." ],
+      [ ".", "go_sql_stats_connections_open", ".", ".", ".", ".", ".", "." ],
+      [ ".", "go_sql_stats_connections_in_use", ".", ".", ".", ".", ".", "." ]
+    ],
+    "period": 60,
+    "stat": "Sum",
+    "region": "${var.region}",
+    "title": "DB Connections",
+    "yAxis": {
+        "left": {
+            "label": "Count",
+            "showUnits": false
+        }
+    }
+  }
+},
+{
+  "type": "metric",
+  "width": 12,
+  "height": 6,
+  "properties": {
+    "metrics": [
+      [ "ECS/ContainerInsights/Prometheus", "go_sql_stats_connections_idle", "db_name", "reader_db", "TaskDefinitionFamily", "${module.catalog_service.service_name}", "ClusterName", "${aws_ecs_cluster.cluster.name}" ],
+      [ ".", "go_sql_stats_connections_max_open", ".", ".", ".", ".", ".", "." ],
+      [ ".", "go_sql_stats_connections_open", ".", ".", ".", ".", ".", "." ],
+      [ ".", "go_sql_stats_connections_in_use", ".", ".", ".", ".", ".", "." ]
+    ],
+    "period": 60,
+    "stat": "Sum",
+    "region": "${var.region}",
+    "title": "Reader DB Connections",
+    "yAxis": {
+        "left": {
+            "label": "Count",
+            "showUnits": false
+        }
+    }
+  }
 }
 EOF
 }

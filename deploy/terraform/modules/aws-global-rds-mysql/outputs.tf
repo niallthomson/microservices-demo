@@ -33,3 +33,7 @@ output "root_password_ssm_name" {
 output "root_password_ssm_arn" {
   value = aws_ssm_parameter.root_password.arn
 }
+
+output "cloudwatch_dashboard_elements" {
+  value = data.template_file.cloudwatch_dashboard_elements.rendered
+}

@@ -1,3 +1,17 @@
+locals {
+  linuxParameters = !var.drop_capabilities ? "" : <<CONTENT
+"linuxParameters": {
+  "capabilities": {
+    "drop": ["ALL"]
+  },
+  "tmpfs": [{
+    "containerPath": "/tmp",
+    "size": 64
+  }]
+},
+CONTENT
+}
+
 resource "aws_ecs_task_definition" "task" {
   family                   = "${var.environment_name}-${var.service_name}"
   network_mode             = "awsvpc"
@@ -7,14 +21,43 @@ resource "aws_ecs_task_definition" "task" {
   cpu                      = var.cpu
   memory                   = var.memory
 
-  container_definitions = var.container_definitions
+  container_definitions = <<DEFINITION
+[
+  {
+    "name": "application",
+    "image": "${var.container_image}",
+    "cpu": ${var.cpu},
+    "memory": ${var.memory},
+    "essential": true,
+    "environment": ${jsonencode(var.environment)},
+    "secrets": ${jsonencode(var.secrets)},
+    "portMappings": [
+      {
+        "protocol": "tcp",
+        "containerPort": 8080
+      }
+    ],
+    "readonlyRootFilesystem": ${var.readonly_filesystem},
+    ${local.linuxParameters}
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${aws_cloudwatch_log_group.logs.name}",
+        "awslogs-region": "${var.region}",
+        "awslogs-stream-prefix": "ecs"
+      }
+    },
+    "dockerLabels": ${jsonencode(var.docker_labels)}
+  }
+]
+DEFINITION
 }
 
 resource "aws_ecs_service" "service" {
   name                              = "${var.environment_name}-${var.service_name}"
   cluster                           = var.cluster_id
   task_definition                   = aws_ecs_task_definition.task.arn
-  desired_count                     = 3
+  desired_count                     = length(var.subnet_ids)
   platform_version                  = var.fargate ? "1.4.0" : null
   health_check_grace_period_seconds = var.health_check_grace_period
 

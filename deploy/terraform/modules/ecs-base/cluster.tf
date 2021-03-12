@@ -9,21 +9,31 @@ resource "aws_ecs_cluster" "cluster" {
   capacity_providers  = concat(aws_ecs_capacity_provider.asg_ondemand.*.name, [aws_ecs_capacity_provider.asg_spot.name, "FARGATE", "FARGATE_SPOT"])
 
   dynamic "default_capacity_provider_strategy" {
-    for_each = var.fargate ? ["FARGATE"] : concat(aws_ecs_capacity_provider.asg_ondemand.*.name, [aws_ecs_capacity_provider.asg_spot.name])
+    for_each = var.fargate ? [] : aws_ecs_capacity_provider.asg_ondemand.*.name
     iterator = strategy
 
     content {
       capacity_provider = strategy.value
-      weight = 1
+      weight            = 1
+    }
+  }
+
+  dynamic "default_capacity_provider_strategy" {
+    for_each = var.fargate ? ["FARGATE"] : []
+    iterator = strategy
+
+    content {
+      capacity_provider = strategy.value
+      base              = 3
+      weight            = 1
     }
   }
 
   default_capacity_provider_strategy {
     capacity_provider  = var.fargate ? "FARGATE_SPOT" : aws_ecs_capacity_provider.asg_spot.name
-    weight = 1
+    weight             = 3
   }
 
-/*
   # We need to terminate all instances before the cluster can be destroyed.
   # (Terraform would handle this automatically if the autoscaling group depended
   #  on the cluster, but we need to have the dependency in the reverse
@@ -64,7 +74,7 @@ resource "aws_ecs_cluster" "cluster" {
         done
       fi
 CMD
-  }*/
+  }
 }
 
 resource "aws_ecs_capacity_provider" "asg_ondemand" {

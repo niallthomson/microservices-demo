@@ -3,6 +3,7 @@ variable "environment_name" {
 }
 
 variable "region" {
+  type = string
 }
 
 variable "availability_zones" {
@@ -79,14 +80,35 @@ variable "fargate" {
   default = true
 }
 
-variable "ec2_instance_type" {
+variable "graviton2" {
+  default = false
+}
+
+variable "ec2_instance_type_x64" {
   type        = string
   description = "EC2 instance type used for ASG capacity providers"
   default     = "c5a.xlarge"
+}
+
+variable "ec2_instance_type_arm64" {
+  type        = string
+  description = "EC2 instance type used for ASG capacity providers"
+  default     = "c6g.xlarge"
+}
+
+variable "ec2_instance_refresh" {
+  type        = bool
+  description = "Whether to enable instance refresh on the ASGs for the capacity providers"
+  default     = true
 }
 
 variable "ami_override_id" {
   type        = string
   description = "AMI ID to override the SSM parameter lookup, for testing upgrades"
   default     = ""
+}
+
+variable "use_cloud_map" {
+  type    = bool
+  default = true
 }

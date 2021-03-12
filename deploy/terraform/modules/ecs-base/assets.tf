@@ -3,6 +3,7 @@ module "assets_service" {
 
   environment_name          = local.full_environment_prefix
   service_name              = "assets"
+  region                    = var.region
   cluster_id                = aws_ecs_cluster.cluster.id
   ecs_deployment_controller = var.ecs_deployment_controller
   vpc_id                    = module.vpc.vpc_id
@@ -15,38 +16,16 @@ module "assets_service" {
   health_check_path         = "/health.html"
   fargate                   = var.fargate
   ssm_kms_policy_arn        = aws_iam_policy.ssm_kms.arn
-
-  container_definitions = <<DEFINITION
-[
-  {
-    "name": "application",
-    "image": "watchn/watchn-assets:${module.image_tag.image_tag}",
-    "memory": 512,
-    "essential": true,
-    "portMappings": [
-      {
-        "protocol": "tcp",
-        "containerPort": 8080
-      }
-    ],
-    "healthcheck": {
-      "command" : [ 
-        "CMD-SHELL", "curl -f http://localhost:8080/health.html || exit 1"
-      ],
-      "interval" : 30,
-      "retries" : 3,
-      "startPeriod" : 15,
-      "timeout" : 10
-    },
-    "logConfiguration": {
-      "logDriver": "awslogs",
-      "options": {
-        "awslogs-group": "${aws_cloudwatch_log_group.logs.name}",
-        "awslogs-region": "${var.region}",
-        "awslogs-stream-prefix": "ecs"
-      }
-    }
+  docker_labels             = {
+    "platform" = "nginx"
   }
-]
-DEFINITION
+
+  container_image           = "watchn/watchn-assets:${module.image_tag.image_tag}"
+  environment               = [{
+    name  = "PORT"
+    value = "8080"
+  }]
+
+  readonly_filesystem       = false
+  drop_capabilities         = false
 }

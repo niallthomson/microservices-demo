@@ -26,10 +26,18 @@ output "alb_target_group_name" {
   value = aws_alb_target_group.main.name
 }
 
+output "alb_target_group_arn_suffix" {
+  value = aws_alb_target_group.main.arn_suffix
+}
+
 output "execution_role_name" {
   value = aws_iam_role.ecs_execution_role.name
 }
 
 output "task_execution_role_name" {
   value = aws_iam_role.ecs_task_execution_role.name
+}
+
+output "cloudwatch_log_group_name" {
+  value = aws_cloudwatch_log_group.logs.name
 }
