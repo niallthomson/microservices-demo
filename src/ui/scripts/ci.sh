@@ -7,3 +7,5 @@ DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 cd $DIR/..
 
 ./mvnw test
+
+../../scripts/build-image.sh -s ui -a
