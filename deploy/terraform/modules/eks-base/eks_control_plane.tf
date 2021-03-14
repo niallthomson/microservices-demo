@@ -43,7 +43,8 @@ resource "aws_eks_cluster" "cluster" {
     aws_iam_role_policy_attachment.cluster_AmazonEKSServicePolicy,
     aws_cloudwatch_log_group.cluster,
     aws_eip.nginx_ingress, 
-    aws_eip.istio_ingress
+    aws_eip.istio_ingress,
+    module.vpc
   ]
 }
 
