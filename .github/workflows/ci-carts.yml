@@ -23,6 +23,22 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    - name: Install Pack
+      run: |
+        mkdir -p $GITHUB_WORKSPACE/bin
+        echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
+        wget https://github.com/buildpack/pack/releases/download/v0.17.0/pack-v0.17.0-linux.tgz \
+          && tar -xvf pack-v0.17.0-linux.tgz \
+          && mv pack $GITHUB_WORKSPACE/bin/pack
+    - name: Set up QEMU
+      id: qemu
+      uses: docker/setup-qemu-action@v1
+      with:
+        image: tonistiigi/binfmt:latest
+        platforms: all
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v1
     - name: Run
       env:
         AWS_ACCESS_KEY_ID: dummy
