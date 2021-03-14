@@ -83,6 +83,12 @@ resource "aws_autoscaling_group" "ecs_ondemand" {
     propagate_at_launch = true
     value               = ""
   }
+
+  tag {
+    key                 = "watchn-environment"
+    propagate_at_launch = false
+    value               = local.full_environment_prefix
+  }
 }
 
 data "template_cloudinit_config" "asg_userdata_spot" {
@@ -160,6 +166,12 @@ resource "aws_autoscaling_group" "ecs_spot" {
     key                 = "AmazonECSManaged"
     propagate_at_launch = true
     value               = ""
+  }
+
+  tag {
+    key                 = "watchn-environment"
+    propagate_at_launch = false
+    value               = local.full_environment_prefix
   }
 }
 

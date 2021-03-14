@@ -42,37 +42,18 @@ resource "aws_ecs_cluster" "cluster" {
     when = destroy
 
     command = <<CMD
-      # Get the list of capacity providers associated with this cluster
-      CAP_PROVS="$(aws ecs describe-clusters --clusters "${self.arn}" \
-        --query 'clusters[*].capacityProviders[*]' --output text)"
+      export AWS_DEFAULT_REGION="${var.region}"
+      ASG_NAMES="$(aws autoscaling describe-auto-scaling-groups --query "AutoScalingGroups[? Tags[? (Key=='watchn-environment') && Value=='${self.name}']]".AutoScalingGroupName --output text)"
 
-      # Now get the list of autoscaling groups from those capacity providers
-      ASG_ARNS="$(aws ecs describe-capacity-providers \
-        --capacity-providers "$CAP_PROVS" \
-        --query 'capacityProviders[*].autoScalingGroupProvider.autoScalingGroupArn' \
-        --output text)"
-
-      if [ -n "$ASG_ARNS" ] && [ "$ASG_ARNS" != "None" ]
+      if [ -n "$ASG_NAMES" ] && [ "$ASG_NAMES" != "None" ]
       then
-        for ASG_ARN in $ASG_ARNS
+        for ASG_NAME in $ASG_NAMES
         do
-          ASG_NAME=$(echo $ASG_ARN | cut -d/ -f2-)
-
-          # Set the autoscaling group size to zero
-          aws autoscaling update-auto-scaling-group \
-            --auto-scaling-group-name "$ASG_NAME" \
-            --min-size 0 --max-size 0 --desired-capacity 0
-
-          # Remove scale-in protection from all instances in the asg
-          INSTANCES="$(aws autoscaling describe-auto-scaling-groups \
-            --auto-scaling-group-names "$ASG_NAME" \
-            --query 'AutoScalingGroups[*].Instances[*].InstanceId' \
-            --output text)"
-          aws autoscaling set-instance-protection --instance-ids $INSTANCES \
-            --auto-scaling-group-name "$ASG_NAME" \
-            --no-protected-from-scale-in
+          aws autoscaling delete-auto-scaling-group --auto-scaling-group-name "$ASG_NAME" --force-delete
         done
       fi
+
+      sleep 40
 CMD
   }
 }
