@@ -18,7 +18,7 @@ resource "helm_release" "prometheus" {
   name       = "prometheus"
   chart      = "prometheus"
   repository = "https://prometheus-community.github.io/helm-charts"
-  version    = "12.0.1"
+  version    = "13.6.0"
   namespace  = kubernetes_namespace.prometheus.metadata[0].name
 
   values = [data.template_file.prometheus_values.rendered]
@@ -34,8 +34,10 @@ resource "helm_release" "prometheus_adapter" {
   name       = "prometheus-adapter"
   chart      = "prometheus-adapter"
   repository = "https://prometheus-community.github.io/helm-charts"
-  version    = "2.7.1"
+  version    = "2.12.1"
   namespace  = kubernetes_namespace.prometheus.metadata[0].name
+  replace    = true
+  force_update = true
 
   values = [data.template_file.prometheus_adapter_values.rendered]
 }

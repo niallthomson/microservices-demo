@@ -1,7 +1,5 @@
 provider "aws" {
   region = var.region
-
-  version = "~> 3.3.0"
 }
 
 module "availability_zones" {
@@ -21,6 +19,7 @@ module "eks_base" {
   dns_base           = var.hosted_zone_name
   dns_prefix         = var.dns_prefix
   service_mesh       = var.service_mesh
+  graviton2          = var.graviton2
 }
 
 data "aws_route53_zone" "zone" {

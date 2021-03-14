@@ -4,7 +4,7 @@ locals {
 
 module "iam_assumable_role_admin" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.20.0"
+  version                       = "~> v3.13.0"
   create_role                   = true
   role_name                     = "${local.full_environment_prefix}-carts-dynamo"
   provider_url                  = local.eks_cluster_issuer_domain

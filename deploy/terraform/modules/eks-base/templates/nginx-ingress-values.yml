@@ -19,3 +19,7 @@ controller:
       # increased to '3600' to avoid any potential issues.
       service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "60"
       service.beta.kubernetes.io/aws-load-balancer-eip-allocations: ${eip_allocs}
+
+defaultBackend:
+  image:
+    repository: ${backendImage}

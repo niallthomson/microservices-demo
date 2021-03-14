@@ -31,7 +31,7 @@ resource "aws_iam_role_policy_attachment" "eks_cluster_autoscaler" {
 
 module "iam_assumable_role_cluster_autoscaler" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.20.0"
+  version                       = "~> v3.13.0"
   create_role                   = true
   role_name                     = "${local.full_environment_prefix}-cluster-autoscaler"
   provider_url                  = local.eks_cluster_issuer_domain
@@ -102,8 +102,10 @@ resource "helm_release" "cluster_autoscaler" {
 
   name       = "cluster-autoscaler"
   namespace  = "kube-system"
-  chart      = "stable/cluster-autoscaler"
-  version    = "7.3.3"
+  repository = "https://kubernetes.github.io/autoscaler"
+  chart      = "cluster-autoscaler"
+  version    = "9.7.0"
+  replace    = true
 
   values = [data.template_file.cluster_autoscaler_values.rendered]
 }

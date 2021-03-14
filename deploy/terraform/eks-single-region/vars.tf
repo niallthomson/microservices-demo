@@ -26,3 +26,8 @@ variable "dns_prefix" {
 variable "service_mesh" {
   default = "none"
 }
+
+variable "graviton2" {
+  description = "Whether to deploy EC2-based services on ARM-based Graviton2 instances"
+  default     = false
+}

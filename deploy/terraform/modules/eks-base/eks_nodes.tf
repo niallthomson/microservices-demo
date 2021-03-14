@@ -1,4 +1,8 @@
-resource "aws_eks_node_group" "managed_workers_a" {
+locals {
+  node_pool_instance_type = var.graviton2 ? var.node_pool_instance_type_arm64 : var.node_pool_instance_type_x64
+}
+
+resource "aws_eks_node_group" "managed_workers" {
   cluster_name    = aws_eks_cluster.cluster.name
   node_group_name = "${local.full_environment_prefix}-workers-${var.availability_zones[count.index]}"
   node_role_arn   = aws_iam_role.managed_workers.arn
@@ -10,7 +14,8 @@ resource "aws_eks_node_group" "managed_workers_a" {
     min_size     = 2
   }
 
-  instance_types = [var.node_pool_instance_type]
+  instance_types = [local.node_pool_instance_type]
+  ami_type       = var.graviton2 ? "AL2_ARM_64" : "AL2_x86_64"
   labels = {
     lifecycle = "OnDemand"
     az        = var.availability_zones[count.index]

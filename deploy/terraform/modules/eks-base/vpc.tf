@@ -8,7 +8,7 @@ locals {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "2.51.0"
+  version = "2.70.0"
   name    = "${local.full_environment_prefix}-vpc"
   azs     = var.availability_zones
   cidr    = var.vpc_cidr

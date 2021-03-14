@@ -32,7 +32,7 @@ EOF
 
 module "iam_assumable_role_certmanager" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.20.0"
+  version                       = "~> v3.13.0"
   create_role                   = true
   role_name                     = "${local.full_environment_prefix}-certmanager"
   provider_url                  = local.eks_cluster_issuer_domain
@@ -64,30 +64,37 @@ resource "helm_release" "certmanager" {
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"
   version    = "v0.15.2"
+  replace    = true
 
   values = [data.template_file.certmanager_values.rendered]
 
   provisioner "local-exec" {
     command = "sleep 30"
   }
-}
 
-data "template_file" "certmanager_issuer" {
-  template = file("${path.module}/templates/certmanager-issuer.yml")
-
-  vars = {
-    namespace = kubernetes_namespace.certmanager.metadata.0.name
-    acmeEmail = "non@paasify.org"
-    domain = var.dns_base
-    region = var.region
-    hostedZoneId = var.dns_hosted_zone_id
+  provisioner "local-exec" {
+    command = <<EOT
+cat <<EOF | kubectl --server=${aws_eks_cluster.cluster.endpoint} --insecure-skip-tls-verify=true --token=${data.aws_eks_cluster_auth.default.token} create -f -
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+  namespace: ${kubernetes_namespace.certmanager.metadata.0.name}
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: 'none@paasify.org'
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - selector:
+        dnsZones:
+        - "${var.dns_base}"
+      dns01:
+        route53:
+          region: ${var.region}
+          hostedZoneID: ${var.dns_hosted_zone_id}
+EOF
+EOT
   }
-}
-
-module "certmanager_issuer_apply" {
-  source = "../kubernetes-apply"
-
-  name = "certmanager-issuer"
-  blocker = helm_release.certmanager.id
-  yaml = data.template_file.certmanager_issuer.rendered
 }

@@ -22,6 +22,7 @@ There are several high level implementation themes that are used throughout this
 - REST APIs are generally used and documented through the OpenAPI specification
 - Events that each service publishes are documented with JSONSchema
 - Services should avoid making synchronous calls to each other where possible
+- Container setup designed to work with both x64 and ARM64 CPU architecture
 
 ## Application Architecture
 

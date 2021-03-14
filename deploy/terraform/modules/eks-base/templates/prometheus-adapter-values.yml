@@ -2,6 +2,9 @@ prometheus:
   url: http://prometheus-server.prometheus.svc
   port: 80
 
+image:
+  repository: directxman12/k8s-prometheus-adapter
+
 rules:
   custom:
   - seriesQuery: 'http_server_requests_seconds_count{kubernetes_namespace!="",kubernetes_pod_name!=""}'

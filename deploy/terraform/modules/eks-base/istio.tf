@@ -28,7 +28,7 @@ data "template_file" "istio_yaml" {
 }
 
 module "istio_apply" {
-  depends_on = [kubernetes_namespace.istio_system, module.certmanager_issuer_apply]
+  depends_on = [kubernetes_namespace.istio_system]
 
   source = "../kubernetes-apply"
 

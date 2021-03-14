@@ -14,6 +14,7 @@ data "template_file" "nginx_config" {
     eip_allocs   = join(",", aws_eip.nginx_ingress.*.id)
     replicas     = length(var.availability_zones)
     minAvailable = length(var.availability_zones) > 1 ? length(var.availability_zones) - 1 : 1
+    backendImage = var.graviton2 ? "k8s.gcr.io/defaultbackend-arm64" : "k8s.gcr.io/defaultbackend-amd64"
   }
 }
 
@@ -33,7 +34,7 @@ resource "helm_release" "nginx_ingress" {
   name      = "nginx-ingress"
   namespace = "nginx-ingress"
   chart     = "stable/nginx-ingress"
-  version   = "1.40.2"
+  version   = "1.41.3"
 
   values = [data.template_file.nginx_config.rendered]
 

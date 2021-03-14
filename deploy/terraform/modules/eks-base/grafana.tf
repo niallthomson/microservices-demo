@@ -19,8 +19,10 @@ resource "helm_release" "grafana" {
 
   name       = "grafana"
   chart      = "grafana"
+  version    = "6.6.2"
   repository = "https://grafana.github.io/helm-charts"
   namespace  = kubernetes_namespace.grafana.metadata[0].name
+  replace    = true
 
   values = [data.template_file.grafana_values.rendered]
 }

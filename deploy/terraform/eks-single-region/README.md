@@ -6,7 +6,7 @@ This Terraform project will create a fully running deployment of Watchn running 
 
 Prerequisites:
 - An AWS account
-- Terraform >= 0.13
+- Terraform >= 0.14
 - Route53 public hosted zone
 
 ## Example

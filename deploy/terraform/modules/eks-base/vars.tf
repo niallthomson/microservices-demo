@@ -17,8 +17,17 @@ variable "vpc_cidr" {
   default = "10.0.0.0/16"
 }
 
-variable "node_pool_instance_type" {
+variable "node_pool_instance_type_x64" {
   default = "t3a.large"
+}
+
+variable "node_pool_instance_type_arm64" {
+  default = "t4g.large"
+}
+
+variable "graviton2" {
+  description = "Whether to deploy EC2-based services on ARM-based Graviton2 instances"
+  default     = false
 }
 
 variable "tags" {
@@ -46,7 +55,7 @@ variable "service_mesh" {
 }
 
 variable "aurora_engine_version" {
-  default = "5.7.mysql_aurora.2.08.1"
+  default = "5.7.mysql_aurora.2.09.1"
 }
 
 variable "aurora_source_region" {

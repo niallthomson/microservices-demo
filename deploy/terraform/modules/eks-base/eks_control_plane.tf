@@ -2,6 +2,10 @@ locals {
   eks_cluster_issuer_domain = replace(aws_eks_cluster.cluster.identity.0.oidc.0.issuer, "https://", "")
 }
 
+data "aws_eks_cluster_auth" "default" {
+  name = aws_eks_cluster.cluster.name
+}
+
 # EKS Control Plane security group
 resource "aws_security_group_rule" "vpc_endpoint_eks_cluster_sg" {
   from_port                = 443

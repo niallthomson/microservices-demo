@@ -1,10 +1,11 @@
 module "checkout_redis" {
   source = "../aws-elasticache-redis"
 
-  environment_name = local.full_environment_prefix
-  instance_name    = "checkout"
-  vpc_id           = module.vpc.vpc_id
-  subnet_ids       = module.vpc.database_subnets
+  environment_name   = local.full_environment_prefix
+  instance_name      = "checkout"
+  vpc_id             = module.vpc.vpc_id
+  subnet_ids         = module.vpc.database_subnets
+  availability_zones = var.availability_zones
 }
 
 resource "aws_security_group_rule" "checkout_redis_ingress" {
