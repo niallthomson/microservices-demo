@@ -31,7 +31,6 @@ securityContext:
     drop:
       - ALL
   readOnlyRootFilesystem: false
-  runAsNonRoot: true
 
 service:
   type: ClusterIP
