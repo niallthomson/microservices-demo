@@ -11,15 +11,6 @@ variable "num_availability_zones" {
   default = 3
 }
 
-/*
-data "aws_availability_zones" "available" {
-  state = "available"
-}
-
-output "availability_zones" {
-  value = length(var.availability_zones) > 0 ? var.availability_zones : slice(data.aws_availability_zones.available, 0, var.num_availability_zones - 1)
-}*/
-
 variable "availability_zone_map" {
   default = {
     "us-east-1" : ["us-east-1a", "us-east-1b", "us-east-1c"],
