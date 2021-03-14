@@ -77,11 +77,13 @@ variable "carts_chaos" {
 }
 
 variable "fargate" {
-  default = true
+  description = "Whether to deploy entirely on Fargate"
+  default     = true
 }
 
 variable "graviton2" {
-  default = false
+  description = "Whether to deploy EC2-based services on ARM-based Graviton2 instances"
+  default     = false
 }
 
 variable "ec2_instance_type_x64" {
@@ -121,6 +123,7 @@ variable "ami_override_id" {
 }
 
 variable "use_cloud_map" {
-  type    = bool
-  default = true
+  type        = bool
+  description = "Services will communicate directly via DNS-based lookups from Cloud Map, bypassing service load balancers"
+  default     = true
 }
