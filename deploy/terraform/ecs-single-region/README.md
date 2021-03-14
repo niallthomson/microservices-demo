@@ -18,7 +18,7 @@ It demonstrates the following features:
 
 Prerequisites:
 - An AWS account
-- Terraform >= 0.13
+- Terraform >= 0.14
 - Route53 public hosted zone
 
 ## Example
