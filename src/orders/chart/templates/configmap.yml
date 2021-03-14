@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: {{ include "orders.configMapName" . }}
 data:
-  SPRING_PROFILES_ACTIVE: mysql,activemq
+  SPRING_PROFILES_ACTIVE: mysql,default
   {{- if .Values.messaging.activemq.brokerUrl }}
   SPRING_ACTIVEMQ_BROKERURL: {{ .Values.messaging.activemq.brokerUrl }}
   {{- end }}
