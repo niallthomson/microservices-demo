@@ -3,14 +3,14 @@ provider "aws" {
 }
 
 module "availability_zones" {
-  source = "../modules/aws-az-util"
+  source = "../modules/aws/az-util"
 
   region             = var.region
   availability_zones = var.availability_zones
 }
 
 module "ecs_base" {
-  source = "../modules/ecs-base"
+  source = "../modules/aws/ecs/base"
 
   environment_name     = var.environment_name
   region               = var.region
