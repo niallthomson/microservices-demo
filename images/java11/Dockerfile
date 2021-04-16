@@ -6,7 +6,7 @@ ARG JAR_PATH
 VOLUME /tmp
 WORKDIR /
 
-ADD ./pom.xml .
+COPY ./pom.xml .
 
 RUN mvn dependency:go-offline -B
 
@@ -19,7 +19,8 @@ RUN mv /$JAR_PATH /app.jar
 FROM amazoncorretto:11-al2-full
 
 RUN yum install -y \
-    shadow-utils
+    shadow-utils && \
+    yum clean all
 
 ENV APPUSER=appuser
 ENV APPUID=1000
