@@ -3,7 +3,7 @@ FROM alpine:3.12 as build-env
 
 ARG MAIN_PATH
 
-RUN apk update && apk upgrade && \
+RUN apk update && \
     apk add --no-cache bash git openssh make musl-dev go
 
 # Configure Go
@@ -42,7 +42,7 @@ RUN addgroup --gid $APPGID "$APPUSER" \
     --uid "$APPUID" \
     "$APPUSER"
 
-RUN apk update && apk upgrade && \
+RUN apk update && \
     apk add --no-cache curl
 
 WORKDIR /app
