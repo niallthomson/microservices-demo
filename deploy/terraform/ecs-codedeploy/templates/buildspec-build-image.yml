@@ -1,0 +1,27 @@
+version: 0.2
+env:
+  variables:
+    DOCKERHUB_USERNAME: "${dockerhub_username}"
+  parameter-store:
+    DOCKERHUB_PASSWORD: "${dockerhub_password}"
+  exported-variables:
+    - IMAGE_TAG
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to DockerHub...
+      - echo $${DOCKERHUB_PASSWORD} | docker login --username "$${DOCKERHUB_USERNAME}" --password-stdin
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+  build:
+    commands:
+      - IMAGE_TAG=$${ecr_repository_url}:$${COMMIT_HASH}
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - src/$${component}/scripts/build.sh
+  post_build:
+    commands:
+      - echo Pushing the Docker image to ECR...
+      - docker tag watchn/watchn-$${component}:latest $${IMAGE_TAG}
+      - docker push $${IMAGE_TAG}
