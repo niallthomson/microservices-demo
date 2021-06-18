@@ -31,12 +31,10 @@ resource "aws_ecs_task_definition" "task" {
     "essential": true,
     "environment": ${jsonencode(var.environment)},
     "secrets": ${jsonencode(var.secrets)},
-    "portMappings": [
-      {
-        "protocol": "tcp",
-        "containerPort": 8080
-      }
-    ],
+    "portMappings": [{
+      "protocol": "tcp",
+      "containerPort": 8080
+    }],
     "readonlyRootFilesystem": ${var.readonly_filesystem},
     ${local.linuxParameters}
     "logConfiguration": {
