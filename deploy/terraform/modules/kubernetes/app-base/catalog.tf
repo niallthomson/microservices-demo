@@ -1,6 +1,6 @@
 resource "helm_release" "catalog" {
   name       = "catalog"
-  chart      = "${path.module}/../../../../src/catalog/chart"
+  chart      = "${local.src_dir}/catalog/chart"
   namespace  = kubernetes_namespace.watchn.metadata[0].name
 
   set {

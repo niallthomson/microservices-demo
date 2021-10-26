@@ -1,6 +1,6 @@
 resource "helm_release" "carts" {
   name       = "carts"
-  chart      = "${path.module}/../../../../src/cart/chart"
+  chart      = "${local.src_dir}/cart/chart"
   namespace  = kubernetes_namespace.watchn.metadata[0].name
 
   set {

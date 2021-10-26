@@ -10,7 +10,7 @@ data "template_file" "ui_values" {
 
 resource "helm_release" "ui" {
   name       = "ui"
-  chart      = "${path.module}/../../../../src/ui/chart"
+  chart      = "${local.src_dir}/ui/chart"
   namespace  = kubernetes_namespace.watchn.metadata[0].name
 
   values = [data.template_file.ui_values.rendered]

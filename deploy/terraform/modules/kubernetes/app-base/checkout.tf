@@ -9,7 +9,7 @@ data "template_file" "checkout_values" {
 
 resource "helm_release" "checkout" {
   name       = "checkout"
-  chart      = "${path.module}/../../../../src/checkout/chart"
+  chart      = "${local.src_dir}/checkout/chart"
   namespace  = kubernetes_namespace.watchn.metadata[0].name
 
   values = [data.template_file.checkout_values.rendered]

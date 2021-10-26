@@ -17,3 +17,7 @@ resource "kubernetes_namespace" "watchn" {
     }
   }
 }
+
+locals {
+  src_dir = "${path.module}/../../../../../src"
+}
