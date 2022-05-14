@@ -1,12 +1,16 @@
-FROM markadams/chromium-xvfb
+FROM node:14-buster
 
-WORKDIR /usr/src/app
-
-RUN apt-get update && apt-get install -y gpg \
-    && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
-    && apt-get install -y nodejs gpg \
-    && rm -rf /var/lib/apt/lists
-
+RUN apt-get update && \
+    DEBIAN_FRONTEND="noninteractive" \
+    apt-get install -y --no-install-recommends \
+    chromium \
+    chromium-driver \
+    libatk-bridge2.0-0 \
+    libgconf-2-4 \
+    libxss1 \
+    openjdk-11-jre-headless \
+    && rm -rf /var/lib/apt/lists/*
+    
 WORKDIR /app
 
 RUN groupadd -r app && useradd -r -d /app -g app -G audio,video app \

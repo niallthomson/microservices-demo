@@ -9,7 +9,7 @@ exports.config = {
   capabilities: {
     browserName: 'chrome',
     chromeOptions: {
-      args: ['--headless', '--disable-gpu', '--window-size=1024,768'] // Need minimum windows size or the responsive layout breaks navigation assumptions
+      args: ['--headless', '--disable-gpu', '--window-size=1024,768', '--no-sandbox'] // Need minimum windows size or the responsive layout breaks navigation assumptions
     }
   },
   directConnect: true,
