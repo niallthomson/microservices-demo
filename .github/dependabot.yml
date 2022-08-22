@@ -8,3 +8,7 @@ updates:
     directory: "/src/orders"
     schedule:
       interval: "monthly"
+  - package-ecosystem: "maven"
+    directory: "/src/ui"
+    schedule:
+      interval: "monthly"
