@@ -15,7 +15,7 @@ services:
     hostname: ui
     build:
       context: ../../src/ui
-      dockerfile: ../../images/java11/Dockerfile
+      dockerfile: ../../images/java17/Dockerfile
       args:
         JAR_PATH: target/ui-0.0.1-SNAPSHOT.jar
     restart: always
@@ -49,7 +49,7 @@ services:
     hostname: carts
     build:
       context: ../../src/cart
-      dockerfile: ../../images/java11/Dockerfile
+      dockerfile: ../../images/java17/Dockerfile
       args:
         JAR_PATH: target/carts-0.0.1-SNAPSHOT.jar
     restart: always
@@ -75,7 +75,7 @@ services:
     hostname: orders
     build:
       context: ../../src/orders
-      dockerfile: ../../images/java11/Dockerfile
+      dockerfile: ../../images/java17/Dockerfile
       args:
         JAR_PATH: target/orders-0.0.1-SNAPSHOT.jar
     restart: always

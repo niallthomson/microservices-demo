@@ -2,8 +2,9 @@ package com.watchn.orders.web;
 
 import com.watchn.orders.services.OrderService;
 import com.watchn.orders.web.payload.*;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/orders")
-@Api(tags = {"orders"})
+@Tag(name="orders")
 @Slf4j
 public class OrderController {
 
@@ -24,13 +25,13 @@ public class OrderController {
     private OrderMapper orderMapper;
 
     @PostMapping
-    @ApiOperation(value = "Create an order", nickname = "createOrder")
+    @Operation(summary = "Create an order", operationId = "createOrder")
     public ExistingOrder order(@RequestBody Order orderRequest) {
         return this.orderMapper.toExistingOrder(this.service.create(this.orderMapper.toOrderEntity(orderRequest)));
     }
 
     @GetMapping
-    @ApiOperation(value = "List orders", nickname = "listOrders")
+    @Operation(summary = "List orders", operationId = "listOrders")
     public List<ExistingOrder> order() {
         return this.service.list().stream().map(this.orderMapper::toExistingOrder).collect(Collectors.toList());
     }
