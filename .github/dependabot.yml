@@ -3,4 +3,8 @@ updates:
   - package-ecosystem: "maven"
     directory: "/src/cart"
     schedule:
-      interval: "daily"
+      interval: "monthly"
+  - package-ecosystem: "maven"
+    directory: "/src/orders"
+    schedule:
+      interval: "monthly"
