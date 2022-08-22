@@ -1,0 +1,6 @@
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/src/cart"
+    schedule:
+      interval: "daily"
