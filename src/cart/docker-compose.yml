@@ -4,7 +4,7 @@ services:
   carts:
     build:
       context: .
-      dockerfile: ../../images/java11/Dockerfile
+      dockerfile: ../../images/java17/Dockerfile
       args:
         JAR_PATH: target/carts-0.0.1-SNAPSHOT.jar
     image: microservices-demo/carts
