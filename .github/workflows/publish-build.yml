@@ -22,8 +22,8 @@ jobs:
       run: |
         mkdir -p $GITHUB_WORKSPACE/bin
         echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
-        wget https://github.com/buildpack/pack/releases/download/v0.17.0/pack-v0.17.0-linux.tgz \
-          && tar -xvf pack-v0.17.0-linux.tgz \
+        wget https://github.com/buildpack/pack/releases/download/v0.27.0/pack-v0.27.0-linux.tgz \
+          && tar -xvf pack-v0.27.0-linux.tgz \
           && mv pack $GITHUB_WORKSPACE/bin/pack
    
     - name: Get the version
