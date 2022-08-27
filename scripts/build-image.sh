@@ -58,7 +58,7 @@ parse_params() {
   cnb=false
   arm=false
   quiet=false
-  builder='paketobuildpacks/builder:base'
+  builder='paketobuildpacks/builder:full'
   repository='watchn'
   tag='latest'
   service='*'
@@ -101,9 +101,9 @@ parse_params() {
 parse_params "$@"
 setup_colors
 
-quiet_args='-q'
+quiet_args=''
 
-if [ "$push" = true ] ; then
+if [ "$push" = true ] || [ "$quiet" = true ] ; then
   quiet_args='-q'
 fi
 
