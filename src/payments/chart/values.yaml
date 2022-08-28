@@ -6,7 +6,7 @@ replicaCount: 1
 image:
   repository: watchn/watchn-payments
   pullPolicy: IfNotPresent
-  tag: "build.1615751790"
+  tag: "build.1661651841"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
