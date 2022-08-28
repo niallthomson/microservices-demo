@@ -154,7 +154,7 @@ function build()
       fi
 
       msg "Running Docker buildx..."
-      docker buildx build --progress plain $push_args --platform linux/amd64,linux/arm64 $quiet_args -f "$component_dir/$dockerfile" $docker_build_args -t $repository/watchn-$component:$tag $component_dir
+      docker buildx build $push_args --platform linux/amd64,linux/arm64 $quiet_args -f "$component_dir/$dockerfile" $docker_build_args -t $repository/watchn-$component:$tag $component_dir
     else
       msg "Running Docker build..."
       docker build $quiet_args -f "$component_dir/$dockerfile" $docker_build_args -t $repository/watchn-$component:$tag $component_dir
