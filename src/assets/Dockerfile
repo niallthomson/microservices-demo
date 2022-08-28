@@ -1,4 +1,4 @@
-FROM nginx:1.19.6
+FROM nginx:1.23
 EXPOSE 8080
 COPY default.conf /etc/nginx/conf.d/default.conf
 COPY mime.types /etc/nginx/mime.types
