@@ -1,3 +1,9 @@
+NO LONGER MAINTAINED
+
+You can find the successor to this project here:
+
+https://github.com/aws-containers/retail-store-sample-app
+
 # Watchn - Microservices Demo
 
 Watchn is a project that provides a demo for illustrating various concepts related to the development and deployment of applications that are made up of distributed, decoupled components. Like projects that inspired is such as Hipster Shop and Sock Shop it is deliberately over-architected to provide a foundation for truely exploring more complex techniques and technologies.
